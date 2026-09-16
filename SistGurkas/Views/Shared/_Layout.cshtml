@@ -1,0 +1,1729 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <base href="/" />
+
+    <title>@ViewData["Title"] - Sistema Gurkas</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1" />
+
+    <link rel="shortcut icon"
+          href="~/favicon.ico" />
+
+    <!-- Fuente Metronic -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
+
+    <!-- Metronic 8 -->
+    <link href="~/assets/plugins/global/plugins.bundle.css"
+          rel="stylesheet"
+          type="text/css" />
+
+    <link href="~/assets/css/style.bundle.css"
+          rel="stylesheet"
+          type="text/css" />
+
+    <!-- CSS propio -->
+    <link href="~/css/site.css"
+          rel="stylesheet"
+          asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+
+<body id="kt_app_body"
+      data-kt-app-layout="dark-sidebar"
+      data-kt-app-header-fixed="true"
+      data-kt-app-sidebar-enabled="true"
+      data-kt-app-sidebar-fixed="true"
+      data-kt-app-sidebar-hoverable="true"
+      data-kt-app-sidebar-push-header="true"
+      class="app-default">
+
+
+    <!-- ============================================================
+         APP
+    ============================================================= -->
+
+    <div class="d-flex flex-column flex-root app-root"
+         id="kt_app_root">
+
+        <div class="app-page flex-column flex-column-fluid"
+             id="kt_app_page">
+
+
+            <!-- ====================================================
+                 HEADER
+            ===================================================== -->
+
+            <div id="kt_app_header"
+                 class="app-header">
+
+                <div class="app-container container-fluid
+                            d-flex align-items-stretch
+                            justify-content-between"
+                     id="kt_app_header_container">
+
+
+                    <!-- BOTÓN SIDEBAR MÓVIL -->
+
+                    <div class="d-flex align-items-center d-lg-none
+                                ms-n3 me-1 me-md-2">
+
+                        <div class="btn btn-icon
+                                    btn-active-color-primary
+                                    w-35px h-35px"
+                             id="kt_app_sidebar_mobile_toggle">
+
+                            <i class="ki-duotone ki-abstract-14 fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- LOGO MÓVIL -->
+
+                    <div class="d-flex align-items-center
+                                flex-grow-1 flex-lg-grow-0">
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="d-lg-none">
+
+                            <span class="fw-bold fs-4 text-dark">
+                                GURKAS
+                            </span>
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- HEADER DERECHO -->
+
+                    <div class="d-flex align-items-stretch
+                                justify-content-end
+                                flex-lg-grow-1">
+
+                        <div class="app-navbar flex-shrink-0">
+
+
+                            <!-- USUARIO -->
+
+                            <div class="app-navbar-item ms-1 ms-md-4"
+                                 id="kt_header_user_menu_toggle">
+
+
+                                <!-- AVATAR -->
+
+                                <div class="cursor-pointer symbol symbol-35px"
+                                     data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
+                                     data-kt-menu-attach="parent"
+                                     data-kt-menu-placement="bottom-end">
+
+                                    <div class="symbol-label
+                                                bg-light-danger
+                                                text-danger
+                                                fw-bold">
+
+                                        U
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- MENU USUARIO -->
+
+                                <div class="menu
+                                            menu-sub
+                                            menu-sub-dropdown
+                                            menu-column
+                                            menu-rounded
+                                            menu-gray-800
+                                            menu-state-bg
+                                            menu-state-color
+                                            fw-semibold
+                                            py-4
+                                            fs-6
+                                            w-275px"
+                                     data-kt-menu="true">
+
+
+                                    <!-- INFORMACIÓN -->
+
+                                    <div class="menu-item px-3">
+
+                                        <div class="menu-content
+                                                    d-flex
+                                                    align-items-center
+                                                    px-3">
+
+
+                                            <div class="symbol symbol-50px me-5">
+
+                                                <div class="symbol-label
+                                                            bg-light-danger
+                                                            text-danger
+                                                            fw-bold
+                                                            fs-3">
+
+                                                    U
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="d-flex
+                                                        flex-column">
+
+                                                <div class="fw-bold
+                                                            d-flex
+                                                            align-items-center
+                                                            fs-5">
+
+                                                    Usuario
+
+                                                </div>
+
+                                                <span class="fw-semibold
+                                                             text-muted
+                                                             fs-7">
+
+                                                    Sistema Gurkas
+
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="separator my-2"></div>
+
+
+                                    <!-- PERFIL -->
+
+                                    <div class="menu-item px-5">
+
+                                        <a href="#"
+                                           class="menu-link px-5">
+
+                                            Mi perfil
+
+                                        </a>
+
+                                    </div>
+
+
+                                    <!-- CERRAR SESIÓN -->
+
+                                    <div class="menu-item px-5">
+
+                                        <a asp-controller="Acceso"
+                                           asp-action="Salir"
+                                           class="menu-link px-5">
+
+                                            Cerrar sesión
+
+                                        </a>
+
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ====================================================
+                 WRAPPER
+            ===================================================== -->
+
+            <div class="app-wrapper flex-column flex-row-fluid"
+                 id="kt_app_wrapper">
+
+
+                <!-- =================================================
+                     SIDEBAR
+                ================================================== -->
+
+                <div id="kt_app_sidebar"
+                     class="app-sidebar flex-column"
+                     data-kt-drawer="true"
+                     data-kt-drawer-name="app-sidebar"
+                     data-kt-drawer-activate="{default: true, lg: false}"
+                     data-kt-drawer-overlay="true"
+                     data-kt-drawer-width="225px"
+                     data-kt-drawer-direction="start"
+                     data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle">
+
+
+                    <!-- =============================================
+                         LOGO
+                    ============================================== -->
+
+                    <div class="app-sidebar-logo px-6"
+                         id="kt_app_sidebar_logo">
+
+
+                        <a asp-controller="Home"
+                           asp-action="Index">
+
+
+                            <!-- LOGO NORMAL -->
+
+                            <span class="app-sidebar-logo-default
+                                         text-white
+                                         fw-bold
+                                         fs-3">
+
+                                GURKAS
+
+                            </span>
+
+
+                            <!-- LOGO MINIMIZADO -->
+
+                            <span class="app-sidebar-logo-minimize
+                                         text-white
+                                         fw-bold
+                                         fs-3">
+
+                                G
+
+                            </span>
+
+                        </a>
+
+
+                        <!-- BOTÓN MINIMIZAR -->
+
+                        <div id="kt_app_sidebar_toggle"
+                             class="app-sidebar-toggle
+                                    btn
+                                    btn-icon
+                                    btn-shadow
+                                    btn-sm
+                                    btn-color-muted
+                                    btn-active-color-primary
+                                    h-30px
+                                    w-30px
+                                    position-absolute
+                                    top-50
+                                    start-100
+                                    translate-middle
+                                    rotate"
+                             data-kt-toggle="true"
+                             data-kt-toggle-state="active"
+                             data-kt-toggle-target="body"
+                             data-kt-toggle-name="app-sidebar-minimize">
+
+
+                            <i class="ki-duotone
+                                      ki-black-left-line
+                                      fs-3
+                                      rotate-180">
+
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+
+                            </i>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         MENÚ
+                    ============================================== -->
+
+                    <div class="app-sidebar-menu
+                                overflow-hidden
+                                flex-column-fluid">
+
+
+                        <div id="kt_app_sidebar_menu_wrapper"
+                             class="app-sidebar-wrapper">
+
+
+                            <div id="kt_app_sidebar_menu_scroll"
+                                 class="scroll-y my-5 mx-3"
+                                 data-kt-scroll="true"
+                                 data-kt-scroll-activate="true"
+                                 data-kt-scroll-height="auto"
+                                 data-kt-scroll-dependencies="#kt_app_sidebar_logo"
+                                 data-kt-scroll-wrappers="#kt_app_sidebar_menu"
+                                 data-kt-scroll-offset="5px">
+
+
+                                <div class="menu
+                                            menu-column
+                                            menu-rounded
+                                            menu-sub-indention
+                                            fw-semibold
+                                            fs-6"
+                                     id="kt_app_sidebar_menu"
+                                     data-kt-menu="true">
+
+
+                                    <!-- =============================
+                                         INICIO
+                                    ============================== -->
+
+                                    <div class="menu-item">
+
+                                        <a class="menu-link active"
+                                           asp-controller="Home"
+                                           asp-action="Index">
+
+
+                                            <span class="menu-icon">
+
+                                                <i class="ki-duotone
+                                                          ki-element-11
+                                                          fs-2">
+
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                    <span class="path3"></span>
+                                                    <span class="path4"></span>
+
+                                                </i>
+
+                                            </span>
+
+
+                                            <span class="menu-title">
+                                                Inicio
+                                            </span>
+
+                                        </a>
+
+                                    </div>
+
+
+                                    <!-- =============================
+                                         SEPARADOR
+                                    ============================== -->
+
+                                    <div class="menu-item pt-5">
+
+                                        <div class="menu-content">
+
+                                            <span class="menu-heading
+                                                         fw-bold
+                                                         text-uppercase
+                                                         fs-7">
+
+                                                Módulos
+
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                    <!-- ======== MÓDULOS ======== -->
+                                 
+                                    <!--begin:Menu item - Recursos Humanos-->
+                                    <div data-kt-menu-trigger="click"
+                                         class="menu-item menu-accordion">
+
+                                        <!--begin:Menu link-->
+                                        <span class="menu-link">
+
+                                            <!-- Icono -->
+                                            <span class="menu-icon">
+                                                <i class="ki-duotone ki-profile-user fs-2">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i>
+                                            </span>
+
+                                            <!-- Título -->
+                                            <span class="menu-title">
+                                                Recursos Humanos
+                                            </span>
+
+                                            <!-- Flecha -->
+                                            <span class="menu-arrow"></span>
+
+                                        </span>
+                                        <!--end:Menu link-->
+
+                                        <!--begin:Menu sub-->
+                                        <div class="menu-sub menu-sub-accordion">
+
+                                            <!-- ======== Reclutamiento ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                       Reclutamiento
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link"  asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Déficit / Vacantes por sede
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Postulantes
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Postulantes sin contactar
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                     <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Seguimiento de postulantes
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Contactos / Llamadas
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Referidos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Lista de exclusión
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+
+                                            <!-- ======== Seleccion ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Seleccion
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Procesos de selección
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Evaluaciones
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Resultados de evaluación
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Postulantes aptos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Descartados / Desistimientos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Compatibilidad con vacantes
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Pendientes de ingreso
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <!-- ======== Personal ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Personal
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Trabajadores
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Ingresos y Reingresos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Contratos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Movimientos laborales
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Destaques
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Ceses
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <!-- ======== Legajos ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Legajos
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Legajos digitales
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Documentos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Pendientes / Incompletos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Personal no declarado
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <!-- ======== Sucamec ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Sucamec
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Carnés SUCAMEC
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Licencias L4
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Vencimientos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <!-- ======== Bienestar Social ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Bienestar Social
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Descansos médicos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Subsidios
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Licencias
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Seguimiento social
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <!-- ======== Vacaciones ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Vacaciones
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Solicitudes
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Aprobaciones
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Procesamiento
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Historial
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <!-- ======== Capacitación ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Capacitación
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Capacitaciones
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Programación
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Asistencia
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Brecha de capacitación
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <!-- ======== Declaraciones ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Declaraciones
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Dashboard
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Declaraciones
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Presentados pendientes
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Observados / Rechazados
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Historial
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <!-- ======== Reporte ======== -->
+                                            <div data-kt-menu-trigger="click"
+                                                 class="menu-item menu-accordion">
+
+                                                <span class="menu-link">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Reporte
+                                                    </span>
+
+                                                    <span class="menu-arrow"></span>
+
+                                                </span>
+
+
+                                                <!-- Sub Modulos -->
+                                                <div class="menu-sub menu-sub-accordion">
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Reportes operativos
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Contratos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Reportes de gestión
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Reportes gerenciales
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                    <div class="menu-item">
+
+                                                        <a class="menu-link" asp-controller="Documentos" asp-action="Index">
+
+                                                            <span class="menu-bullet">
+                                                                <span class="bullet bullet-dot"></span>
+                                                            </span>
+
+                                                            <span class="menu-title">
+                                                                Reportes personalizados
+                                                            </span>
+
+                                                        </a>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <!-- Vacaciones -->
+                                            <div class="menu-item">
+                                                <a class="menu-link"
+                                                   asp-controller="Vacaciones"
+                                                   asp-action="Index">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Vacaciones
+                                                    </span>
+
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                        <!--end:Menu sub-->
+
+                                    </div>
+                                    <!--end:Menu item - Recursos Humanos-->
+
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     MAIN
+                ================================================== -->
+
+                <div class="app-main flex-column flex-row-fluid"
+                     id="kt_app_main">
+
+
+                    <!-- =============================================
+                         CONTENT
+                    ============================================== -->
+
+                    <div class="d-flex flex-column flex-column-fluid">
+
+
+                        <div id="kt_app_content"
+                             class="app-content flex-column-fluid">
+
+
+                            <div id="kt_app_content_container"
+                                 class="app-container container-fluid">
+
+
+                                @RenderBody()
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         JAVASCRIPT METRONIC
+    ============================================================= -->
+
+    <script src="~/assets/plugins/global/plugins.bundle.js"></script>
+
+    <script src="~/assets/js/scripts.bundle.js"></script>
+
+
+    <!-- JS PROPIO -->
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
