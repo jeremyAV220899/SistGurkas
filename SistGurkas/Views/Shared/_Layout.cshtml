@@ -30,6 +30,10 @@
           rel="stylesheet"
           asp-append-version="true" />
 
+          <!-- Toastr: estilos de notificaciones -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
@@ -3341,84 +3345,94 @@
                                     </div>
                                     <!--end:Menu item - Operaciones-->
 
-                                    <!--begin:Menu item - Comercial-->
-                                    <div data-kt-menu-trigger="click"
-                                         class="menu-item menu-accordion">
+                                     <!--begin:Menu item - Comercial-->
+@{
+    var controllerActual = ViewContext.RouteData.Values["controller"]?.ToString();
+    var comercialActivo = controllerActual == "Prospecto"
+                    || controllerActual == "Oportunidad"
+                    || controllerActual == "Cliente";
+}
 
-                                        <!--begin:Menu link-->
-                                        <span class="menu-link">
+<div data-kt-menu-trigger="click"
+     class="menu-item menu-accordion @(comercialActivo ? "here show" : "")">
 
-                                            <!-- Icono -->
-                                            <span class="menu-icon">
-                                                <i class="ki-duotone ki-briefcase fs-2">
-                                                    <span class="path1"></span>
-                                                    <span class="path2"></span>
-                                                </i>
-                                            </span>
+    <span class="menu-link">
+        <span class="menu-icon">
+            <i class="ki-duotone ki-briefcase fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        </span>
 
-                                            <!-- Título -->
-                                            <span class="menu-title">
-                                                Comercial
-                                            </span>
+        <span class="menu-title">Comercial</span>
+        <span class="menu-arrow"></span>
+    </span>
 
-                                            <!-- Flecha -->
-                                            <span class="menu-arrow"></span>
+    <div class="menu-sub menu-sub-accordion">
 
-                                        </span>
-                                        <!--end:Menu link-->
-                                        <!--begin:Menu sub-->
-                                        <div class="menu-sub menu-sub-accordion">
+        <!-- CRM -->
+        <div data-kt-menu-trigger="click"
+             class="menu-item menu-accordion @(comercialActivo ? "here show" : "")">
 
-                                            <!-- ======== Reclutamiento ======== -->
-                                            <div data-kt-menu-trigger="click"
-                                                 class="menu-item menu-accordion">
+            <span class="menu-link">
+                <span class="menu-bullet">
+                    <span class="bullet bullet-dot"></span>
+                </span>
 
-                                                <span class="menu-link">
+                <span class="menu-title">CRM</span>
+                <span class="menu-arrow"></span>
+            </span>
 
-                                                    <span class="menu-bullet">
-                                                        <span class="bullet bullet-dot"></span>
-                                                    </span>
+            <div class="menu-sub menu-sub-accordion">
 
-                                                    <span class="menu-title">
-                                                        Reclutamiento
-                                                    </span>
+                <!-- Prospectos -->
+                <div class="menu-item">
+                    <a class="menu-link @(controllerActual == "Prospecto" ? "active" : "")"
+                       asp-controller="Prospecto"
+                       asp-action="Index">
 
-                                                    <span class="menu-arrow"></span>
+                        <span class="menu-bullet">
+                            <span class="bullet bullet-dot"></span>
+                        </span>
 
-                                                </span>
+                        <span class="menu-title">
+                            Prospectos
+                        </span>
+                    </a>
+                </div>
 
+                <!-- Oportunidades -->
+                <div class="menu-item">
+                    <a class="menu-link @(controllerActual == "Oportunidad" ? "active" : "")"
+                       asp-controller="Oportunidad"
+                       asp-action="Index">
 
-                                                <!-- Sub Modulos -->
-                                                <div class="menu-sub menu-sub-accordion">
+                        <span class="menu-bullet">
+                            <span class="bullet bullet-dot"></span>
+                        </span>
 
-                                                    <div class="menu-item">
+                        <span class="menu-title">
+                            Oportunidades
+                        </span>
+                    </a>
+                </div>
+                
+                <div class="menu-item">
+    <a class="menu-link @(controllerActual == "Cliente" ? "active" : "")"
+       asp-controller="Cliente" asp-action="Index">
+        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+        <span class="menu-title">Clientes</span>
+    </a>
+</div>
 
-                                                        <a class="menu-link" asp-controller="Trabajadores" asp-action="Index">
+            </div>
+        </div>
 
-                                                            <span class="menu-bullet">
-                                                                <span class="bullet bullet-dot"></span>
-                                                            </span>
+    </div>
+</div>
+<!--end:Menu item - Comercial-->
 
-                                                            <span class="menu-title">
-                                                                Dashboard
-                                                            </span>
-
-                                                        </a>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-
-
-                                        </div>
-                                        <!--end:Menu sub-->
-
-                                    </div>
-                                    <!--end:Menu item - Comercial-->
-
-                                    <!--begin:Menu item - Administración y Planillas-->
+<!--begin:Menu item - Administración y Planillas-->
                                     <div data-kt-menu-trigger="click"
                                          class="menu-item menu-accordion">
 
@@ -3524,6 +3538,21 @@
                                         <!--end:Menu link-->
                                         <!--begin:Menu sub-->
                                         <div class="menu-sub menu-sub-accordion">
+                                            <!-- ======== Empresas ======== -->
+                                            <div class="menu-item">
+                                                <a class="menu-link"
+                                                    asp-controller="Empresa"
+                                                    asp-action="Index">
+
+                                                    <span class="menu-bullet">
+                                                        <span class="bullet bullet-dot"></span>
+                                                    </span>
+
+                                                    <span class="menu-title">
+                                                        Empresas
+                                                    </span>
+                                                </a>
+                                            </div>
 
                                             <!-- ======== Reclutamiento ======== -->
                                             <div data-kt-menu-trigger="click"
@@ -3640,6 +3669,23 @@
     <script src="~/js/site.js"
             asp-append-version="true"></script>
 
+            <!-- Toastr: notificaciones -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- SweetAlert2: confirmaciones -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Configuración global de Toastr -->
+<script>
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        timeOut: 3500,
+        extendedTimeOut: 1000,
+        preventDuplicates: true
+    };
+</script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

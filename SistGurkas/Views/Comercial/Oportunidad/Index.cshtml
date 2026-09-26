@@ -1,0 +1,370 @@
+﻿@model IEnumerable<SistGurkas.Models.Comercial.Oportunidad>
+@using SistGurkas.Models.Comercial
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Oportunidades";
+    var items = Model?.ToList() ?? new List<Oportunidad>();
+    var prospectos = ViewBag.Prospectos as List<(int Id, string Nombre)> ?? new List<(int Id, string Nombre)>();
+
+    var estados = new Dictionary<int, string>
+    {
+        [1] = "En evaluación",
+        [2] = "Propuesta enviada",
+        [3] = "Negociación",
+        [4] = "Ganada",
+        [5] = "Perdida"
+    };
+
+    var total = items.Count;
+    var evaluacion = items.Count(x => x.IdEstadoOportunidad == 1 && x.IdEstado == 1);
+    var propuesta = items.Count(x => x.IdEstadoOportunidad == 2 && x.IdEstado == 1);
+    var negociacion = items.Count(x => x.IdEstadoOportunidad == 3 && x.IdEstado == 1);
+    var ganadas = items.Count(x => x.IdEstadoOportunidad == 4 && x.IdEstado == 1);
+    var perdidas = items.Count(x => x.IdEstadoOportunidad == 5 && x.IdEstado == 1);
+}
+
+<style>
+.op-page .card{border:0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.op-header{padding:24px 26px;border-radius:12px;background:linear-gradient(110deg,#17386f 0%,#2f61a9 100%);box-shadow:0 8px 22px rgba(23,56,111,.12)}
+.op-header-section{color:#b9d2ff;font-size:11px;font-weight:700;letter-spacing:.5px}
+.op-header-description{color:rgba(255,255,255,.88);font-size:13px}
+.op-header .btn{background:#f4f8ff;border:0}.op-header .btn:hover{background:#fff}
+.metric-card{position:relative;overflow:hidden;border:1px solid #edf0f5!important;transition:transform .2s ease,box-shadow .2s ease}
+.metric-card:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.08)}
+.metric-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:#315fa8}
+.metric-card.card-evaluacion::before{background:#f4b740}.metric-card.card-propuesta::before{background:#3b82f6}.metric-card.card-negociacion::before{background:#8b5cf6}.metric-card.card-ganada::before{background:#25b46b}.metric-card.card-perdida::before{background:#dc3545}
+.metric-icon{width:46px;height:46px;min-width:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.metric-total{background:#e8f1ff;color:#0d6efd}.metric-evaluacion{background:#fff4dc;color:#f59f00}.metric-propuesta{background:#e8f1ff;color:#0d6efd}.metric-negociacion{background:#eee8ff;color:#6f42c1}.metric-ganada{background:#e4f8ee;color:#0f9d58}.metric-perdida{background:#fde8eb;color:#dc3545}
+.metric-number{font-size:22px;line-height:1.1;font-weight:700;color:#152348;margin-bottom:5px}.metric-label{font-size:12px;line-height:1.2;font-weight:500;color:#71809f;white-space:nowrap}
+.app-svg{width:20px;height:20px;display:inline-block!important;visibility:visible!important;opacity:1!important;vertical-align:middle;stroke:currentColor!important;fill:none!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.metric-icon .app-svg{width:22px;height:22px}
+.op-filter-card label{font-size:12px;font-weight:600;color:#344563}
+.op-table-card{overflow:hidden}.op-table-title{padding:18px 20px 12px;display:flex;align-items:center;justify-content:space-between}.op-table-title h3{margin:0;color:#152348;font-size:16px;font-weight:700}
+.op-table{margin-bottom:0}.op-table th,.op-table td{vertical-align:middle;padding-top:14px;padding-bottom:14px;padding-left:12px;padding-right:12px}
+.op-table th:first-child,.op-table td:first-child{padding-left:24px!important}.op-table th:last-child,.op-table td:last-child{padding-right:24px!important}
+.op-table thead th{color:#71809f;font-weight:700;font-size:12px;white-space:nowrap}
+.op-code{color:#31547e;font-weight:700;white-space:nowrap}.op-company{font-weight:700;color:#182a4e;display:block}.op-prospect-label{display:block;color:#71809f;font-size:11px;margin-top:2px}
+.op-stage{display:inline-flex;align-items:center;justify-content:center;min-width:105px;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:600}
+.stage-1{background:#fff2cf;color:#b26a00}.stage-2{background:#dcebff;color:#0561d9}.stage-3{background:#eee4ff;color:#6c2bd9}.stage-4{background:#dff6e8;color:#16803c}.stage-5{background:#ffe2e5;color:#c62828}
+.prob-wrap{display:flex;align-items:center;gap:8px;min-width:115px}.prob-value{width:32px;font-weight:600;color:#26385c}.prob-track{width:70px;height:5px;background:#e9edf4;border-radius:20px;overflow:hidden}.prob-fill{height:100%;background:#1769ff;border-radius:20px}
+.op-actions{display:flex;align-items:center;justify-content:center;gap:6px}.btn-action{width:36px!important;height:36px!important;min-width:36px!important;padding:0!important;display:inline-flex!important;justify-content:center!important;align-items:center!important;border-radius:8px!important}
+.btn-action .app-svg{width:18px!important;height:18px!important;display:inline-block!important;visibility:visible!important;opacity:1!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important}
+.btn-activar{color:#16803c!important;background-color:#e4f8ee!important}.op-empty{padding:50px 20px;text-align:center;color:#8491aa}
+@@media(max-width:1200px){.op-table{min-width:1100px}}
+</style>
+
+<div class="op-page">
+    <div class="op-header mb-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
+            <div>
+                <div class="op-header-section mb-2">COMERCIAL</div>
+                <h1 class="text-white fw-bold mb-2">Oportunidades</h1>
+                <div class="op-header-description">Gestiona las oportunidades comerciales desde la propuesta hasta el cierre.</div>
+            </div>
+            <button type="button" class="btn btn-light-primary fw-semibold" id="btnNueva">
+                <svg class="app-svg me-1" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                Nueva oportunidad
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-5">
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-total"><svg class="app-svg" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></div><div><div class="metric-number">@total</div><div class="metric-label">Oportunidades</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-evaluacion h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-evaluacion"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><div class="metric-number">@evaluacion</div><div class="metric-label">En evaluación</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-propuesta h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-propuesta"><svg class="app-svg" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/></svg></div><div><div class="metric-number">@propuesta</div><div class="metric-label">Propuesta enviada</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-negociacion h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-negociacion"><svg class="app-svg" viewBox="0 0 24 24"><path d="M4 12h4l3-3 3 3h6"/><path d="M7 16l3 3 7-7"/></svg></div><div><div class="metric-number">@negociacion</div><div class="metric-label">Negociación</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-ganada h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-ganada"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></div><div><div class="metric-number">@ganadas</div><div class="metric-label">Ganadas</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-perdida h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-perdida"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg></div><div><div class="metric-number">@perdidas</div><div class="metric-label">Perdidas</div></div></div></div></div>
+    </div>
+
+    <div class="card op-filter-card mb-4">
+        <div class="card-body p-4">
+            <form method="get" asp-controller="Oportunidad" asp-action="Index" class="row g-3 align-items-end">
+                <div class="col-xl-5 col-md-6"><label class="form-label">Buscar</label><input type="text" name="buscar" value="@ViewBag.Buscar" class="form-control" placeholder="Empresa, oportunidad..." /></div>
+                <div class="col-xl-3 col-md-6"><label class="form-label">Etapa</label><select name="idEstadoOportunidad" class="form-select"><option value="">Todas</option>@foreach(var e in estados){<option value="@e.Key" selected="@(ViewBag.Estado == e.Key)">@e.Value</option>}</select></div>
+                <div class="col-xl-2 col-md-6"><button type="submit" class="btn btn-primary w-100">Buscar</button></div>
+                <div class="col-xl-2 col-md-6"><a asp-controller="Oportunidad" asp-action="Index" class="btn btn-light w-100">Limpiar</a></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card op-table-card">
+        <div class="op-table-title"><h3>Lista de Oportunidades <span class="text-muted fw-normal">(@items.Count registros)</span></h3></div>
+        <div class="table-responsive">
+            <table class="table op-table align-middle">
+                <thead><tr><th>Código</th><th>Empresa / Prospecto</th><th>Oportunidad</th><th>Monto estimado</th><th>Etapa</th><th>Probabilidad</th><th>Fecha estimada</th><th>Responsable</th><th class="text-center">Acciones</th></tr></thead>
+                <tbody>
+                @foreach(var x in items)
+                {
+                    var probabilidad = x.ProbabilidadCierre ?? 0;
+                    <tr>
+                        <td><span class="op-code">@x.CodigoOportunidad</span></td>
+                        <td><span class="op-company">@x.ProspectoNombre</span><span class="op-prospect-label">(Prospecto)</span></td>
+                        <td><strong>@x.Nombre</strong>@if(x.IdEstado==2){<span class="badge badge-light-danger ms-1">INACTIVA</span>}</td>
+                        <td>@if(x.MontoEstimado.HasValue){<strong>@(x.Moneda=="USD" ? "$ " : "S/ ")@x.MontoEstimado.Value.ToString("N2")</strong>}else{<span>—</span>}</td>
+                        <td><span class="op-stage stage-@x.IdEstadoOportunidad">@estados.GetValueOrDefault(x.IdEstadoOportunidad,"Sin etapa")</span></td>
+                        <td><div class="prob-wrap"><span class="prob-value">@probabilidad%</span><div class="prob-track"><div class="prob-fill" style="width:@probabilidad%"></div></div></div></td>
+                        <td>@(x.FechaEstimadaCierre?.ToString("dd/MM/yyyy") ?? "—")</td>
+                        <td><span class="text-muted">—</span></td>
+                        <td class="text-center">
+                            <div class="op-actions">
+                                <button type="button" class="btn btn-light-info btn-action btnVerDetalle" title="Ver detalle"
+                                        data-item='@JsonSerializer.Serialize(x,new JsonSerializerOptions { PropertyNamingPolicy=JsonNamingPolicy.CamelCase })'>
+                                    <svg class="app-svg" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                                <button type="button" class="btn btn-light-primary btn-action btnEditar" title="Editar"
+                                        data-item='@JsonSerializer.Serialize(x,new JsonSerializerOptions { PropertyNamingPolicy=JsonNamingPolicy.CamelCase })'>
+                                    <svg class="app-svg" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/></svg>
+                                </button>
+                                <button type="button" class="btn btn-action @(x.IdEstado==1 ? "btn-light-danger":"btn-activar") btnEstado" title="@(x.IdEstado==1 ? "Dar de baja":"Activar")" data-id="@x.IdOportunidad" data-nombre="@x.Nombre" data-estado="@x.IdEstado">
+                                    <svg class="app-svg" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="@(x.IdEstado==1 ? 8 : 16)" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        @if(!items.Any()){<div class="op-empty">No se encontraron oportunidades.</div>}
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalDetalleOportunidad" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content border-0">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <div class="text-muted fs-8 fw-bold mb-1">COMERCIAL · OPORTUNIDAD</div>
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <h2 class="fw-bold mb-0" id="detCodigo">Oportunidad</h2>
+                        <span class="op-stage" id="detEtapaBadge">—</span>
+                    </div>
+                    <div class="text-muted mt-2" id="detNombreCabecera">—</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-4">
+                <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6" role="tablist">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#detGeneral" type="button">Datos Generales</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detProspecto" type="button">Cliente / Prospecto</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detServicios" type="button">Servicios</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detPropuesta" type="button">Propuesta</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detSeguimiento" type="button">Seguimiento</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detDocumentos" type="button">Documentos</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detCompetencia" type="button">Competencia</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#detHistorial" type="button">Historial</button></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="detGeneral">
+                        <div class="row g-4">
+                            <div class="col-xl-8">
+                                <div class="card border h-100">
+                                    <div class="card-body p-5">
+                                        <h4 class="fw-bold mb-5">Información de la oportunidad</h4>
+                                        <div class="row g-4">
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">CÓDIGO</div><div class="fw-semibold" id="detCodigoValor">—</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">ORIGEN</div><div class="fw-semibold">Prospecto</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">FECHA CREACIÓN</div><div class="fw-semibold" id="detFechaRegistro">—</div></div>
+                                            <div class="col-md-8"><div class="text-muted fs-8 fw-bold mb-1">NOMBRE OPORTUNIDAD</div><div class="fw-semibold" id="detNombre">—</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">RESPONSABLE COMERCIAL</div><div class="text-muted">—</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">ETAPA ACTUAL</div><span class="op-stage" id="detEtapa">—</span></div>
+                                            <div class="col-md-4">
+                                                <div class="text-muted fs-8 fw-bold mb-1">PROBABILIDAD DE CIERRE</div>
+                                                <div class="d-flex align-items-center gap-2"><strong id="detProbText">0%</strong><div class="prob-track flex-grow-1"><div class="prob-fill" id="detProbBar" style="width:0%"></div></div></div>
+                                            </div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">FECHA ESTIMADA CIERRE</div><div class="fw-semibold" id="detFechaCierre">—</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">PRIORIDAD</div><div class="fw-semibold" id="detPrioridad">—</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">MONTO ESTIMADO (SIN IGV)</div><div class="fw-semibold" id="detMonto">—</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">MONEDA</div><div class="fw-semibold" id="detMoneda">—</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">TIPO CONTRATACIÓN</div><div class="fw-semibold" id="detContratacion">—</div></div>
+                                            <div class="col-md-4"><div class="text-muted fs-8 fw-bold mb-1">FECHA ACEPTACIÓN</div><div class="fw-semibold" id="detAceptacion">—</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="card border h-100">
+                                    <div class="card-body p-5">
+                                        <h4 class="fw-bold mb-5">Resumen de la Oportunidad</h4>
+                                        <div class="text-muted fs-8 fw-bold mb-2">DESCRIPCIÓN DE LA NECESIDAD</div>
+                                        <div class="bg-light rounded p-4 mb-4" id="detNecesidad">Sin información registrada.</div>
+                                        <div class="text-muted fs-8 fw-bold mb-2">OBJETIVOS / ALCANCE</div>
+                                        <div class="bg-light rounded p-4 mb-4" id="detAlcance">Sin información registrada.</div>
+                                        <div class="text-muted fs-8 fw-bold mb-2">OBSERVACIONES</div>
+                                        <div class="bg-light rounded p-4" id="detObservacion">Sin observaciones.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="card border">
+                                    <div class="card-body p-5">
+                                        <h4 class="fw-bold mb-5">Estado del Proceso</h4>
+                                        <div class="d-flex flex-column flex-lg-row align-items-stretch gap-3">
+                                            <div class="flex-fill text-center rounded border p-3" id="flow1"><strong>1</strong><div class="fs-8 mt-1">En evaluación</div></div>
+                                            <div class="flex-fill text-center rounded border p-3" id="flow2"><strong>2</strong><div class="fs-8 mt-1">Propuesta enviada</div></div>
+                                            <div class="flex-fill text-center rounded border p-3" id="flow3"><strong>3</strong><div class="fs-8 mt-1">Negociación</div></div>
+                                            <div class="flex-fill text-center rounded border p-3" id="flow4"><strong>4</strong><div class="fs-8 mt-1">Ganada</div></div>
+                                            <div class="flex-fill text-center rounded border p-3" id="flow5"><strong>5</strong><div class="fs-8 mt-1">Perdida</div></div>
+                                        </div>
+                                        <div class="text-muted fs-8 mt-3">Ganada y Perdida son resultados alternativos del proceso.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="detProspecto"><div class="alert alert-light-primary mb-0"><strong id="detProspectoNombre">—</strong><br>Esta pestaña se conectará con la ficha completa del prospecto/cliente.</div></div>
+                    <div class="tab-pane fade" id="detServicios"><div class="text-center text-muted py-10">Servicios se desarrollará en la siguiente etapa.</div></div>
+                    <div class="tab-pane fade" id="detPropuesta"><div class="text-center text-muted py-10">Propuesta comercial se desarrollará en la siguiente etapa.</div></div>
+                    <div class="tab-pane fade" id="detSeguimiento"><div class="text-center text-muted py-10">Seguimiento se desarrollará en la siguiente etapa.</div></div>
+                    <div class="tab-pane fade" id="detDocumentos"><div class="text-center text-muted py-10">Documentos se desarrollará en la siguiente etapa.</div></div>
+                    <div class="tab-pane fade" id="detCompetencia"><div class="text-center text-muted py-10">Competencia se desarrollará en la siguiente etapa.</div></div>
+                    <div class="tab-pane fade" id="detHistorial"><div class="text-center text-muted py-10">Historial se desarrollará en la siguiente etapa.</div></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-success d-none" id="btnConvertirCliente" disabled>Convertir en Cliente</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalOportunidad" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <form asp-controller="Oportunidad" asp-action="Guardar" method="post" id="formOportunidad">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="IdOportunidad" id="opId" value="0" />
+                <div class="modal-header">
+                    <div><h3 class="modal-title fw-bold" id="opTitulo">Nueva oportunidad</h3><div class="text-muted fs-7 mt-1">Registra la información comercial de la oportunidad.</div></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-md-6"><label class="form-label required">Prospecto</label><select name="IdProspecto" id="opProspecto" class="form-select" required><option value="">Seleccionar prospecto...</option>@foreach(var p in prospectos){<option value="@p.Id">@p.Nombre</option>}</select></div>
+                        <div class="col-md-6"><label class="form-label required">Nombre de la oportunidad</label><input name="Nombre" id="opNombre" class="form-control" maxlength="200" required /></div>
+                        <div class="col-md-6"><label class="form-label">Descripción de la necesidad</label><textarea name="DescripcionNecesidad" id="opNecesidad" class="form-control" rows="3" maxlength="2000"></textarea></div>
+                        <div class="col-md-6"><label class="form-label">Objetivos y alcance</label><textarea name="ObjetivosAlcance" id="opAlcance" class="form-control" rows="3" maxlength="2000"></textarea></div>
+                        <div class="col-md-4"><label class="form-label">Etapa actual</label><select name="IdEstadoOportunidad" id="opEstado" class="form-select">@foreach(var e in estados){<option value="@e.Key">@e.Value</option>}</select></div>
+                        <div class="col-md-4"><label class="form-label">Probabilidad de cierre (%)</label><input name="ProbabilidadCierre" id="opProbabilidad" type="number" min="0" max="100" class="form-control" /></div>
+                        <div class="col-md-4"><label class="form-label">Fecha estimada de cierre</label><input name="FechaEstimadaCierre" id="opCierre" type="date" class="form-control" /></div>
+                        <div class="col-md-4"><label class="form-label">Monto estimado</label><input name="MontoEstimado" id="opMonto" type="number" min="0" step="0.01" class="form-control" /></div>
+                        <div class="col-md-4"><label class="form-label">Moneda</label><select name="Moneda" id="opMoneda" class="form-select"><option value="PEN">PEN (S/)</option><option value="USD">USD ($)</option></select></div>
+                        <div class="col-md-4"><label class="form-label">Tipo de contratación</label><input name="TipoContratacion" id="opContratacion" maxlength="100" class="form-control" /></div>
+                        <div class="col-md-4"><label class="form-label">Prioridad</label><select name="Prioridad" id="opPrioridad" class="form-select"><option value="">Seleccionar...</option><option value="BAJA">Baja</option><option value="MEDIA">Media</option><option value="ALTA">Alta</option></select></div>
+                        <div class="col-12"><label class="form-label">Observaciones</label><textarea name="Observacion" id="opObservacion" class="form-control" maxlength="2000" rows="3"></textarea></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary" id="opGuardar">Guardar oportunidad</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const get=id=>document.getElementById(id);
+    const form=get('formOportunidad');
+    const modal=bootstrap.Modal.getOrCreateInstance(get('modalOportunidad'));
+    const modalDetalle=bootstrap.Modal.getOrCreateInstance(get('modalDetalleOportunidad'));
+    const nombresEtapa={1:'En evaluación',2:'Propuesta enviada',3:'Negociación',4:'Ganada',5:'Perdida'};
+    const fecha=v=>v ? new Date(v).toLocaleDateString('es-PE',{timeZone:'UTC'}) : '—';
+    const texto=(v,def='—')=>(v===null||v===undefined||v==='')?def:v;
+    const setText=(id,v)=>get(id).textContent=v;
+
+    document.querySelectorAll('.btnVerDetalle').forEach(btn=>btn.addEventListener('click',()=>{
+        const x=JSON.parse(btn.dataset.item);
+        const etapa=Number(x.idEstadoOportunidad||1);
+        const prob=Number(x.probabilidadCierre||0);
+        const codigo=`OP-${new Date(x.fechaRegistro).getUTCFullYear()}-${String(x.idOportunidad).padStart(3,'0')}`;
+        const etapaNombre=nombresEtapa[etapa]||'Sin etapa';
+
+        setText('detCodigo',`Oportunidad ${codigo}`);
+        setText('detCodigoValor',codigo);
+        setText('detNombreCabecera',texto(x.nombre));
+        setText('detNombre',texto(x.nombre));
+        setText('detFechaRegistro',fecha(x.fechaRegistro));
+        setText('detFechaCierre',fecha(x.fechaEstimadaCierre));
+        setText('detPrioridad',texto(x.prioridad));
+        setText('detMoneda',texto(x.moneda));
+        setText('detContratacion',texto(x.tipoContratacion));
+        setText('detAceptacion',fecha(x.fechaAceptacion));
+        setText('detNecesidad',texto(x.descripcionNecesidad,'Sin información registrada.'));
+        setText('detAlcance',texto(x.objetivosAlcance,'Sin información registrada.'));
+        setText('detObservacion',texto(x.observacion,'Sin observaciones.'));
+        setText('detProspectoNombre',texto(x.prospectoNombre));
+        setText('detProbText',`${prob}%`);
+        get('detProbBar').style.width=`${Math.max(0,Math.min(100,prob))}%`;
+
+        const monto=(x.montoEstimado===null||x.montoEstimado===undefined)
+            ? '—'
+            : `${x.moneda==='USD'?'$':'S/'} ${Number(x.montoEstimado).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+        setText('detMonto',monto);
+
+        ['detEtapa','detEtapaBadge'].forEach(id=>{
+            const el=get(id);
+            el.className=`op-stage stage-${etapa}`;
+            el.textContent=etapaNombre;
+        });
+
+        // Flujo correcto: 1-3 son etapas; 4 y 5 son cierres alternativos.
+        for(let i=1;i<=5;i++){
+            const el=get(`flow${i}`);
+            el.classList.remove('bg-primary','text-white','bg-success','bg-danger','border-primary','border-success','border-danger');
+            let activo=false, clase='';
+            if(etapa<=3) activo=i<=etapa;
+            else activo=(i<=3 || i===etapa);
+            if(activo){
+                if(i===4) clase='bg-success';
+                else if(i===5) clase='bg-danger';
+                else clase='bg-primary';
+                el.classList.add(clase,'text-white');
+            }
+        }
+
+        const convertir=get('btnConvertirCliente');
+        convertir.classList.toggle('d-none',etapa!==4);
+
+        // Siempre abrir inicialmente Datos Generales.
+        const firstTab=get('modalDetalleOportunidad').querySelector('[data-bs-target="#detGeneral"]');
+        bootstrap.Tab.getOrCreateInstance(firstTab).show();
+        modalDetalle.show();
+    }));
+
+
+    get('btnNueva').addEventListener('click',()=>{
+        form.reset(); get('opId').value='0'; get('opEstado').value='1';
+        get('opTitulo').textContent='Nueva oportunidad'; get('opGuardar').textContent='Guardar oportunidad';
+        get('opGuardar').disabled=false; modal.show();
+    });
+
+    const map={opId:'idOportunidad',opProspecto:'idProspecto',opNombre:'nombre',opNecesidad:'descripcionNecesidad',opAlcance:'objetivosAlcance',opEstado:'idEstadoOportunidad',opProbabilidad:'probabilidadCierre',opCierre:'fechaEstimadaCierre',opMonto:'montoEstimado',opMoneda:'moneda',opContratacion:'tipoContratacion',opPrioridad:'prioridad',opObservacion:'observacion'};
+    document.querySelectorAll('.btnEditar').forEach(btn=>btn.addEventListener('click',()=>{
+        const x=JSON.parse(btn.dataset.item); form.reset();
+        Object.entries(map).forEach(([id,key])=>{let value=x[key];if(id==='opCierre'&&value)value=value.substring(0,10);get(id).value=value??'';});
+        get('opTitulo').textContent='Editar oportunidad';get('opGuardar').textContent='Guardar cambios';get('opGuardar').disabled=false;modal.show();
+    }));
+
+    form.addEventListener('submit',()=>get('opGuardar').disabled=true);
+
+    document.querySelectorAll('.btnEstado').forEach(btn=>btn.addEventListener('click',async()=>{
+        const nuevoEstado=Number(btn.dataset.estado)===1?2:1;
+        const result=await Swal.fire({title:'¿Confirmar acción?',text:`¿Deseas ${nuevoEstado===1?'activar':'dar de baja'} la oportunidad ${btn.dataset.nombre}?`,icon:'question',showCancelButton:true,confirmButtonText:'Sí, continuar',cancelButtonText:'Cancelar'});
+        if(!result.isConfirmed)return;
+        try{
+            const body=new URLSearchParams({idOportunidad:btn.dataset.id,idEstado:nuevoEstado,__RequestVerificationToken:form.querySelector('[name="__RequestVerificationToken"]').value});
+            const response=await fetch('@Url.Action("CambiarEstado","Oportunidad")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+            const data=await response.json();
+            if(data.ok){toastr.success(data.mensaje);setTimeout(()=>location.reload(),650);}else toastr.error(data.mensaje);
+        }catch{toastr.error('No se pudo cambiar el estado.');}
+    }));
+});
+</script>
+@if(TempData["Success"] is string success){<script>toastr.success(@Html.Raw(JsonSerializer.Serialize(success)));</script>}
+@if(TempData["Error"] is string error){<script>toastr.error(@Html.Raw(JsonSerializer.Serialize(error)));</script>}
+}

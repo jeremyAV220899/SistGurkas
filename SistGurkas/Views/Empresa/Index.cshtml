@@ -1,0 +1,676 @@
+﻿@model List<SistGurkas.Models.Empresa>
+
+@{
+    ViewData["Title"] = "Empresas";
+
+    var activas = Model.Count(e => e.IdEstado == 1);
+    var deBaja = Model.Count(e => e.IdEstado == 2);
+}
+
+<style>
+    .empresa-banner {
+        background: linear-gradient(115deg, #172b54, #2759a5);
+        border-radius: 14px;
+        color: #fff;
+        padding: 26px 30px;
+    }
+
+    .empresa-banner .text-muted {
+        color: #dbe8ff !important;
+    }
+
+    .empresa-stat {
+        border: 1px solid #e9edf5;
+        border-radius: 12px;
+        background: #fff;
+        padding: 18px 22px;
+        height: 100%;
+    }
+
+    .empresa-stat .stat-value {
+        font-size: 29px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .empresa-direccion {
+        display: inline-block;
+        max-width: 370px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .empresa-tabla thead th {
+        background: #f4f7fc;
+        color: #52627b;
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+
+    .empresa-tabla tbody td {
+        padding-top: 18px;
+        padding-bottom: 18px;
+    }
+
+    .empresa-tabla tbody tr:hover {
+        background: #f8faff;
+    }
+</style>
+
+<div class="empresa-banner mb-6">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
+        <div>
+            <div class="fs-7 fw-semibold mb-2" style="color:#bcd3ff">
+                GESTIÓN DEL SISTEMA
+            </div>
+
+            <h1 class="text-white fw-bold fs-2x mb-2">
+                Empresas
+            </h1>
+
+            <div class="text-muted fs-6">
+                Administra las empresas registradas en SISTGURKAS.
+            </div>
+        </div>
+
+        <button type="button"
+                class="btn btn-light-primary fw-bold"
+                data-bs-toggle="modal"
+                data-bs-target="#modalNuevaEmpresa">
+            <i class="ki-duotone ki-plus fs-2"></i>
+            Nueva empresa
+        </button>
+    </div>
+</div>
+
+<div class="row g-5 mb-6">
+    <div class="col-md-4">
+        <div class="empresa-stat">
+            <div class="text-muted fw-semibold mb-2">
+                Total de empresas
+            </div>
+            <div class="stat-value text-gray-900">@Model.Count</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="empresa-stat">
+            <div class="text-muted fw-semibold mb-2">
+                Empresas activas
+            </div>
+            <div class="stat-value text-success">@activas</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="empresa-stat">
+            <div class="text-muted fw-semibold mb-2">
+                Empresas de baja
+            </div>
+            <div class="stat-value text-danger">@deBaja</div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header border-0 pt-6">
+        <div class="card-title">
+            <div class="d-flex align-items-center position-relative my-1">
+                <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+
+                <input type="text"
+                       id="buscarEmpresa"
+                       class="form-control form-control-solid w-250px ps-13"
+                       placeholder="Buscar empresa..." />
+            </div>
+        </div>
+
+        <div class="card-toolbar">
+            <span class="badge badge-light-primary fs-7">
+                @Model.Count registros
+            </span>
+        </div>
+    </div>
+
+    <div class="card-body py-4">
+        <div class="table-responsive">
+            <table id="tablaEmpresas"
+                   class="table empresa-tabla align-middle table-row-dashed fs-6 gy-5">
+                <thead>
+                    <tr class="fw-bold fs-7 text-uppercase">
+                        <th>ID</th>
+                        <th>Empresa</th>
+                        <th>RUC</th>
+                        <th>Dirección</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody class="text-gray-700 fw-semibold">
+                    @foreach (var empresa in Model)
+                    {
+                        <tr>
+                            <td>@empresa.IdEmpresa</td>
+
+                            <td class="fw-bold text-gray-900">
+                                @empresa.NombreEmpresa
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrWhiteSpace(empresa.Ruc)
+                                    ? "—" : empresa.Ruc)
+                            </td>
+
+                            <td>
+                                <span class="empresa-direccion"
+                                      title="@empresa.Direccion">
+                                    @(string.IsNullOrWhiteSpace(empresa.Direccion)
+                                        ? "—" : empresa.Direccion)
+                                </span>
+                            </td>
+
+                            <td>
+                                @if (empresa.IdEstado == 1)
+                                {
+                                    <span class="badge badge-light-success">
+                                        @empresa.NombreEstado
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-light-danger">
+                                        @empresa.NombreEstado
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-end">
+    <button type="button"
+            class="btn btn-sm btn-light-primary btn-cambiar-estado"
+            data-id="@empresa.IdEmpresa"
+            data-nombre="@empresa.NombreEmpresa"
+            data-estado="@empresa.IdEstado">
+        Cambiar estado
+    </button>
+</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div id="sinResultados"
+             class="text-center text-muted py-8 d-none">
+            No se encontraron empresas.
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-5">
+            <span id="infoPaginacion" class="text-muted fs-7"></span>
+
+            <div class="d-flex align-items-center gap-2">
+                <button type="button"
+                        id="paginaAnterior"
+                        class="btn btn-sm btn-light-primary">
+                    Anterior
+                </button>
+
+                <span id="numeroPagina"
+                      class="badge badge-light-primary fs-7"></span>
+
+                <button type="button"
+                        id="paginaSiguiente"
+                        class="btn btn-sm btn-light-primary">
+                    Siguiente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Nueva empresa -->
+<div class="modal fade"
+     id="modalNuevaEmpresa"
+     tabindex="-1"
+     aria-labelledby="tituloModalEmpresa"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <form id="formNuevaEmpresa"
+                  asp-controller="Empresa"
+                  asp-action="Registrar"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header">
+                    <div>
+                        <h2 id="tituloModalEmpresa" class="fw-bold mb-1">
+                            Nueva empresa
+                        </h2>
+                        <div class="text-muted fs-7">
+                            Completa los datos para registrar una empresa.
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-icon btn-sm btn-active-light-primary"
+                            data-bs-dismiss="modal"
+                            aria-label="Cerrar">
+                        <i class="ki-duotone ki-cross fs-1">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </button>
+                </div>
+
+                <div class="modal-body py-8">
+                    <div class="row g-5">
+                        <div class="col-md-8">
+    <label class="required form-label fw-semibold">
+        Razón social
+    </label>
+
+    <input type="text"
+           id="nombreEmpresa"
+           name="nombreEmpresa"
+           class="form-control form-control-solid"
+           maxlength="200"
+           required
+           placeholder="Nombre de la empresa" />
+
+    <div id="errorNombre"
+         class="text-danger fs-7 mt-2 d-none"></div>
+</div>
+
+<div class="col-md-4">
+    <label class="form-label fw-semibold">RUC</label>
+
+    <input type="text"
+           id="rucEmpresa"
+           name="ruc"
+           class="form-control form-control-solid"
+           maxlength="11"
+           inputmode="numeric"
+           autocomplete="off"
+           placeholder="11 dígitos" />
+
+    <div id="errorRuc"
+         class="text-danger fs-7 mt-2 d-none"></div>
+</div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">
+                                Dirección
+                            </label>
+
+                            <textarea name="direccion"
+                                      class="form-control form-control-solid"
+                                      rows="3"
+                                      maxlength="500"
+                                      placeholder="Dirección de la empresa"></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="required form-label fw-semibold">
+                                Estado
+                            </label>
+
+                            <select name="idEstado"
+                                    class="form-select form-select-solid"
+                                    required>
+                                <option value="1">ACTIVO</option>
+                                <option value="2">BAJA</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-light"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            id="btnGuardarEmpresa"
+                            class="btn btn-primary">
+                        Guardar empresa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const filas = Array.from(
+                document.querySelectorAll("#tablaEmpresas tbody tr")
+            );
+
+            const buscador = document.getElementById("buscarEmpresa");
+            const anterior = document.getElementById("paginaAnterior");
+            const siguiente = document.getElementById("paginaSiguiente");
+            const numeroPagina = document.getElementById("numeroPagina");
+            const info = document.getElementById("infoPaginacion");
+            const sinResultados = document.getElementById("sinResultados");
+
+            const porPagina = 5;
+            let paginaActual = 1;
+
+            function actualizarTabla() {
+                const texto = buscador.value.trim().toLocaleLowerCase();
+
+                const coincidencias = filas.filter(fila =>
+                    fila.textContent.toLocaleLowerCase().includes(texto)
+                );
+
+                const total = coincidencias.length;
+                const totalPaginas = Math.max(
+                    1, Math.ceil(total / porPagina)
+                );
+
+                paginaActual = Math.min(paginaActual, totalPaginas);
+
+                filas.forEach(fila => fila.classList.add("d-none"));
+
+                const inicio = (paginaActual - 1) * porPagina;
+                const visibles = coincidencias.slice(
+                    inicio, inicio + porPagina
+                );
+
+                visibles.forEach(fila =>
+                    fila.classList.remove("d-none")
+                );
+
+                sinResultados.classList.toggle("d-none", total !== 0);
+
+                info.textContent = total === 0
+                    ? "0 registros"
+                    : `Mostrando ${inicio + 1}–${inicio + visibles.length} de ${total} registros`;
+
+                numeroPagina.textContent =
+                    `Página ${paginaActual} de ${totalPaginas}`;
+
+                anterior.disabled = paginaActual <= 1;
+                siguiente.disabled = paginaActual >= totalPaginas;
+            }
+
+            buscador.addEventListener("input", function () {
+                paginaActual = 1;
+                actualizarTabla();
+            });
+
+            anterior.addEventListener("click", function () {
+                if (paginaActual > 1) {
+                    paginaActual--;
+                    actualizarTabla();
+                }
+            });
+
+            siguiente.addEventListener("click", function () {
+                paginaActual++;
+                actualizarTabla();
+            });
+
+            actualizarTabla();
+
+            @if (TempData["Exito"] is string exito)
+{
+    <text>
+        toastr.success(
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(exito))
+        );
+    </text>
+}
+
+@if (TempData["Error"] is string error)
+{
+    <text>
+        toastr.error(
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(error))
+        );
+    </text>
+}
+
+            const formEmpresa = document.getElementById("formNuevaEmpresa");
+const inputNombre = document.getElementById("nombreEmpresa");
+const inputRuc = document.getElementById("rucEmpresa");
+
+const errorNombre = document.getElementById("errorNombre");
+const errorRuc = document.getElementById("errorRuc");
+const btnGuardar = document.getElementById("btnGuardarEmpresa");
+
+let rucDuplicado = false;
+let verificandoRuc = false;
+let ultimaVerificacion = "";
+
+function mostrarError(elemento, mensaje) {
+    elemento.textContent = mensaje;
+    elemento.classList.remove("d-none");
+}
+
+function ocultarError(elemento) {
+    elemento.textContent = "";
+    elemento.classList.add("d-none");
+}
+
+function validarNombre() {
+    const nombre = inputNombre.value.trim();
+
+    if (nombre.length === 0) {
+        mostrarError(errorNombre, "La razón social es obligatoria.");
+        return false;
+    }
+
+    ocultarError(errorNombre);
+    return true;
+}
+
+async function validarRuc() {
+    const ruc = inputRuc.value;
+
+    rucDuplicado = false;
+    ultimaVerificacion = "";
+
+    if (ruc.length === 0) {
+        ocultarError(errorRuc);
+        return true;
+    }
+
+    if (ruc.length < 11) {
+        mostrarError(
+            errorRuc,
+            `El RUC debe tener 11 dígitos. Faltan ${11 - ruc.length}.`
+        );
+        return false;
+    }
+
+    verificandoRuc = true;
+    mostrarError(errorRuc, "Verificando RUC...");
+
+    try {
+        const respuesta = await fetch(
+            `@Url.Action("VerificarRuc", "Empresa")?ruc=${encodeURIComponent(ruc)}`
+        );
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudo verificar el RUC.");
+        }
+
+        const resultado = await respuesta.json();
+
+        // Ignorar una respuesta antigua si el usuario cambió el RUC.
+        if (inputRuc.value !== ruc) {
+            return false;
+        }
+
+        ultimaVerificacion = ruc;
+        rucDuplicado = resultado.existe;
+
+        if (resultado.existe) {
+            mostrarError(
+                errorRuc,
+                "Este RUC ya está registrado en el sistema."
+            );
+            return false;
+        }
+
+        ocultarError(errorRuc);
+        return true;
+    }
+    catch {
+        mostrarError(
+            errorRuc,
+            "No se pudo verificar el RUC. Inténtalo nuevamente."
+        );
+        return false;
+    }
+    finally {
+        verificandoRuc = false;
+    }
+}
+
+inputNombre.addEventListener("input", function () {
+    if (this.value.trim().length > 0) {
+        ocultarError(errorNombre);
+    }
+});
+
+inputRuc.addEventListener("input", function () {
+    this.value = this.value.replace(/\D/g, "").slice(0, 11);
+
+    rucDuplicado = false;
+    ultimaVerificacion = "";
+
+    if (this.value.length === 0) {
+        ocultarError(errorRuc);
+    }
+    else if (this.value.length < 11) {
+        mostrarError(
+            errorRuc,
+            `El RUC debe tener 11 dígitos. Faltan ${11 - this.value.length}.`
+        );
+    }
+    else {
+        ocultarError(errorRuc);
+        validarRuc();
+    }
+});
+
+formEmpresa.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const nombreValido = validarNombre();
+
+    if (!nombreValido) {
+        inputNombre.focus();
+        return;
+    }
+
+    if (inputRuc.value.length > 0 &&
+        inputRuc.value.length !== 11) {
+        await validarRuc();
+        inputRuc.focus();
+        return;
+    }
+
+    if (verificandoRuc) {
+        toastr.info("Espera mientras verificamos el RUC.");
+        return;
+    }
+
+    if (inputRuc.value.length === 11 &&
+        (ultimaVerificacion !== inputRuc.value || rucDuplicado)) {
+        const rucValido = await validarRuc();
+
+        if (!rucValido) {
+            inputRuc.focus();
+            return;
+        }
+    }
+
+    btnGuardar.disabled = true;
+    btnGuardar.textContent = "Guardando...";
+
+    HTMLFormElement.prototype.submit.call(formEmpresa);
+});
+document.querySelectorAll(".btn-cambiar-estado")
+    .forEach(boton => {
+        boton.addEventListener("click", async function () {
+            const idEmpresa = Number(this.dataset.id);
+            const nombre = this.dataset.nombre;
+            const estadoActual = Number(this.dataset.estado);
+
+            const nuevoEstado = estadoActual === 1 ? 2 : 1;
+            const nombreNuevoEstado =
+                nuevoEstado === 1 ? "ACTIVO" : "BAJA";
+
+            const confirmacion = await Swal.fire({
+                title: "¿Cambiar estado?",
+                text: `¿Deseas cambiar "${nombre}" a ${nombreNuevoEstado}?`,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí, cambiar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#2563eb"
+            });
+
+            if (!confirmacion.isConfirmed) {
+                return;
+            }
+
+            try {
+                const datos = new URLSearchParams();
+                datos.append(
+    "__RequestVerificationToken",
+    formEmpresa.querySelector(
+        'input[name="__RequestVerificationToken"]'
+    ).value
+);
+                datos.append("idEmpresa", idEmpresa);
+                datos.append("idEstado", nuevoEstado);
+
+                const respuesta = await fetch(
+                    '@Url.Action("CambiarEstado", "Empresa")',
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+                        },
+                        body: datos.toString()
+                    }
+                );
+
+                const resultado = await respuesta.json();
+
+                if (!respuesta.ok || !resultado.ok) {
+                    throw new Error(resultado.mensaje);
+                }
+
+                toastr.success(resultado.mensaje);
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 900);
+            }
+            catch (error) {
+                toastr.error(
+                    error.message || "No se pudo cambiar el estado."
+                );
+            }
+        });
+    });
+        });
+    </script>
+}

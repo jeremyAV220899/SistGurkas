@@ -1,0 +1,176 @@
+﻿@model IEnumerable<SistGurkas.Models.Comercial.Unidad>
+@using SistGurkas.Models.Comercial
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Clientes"; var items = Model?.ToList() ?? new(); var empresas = ViewBag.Empresas as List<(int Id, string Nombre)> ?? new(); var activos = items.Count(x => x.IdEstado == 1); var inactivos = items.Count(x => x.IdEstado == 2);
+}
+<style>
+    .cli-page .card {
+        border: 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,.05)
+    }
+
+    .cli-header {
+        padding: 24px 26px;
+        border-radius: 12px;
+        background: linear-gradient(110deg,#17386f,#2f61a9)
+    }
+
+    .cli-sub {
+        color: #b9d2ff;
+        font-size: 11px;
+        font-weight: 700
+    }
+
+    .cli-desc {
+        color: #ffffffdd
+    }
+
+    .metric {
+        border: 1px solid #edf0f5 !important
+    }
+
+    .num {
+        font-size: 22px;
+        font-weight: 700;
+        color: #152348
+    }
+
+    .lbl {
+        font-size: 12px;
+        color: #71809f
+    }
+
+    ..cli-table th,
+    .cli-table td {
+        padding: 14px 12px;
+        vertical-align: middle;
+    }
+
+        .cli-table th:first-child,
+        .cli-table td:first-child {
+            padding-left: 24px !important;
+        }
+
+        .cli-table th:last-child,
+        .cli-table td:last-child {
+            padding-right: 24px !important;
+        }
+
+    .cli-table th {
+        font-size: 12px;
+        color: #71809f
+    }
+
+    .code {
+        font-weight: 700;
+        color: #31547e
+    }
+
+    .name {
+        font-weight: 700;
+        color: #182a4e
+    }
+
+    .btn-act {
+        width: 36px;
+        height: 36px;
+        padding: 0
+    }
+
+    .info-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #71809f
+    }
+
+    .placeholder-tab {
+        text-align: center;
+        color: #8491aa;
+        padding: 45px
+    }
+</style>
+<div class="cli-page">
+    <div class="cli-header mb-5"><div class="d-flex justify-content-between align-items-center"><div><div class="cli-sub">COMERCIAL · CRM</div><h1 class="text-white fw-bold my-2">Clientes</h1><div class="cli-desc">Administra clientes, contactos, sedes y su información comercial.</div></div><button class="btn btn-light-primary" id="btnNuevo">+ Nuevo cliente</button></div></div>
+    <div class="row g-3 mb-5"><div class="col-md-4"><div class="card metric"><div class="card-body"><div class="num">@items.Count</div><div class="lbl">Clientes registrados</div></div></div></div><div class="col-md-4"><div class="card metric"><div class="card-body"><div class="num">@activos</div><div class="lbl">Clientes activos</div></div></div></div><div class="col-md-4"><div class="card metric"><div class="card-body"><div class="num">@inactivos</div><div class="lbl">Clientes inactivos</div></div></div></div></div>
+    <div class="card mb-4"><div class="card-body"><form class="row g-3 align-items-end"><div class="col-md-4"><label class="form-label">Buscar</label><input name="buscar" value="@ViewBag.Buscar" class="form-control" placeholder="Código, RUC, razón social..."></div><div class="col-md-3"><label class="form-label">Empresa Gurkas</label><select name="idEmpresa" class="form-select"><option value="">Todas</option>@foreach(var e in empresas){
+        <option value="@e.Id" selected="@(ViewBag.IdEmpresa==e.Id)">@e.Nombre</option>
+    }
+</select></div><div class="col-md-2"><label class="form-label">Estado</label><select name="idEstado" class="form-select"><option value="">Todos</option><option value="1">Activo</option><option value="2">Inactivo</option></select></div><div class="col-md-3 d-flex gap-2"><button class="btn btn-primary flex-fill">Buscar</button><a asp-action="Index" class="btn btn-light flex-fill">Limpiar</a></div></form></div></div>
+<div class="card">
+    <div class="p-5 pb-2"><h3>Lista de Clientes <span class="text-muted fs-7">(@items.Count registros)</span></h3></div><div class="table-responsive">
+    <table class="table cli-table mb-0">
+        <thead><tr><th>Código</th><th>Cliente</th><th>RUC</th><th>Empresa Gurkas</th><th>Contacto</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+            @foreach (var x in items)
+            {
+                <tr><td><span class="code">@x.CodigoUnidad</span><div class="text-muted fs-8">@x.CodigoCliente</div></td><td><span class="name">@x.RazonSocial</span><div class="text-muted fs-8">@(x.NombreComercial??"—")</div></td><td>@(x.RucUnidad??"—")</td><td>@x.EmpresaNombre</td><td>@(x.Telefono??"—")<div class="text-muted fs-8">@(x.Correo??"—")</div></td><td><span class="badge @(x.IdEstado==1?"badge-light-success":"badge-light-danger")">@(x.IdEstado==1?"ACTIVO":"INACTIVO")</span></td><td><button class="btn btn-light-info btn-act btnDetalle" data-id="@x.IdUnidad">👁</button> <button class="btn btn-light-primary btn-act btnEditar" data-item='@JsonSerializer.Serialize(x,new JsonSerializerOptions{PropertyNamingPolicy=JsonNamingPolicy.CamelCase})'>✎</button> <button class="btn @(x.IdEstado==1?"btn-light-danger":"btn-light-success") btn-act btnEstado" data-id="@x.IdUnidad" data-estado="@x.IdEstado" data-nombre="@x.RazonSocial">↔</button></td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="modalCliente">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <form asp-action="Guardar" method="post" id="formCliente">
+                @Html.AntiForgeryToken()<input type="hidden" name="IdUnidad" id="cId" value="0"><div class="modal-header"><h3 id="cTitulo">Nuevo cliente</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-md-3"><label class="form-label required">Código Unidad</label><input name="CodigoUnidad" id="cCodigo" class="form-control" required></div><div class="col-md-5"><label class="form-label required">Empresa Gurkas</label><select name="IdEmpresa" id="cEmpresa" class="form-select" required><option value="">Seleccionar...</option>@foreach(var e in empresas){
+                    <option value="@e.Id">@e.Nombre</option>
+                }
+            </select></div><div class="col-md-4"><label class="form-label">RUC</label><input name="RucUnidad" id="cRuc" maxlength="11" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label required">Razón social</label><input name="RazonSocial" id="cRazon" class="form-control" required></div><div class="col-md-6"><label class="form-label">Nombre comercial</label><input name="NombreComercial" id="cNombre" class="form-control"></div>
+            <div class="col-md-4"><label class="form-label">Sector (ID)</label><input name="IdSector" id="cSector" type="number" class="form-control"></div><div class="col-md-4"><label class="form-label">Centro costo</label><input name="CentroCosto" id="cCC" class="form-control"></div><div class="col-md-4"><label class="form-label">Página web</label><input name="PaginaWeb" id="cWeb" class="form-control"></div>
+            <div class="col-md-4"><label class="form-label">Departamento (ID)</label><input name="IdDepartamento" id="cDep" type="number" class="form-control"></div><div class="col-md-4"><label class="form-label">Provincia (ID)</label><input name="IdProvincia" id="cProv" type="number" class="form-control"></div><div class="col-md-4"><label class="form-label">Distrito (ID)</label><input name="IdDistrito" id="cDist" type="number" class="form-control"></div>
+            <div class="col-12"><label class="form-label">Dirección</label><input name="Direccion" id="cDir" class="form-control"></div><div class="col-md-4"><label class="form-label">Teléfono</label><input name="Telefono" id="cTel" class="form-control"></div><div class="col-md-4"><label class="form-label">Correo</label><input name="Correo" id="cCorreo" type="email" class="form-control"></div><div class="col-md-4"><label class="form-label">Fecha activación</label><input name="FechaActivacion" id="cFecha" type="date" class="form-control"></div><div class="col-12"><label class="form-label">Observación</label><textarea name="Observacion" id="cObs" class="form-control"></textarea></div>
+        </div>
+    </div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar cliente</button></div>
+</form>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="modalDetalle">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-0"><div><div class="text-muted fs-8">COMERCIAL · CLIENTE</div><h2 id="dTitulo" class="mb-1"></h2><div id="dSub" class="text-muted"></div></div><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+            <ul class="nav nav-tabs nav-line-tabs mb-5"><li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tg">Datos Generales</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tc">Contactos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tco">Contratos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ts">Sedes</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tr">Requerimientos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#td">Documentos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#th">Historial</button></li></ul>
+            <div class="tab-content"><div id="tg" class="tab-pane fade show active"><div class="card border"><div class="card-body"><div class="row g-4" id="general"></div></div></div></div><div id="tc" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Contactos</h4><button class="btn btn-primary btn-sm" id="nuevoContacto">Nuevo contacto</button></div><div id="contactos"></div></div><div id="tco" class="tab-pane fade placeholder-tab">Contratos: siguiente fase.</div><div id="ts" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Sedes</h4><button class="btn btn-primary btn-sm" id="nuevaSede">Nueva sede</button></div><div id="sedes"></div></div><div id="tr" class="tab-pane fade placeholder-tab">Requerimientos: siguiente fase.</div><div id="td" class="tab-pane fade placeholder-tab">Documentos: siguiente fase.</div><div id="th" class="tab-pane fade placeholder-tab">Historial: siguiente fase.</div></div>
+        </div><div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal">Cerrar</button></div>
+    </div>
+</div>
+</div>
+
+<div class="modal fade" id="modalContacto"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><form id="formContacto">@Html.AntiForgeryToken()<input type="hidden" name="IdContactoUnidad" id="ctId"><input type="hidden" name="IdUnidad" id="ctUnidad"><div class="modal-header"><h3 id="ctTitulo">Nuevo contacto</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="form-label required">Nombre</label><input name="Nombre" id="ctNombre" class="form-control" required></div><div class="col-md-6"><label class="form-label">Cargo</label><input name="Cargo" id="ctCargo" class="form-control"></div><div class="col-md-6"><label class="form-label">Teléfono</label><input name="Telefono" id="ctTel" class="form-control"></div><div class="col-md-6"><label class="form-label">Correo</label><input name="Correo" id="ctCorreo" class="form-control"></div><div class="col-12 form-check ms-2"><input name="EsPrincipal" value="true" id="ctPrincipal" type="checkbox" class="form-check-input"><label class="form-check-label">Contacto principal</label></div><div class="col-12"><textarea name="Observacion" id="ctObs" class="form-control" placeholder="Observación"></textarea></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar</button></div></form></div></div></div>
+
+<div class="modal fade" id="modalSede"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><form id="formSede">@Html.AntiForgeryToken()<input type="hidden" name="IdSede" id="sId"><input type="hidden" name="IdUnidad" id="sUnidad"><div class="modal-header"><h3 id="sTitulo">Nueva sede</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-3"><label class="form-label required">Código</label><input name="CodigoSede" id="sCodigo" class="form-control" required></div><div class="col-md-9"><label class="form-label required">Nombre</label><input name="NombreSede" id="sNombre" class="form-control" required></div><div class="col-12"><label class="form-label">Dirección</label><input name="Direccion" id="sDir" class="form-control"></div><div class="col-md-3"><label class="form-label">Latitud</label><input name="Latitud" id="sLat" type="number" step=".0000001" class="form-control"></div><div class="col-md-3"><label class="form-label">Longitud</label><input name="Longitud" id="sLng" type="number" step=".0000001" class="form-control"></div><div class="col-md-3"><label class="form-label">Contacto</label><input name="Contacto" id="sContacto" class="form-control"></div><div class="col-md-3"><label class="form-label">Celular</label><input name="Celular" id="sCel" class="form-control"></div><div class="col-md-6"><label class="form-label">Correo</label><input name="Correo" id="sCorreo" class="form-control"></div><div class="col-md-6"><label class="form-label">Centro costo</label><input name="CentroCostoSede" id="sCC" class="form-control"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar sede</button></div></form></div></div></div>
+
+@section Scripts {
+    <script>
+                         document.addEventListener('DOMContentLoaded',()=>{const g=x=>document.getElementById(x),mc=bootstrap.Modal.getOrCreateInstance(g('modalCliente')),md=bootstrap.Modal.getOrCreateInstance(g('modalDetalle')),mct=bootstrap.Modal.getOrCreateInstance(g('modalContacto')),ms=bootstrap.Modal.getOrCreateInstance(g('modalSede'));let actual=0,det=null;const token=()=>g('formCliente').querySelector('[name="__RequestVerificationToken"]').value,fmt=v=>v?String(v).substring(0,10):'',esc=v=>{let d=document.createElement('div');d.textContent=v??'—';return d.innerHTML};
+                         g('btnNuevo').onclick=()=>{g('formCliente').reset();g('cId').value=0;g('cTitulo').textContent='Nuevo cliente';mc.show()};
+                         document.querySelectorAll('.btnEditar').forEach(b=>b.onclick=()=>{let x=JSON.parse(b.dataset.item);g('formCliente').reset();[['cId','idUnidad'],['cCodigo','codigoUnidad'],['cEmpresa','idEmpresa'],['cRuc','rucUnidad'],['cRazon','razonSocial'],['cNombre','nombreComercial'],['cSector','idSector'],['cCC','centroCosto'],['cWeb','paginaWeb'],['cDep','idDepartamento'],['cProv','idProvincia'],['cDist','idDistrito'],['cDir','direccion'],['cTel','telefono'],['cCorreo','correo'],['cObs','observacion']].forEach(a=>g(a[0]).value=x[a[1]]??'');g('cFecha').value=fmt(x.fechaActivacion);g('cTitulo').textContent='Editar cliente';mc.show()});
+                         async function cargar(id){let r=await fetch(`@Url.Action("Detalle","Cliente")?id=${id}`),j=await r.json();if(!j.ok)return toastr.error(j.mensaje);det=j.data;actual=det.cliente.idUnidad;render();md.show()}
+                         document.querySelectorAll('.btnDetalle').forEach(b=>b.onclick=()=>cargar(b.dataset.id));
+                         function render(){let c=det.cliente;g('dTitulo').textContent=`Cliente ${c.codigoCliente}`;g('dSub').textContent=c.razonSocial;let a=[['CÓDIGO UNIDAD',c.codigoUnidad],['EMPRESA GURKAS',c.empresaNombre],['RUC',c.rucUnidad],['RAZÓN SOCIAL',c.razonSocial],['NOMBRE COMERCIAL',c.nombreComercial],['DIRECCIÓN',c.direccion],['TELÉFONO',c.telefono],['CORREO',c.correo],['WEB',c.paginaWeb],['CENTRO COSTO',c.centroCosto],['OBSERVACIÓN',c.observacion]];g('general').innerHTML=a.map(x=>`<div class="col-md-4"><div class="info-label">${x[0]}</div><div>${esc(x[1])}</div></div>`).join('');
+                         g('contactos').innerHTML='<div class="table-responsive"><table class="table"><thead><tr><th>Nombre</th><th>Cargo</th><th>Teléfono</th><th>Correo</th><th>Principal</th><th>Estado</th><th></th></tr></thead><tbody>'+det.contactos.map(x=>`<tr><td>${esc(x.nombre)}</td><td>${esc(x.cargo)}</td><td>${esc(x.telefono)}</td><td>${esc(x.correo)}</td><td>${x.esPrincipal?'Sí':'—'}</td><td>${x.idEstado===1?'Activo':'Inactivo'}</td><td><button class="btn btn-sm btn-light-primary" onclick='editC(${JSON.stringify(x)})'>Editar</button></td></tr>`).join('')+'</tbody></table></div>';
+                         g('sedes').innerHTML='<div class="table-responsive"><table class="table"><thead><tr><th>Código</th><th>Sede</th><th>Dirección</th><th>Contacto</th><th>Estado</th><th></th></tr></thead><tbody>'+det.sedes.map(x=>`<tr><td>${esc(x.codigoSede)}</td><td>${esc(x.nombreSede)}</td><td>${esc(x.direccion)}</td><td>${esc(x.contacto)}</td><td>${x.idEstado===1?'Activo':'Inactivo'}</td><td><button class="btn btn-sm btn-light-primary" onclick='editS(${JSON.stringify(x)})'>Editar</button></td></tr>`).join('')+'</tbody></table></div>'}
+                         g('nuevoContacto').onclick=()=>{g('formContacto').reset();g('ctId').value=0;g('ctUnidad').value=actual;mct.show()};window.editC=x=>{g('formContacto').reset();g('ctId').value=x.idContactoUnidad;g('ctUnidad').value=x.idUnidad;g('ctNombre').value=x.nombre;g('ctCargo').value=x.cargo??'';g('ctTel').value=x.telefono??'';g('ctCorreo').value=x.correo??'';g('ctPrincipal').checked=x.esPrincipal;g('ctObs').value=x.observacion??'';mct.show()};
+                         g('formContacto').onsubmit=async e=>{e.preventDefault();let r=await fetch('@Url.Action("GuardarContacto","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();if(j.ok){toastr.success(j.mensaje);mct.hide();cargar(actual)}else toastr.error(j.mensaje)};
+                         g('nuevaSede').onclick=()=>{g('formSede').reset();g('sId').value=0;g('sUnidad').value=actual;ms.show()};window.editS=x=>{g('formSede').reset();g('sId').value=x.idSede;g('sUnidad').value=x.idUnidad;g('sCodigo').value=x.codigoSede;g('sNombre').value=x.nombreSede;g('sDir').value=x.direccion??'';g('sLat').value=x.latitud??'';g('sLng').value=x.longitud??'';g('sContacto').value=x.contacto??'';g('sCel').value=x.celular??'';g('sCorreo').value=x.correo??'';g('sCC').value=x.centroCostoSede??'';ms.show()};
+                         g('formSede').onsubmit=async e=>{e.preventDefault();let r=await fetch('@Url.Action("GuardarSede","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();if(j.ok){toastr.success(j.mensaje);ms.hide();cargar(actual)}else toastr.error(j.mensaje)};
+                         document.querySelectorAll('.btnEstado').forEach(b=>b.onclick=async()=>{let ne=+b.dataset.estado===1?2:1,q=await Swal.fire({title:'¿Confirmar acción?',text:`¿Deseas ${ne===1?'activar':'dar de baja'} a ${b.dataset.nombre}?`,icon:'question',showCancelButton:true});if(!q.isConfirmed)return;let body=new URLSearchParams({idUnidad:b.dataset.id,idEstado:ne,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("CambiarEstado","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();if(j.ok){toastr.success(j.mensaje);setTimeout(()=>location.reload(),600)}else toastr.error(j.mensaje)});
+        });</script>
+        @if (TempData["Success"] is string s)
+        {
+            <script>toastr.success(@Html.Raw(JsonSerializer.Serialize(s)));</script>
+        }
+        @if (TempData["Error"] is string e)
+        {
+            <script>toastr.error(@Html.Raw(JsonSerializer.Serialize(e)));</script>
+        }
+
+    }

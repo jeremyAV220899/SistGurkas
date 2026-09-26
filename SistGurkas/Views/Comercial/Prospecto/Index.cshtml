@@ -1,0 +1,1152 @@
+﻿@model IEnumerable<SistGurkas.Models.Comercial.Prospecto>
+
+@{
+    ViewData["Title"] = "Prospectos";
+
+    var prospectos = Model?.ToList() ?? new List<SistGurkas.Models.Comercial.Prospecto>();
+
+    var total = prospectos.Count;
+    var nuevos = prospectos.Count(x => x.NombreEstadoProspecto == "NUEVO");
+    var enSeguimiento = prospectos.Count(x => x.NombreEstadoProspecto == "EN SEGUIMIENTO");
+    var calificados = prospectos.Count(x => x.NombreEstadoProspecto == "CALIFICADO");
+    var convertidos = prospectos.Count(x => x.NombreEstadoProspecto == "CONVERTIDO");
+    var noInteresados = prospectos.Count(x => x.NombreEstadoProspecto == "NO INTERESADO");
+    var seguimientosPendientes = prospectos.Count(x =>
+        x.IdEstado == 1 &&
+        (x.IdEstadoProspecto == 1 ||
+        x.IdEstadoProspecto == 2 ||
+        x.IdEstadoProspecto == 3) &&
+        x.ProximaGestion.HasValue &&
+        x.ProximaGestion.Value >= DateTime.Today);
+}
+
+<style>
+    .prospectos-page .card {
+        border: 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+    }
+
+    .prospectos-page .metric-card {
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .prospectos-page .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+    }
+
+    .metric-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        flex-shrink: 0;
+    }
+
+    .metric-total {
+        background: #e8f1ff;
+        color: #0d6efd;
+    }
+
+    .metric-nuevo {
+        background: #e8f8ee;
+        color: #198754;
+    }
+
+    .metric-contactado {
+        background: #fff4dc;
+        color: #f59f00;
+    }
+
+    .estado-inactivo {
+        background: #e9edf3;
+        color: #526174;
+    }
+
+    .metric-interesado {
+        background: #eee8ff;
+        color: #6f42c1;
+    }
+
+    .metric-negociacion {
+        background: #e4f4ff;
+        color: #0dcaf0;
+    }
+
+    .metric-ganado {
+        background: #e4f8ee;
+        color: #0f9d58;
+    }
+
+    .estado-badge {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 100px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .estado-nuevo {
+        background: #dcebff;
+        color: #0561d9;
+    }
+
+    .estado-contactado {
+        background: #fff2cf;
+        color: #b26a00;
+    }
+
+    .estado-interesado {
+        background: #eee4ff;
+        color: #6c2bd9;
+    }
+
+    .estado-negociacion {
+        background: #dff4ff;
+        color: #087ea4;
+    }
+
+    .estado-ganado {
+        background: #dff6e8;
+        color: #16803c;
+    }
+
+    .estado-perdido {
+        background: #ffe2e5;
+        color: #c62828;
+    }
+
+    .table-prospectos td,
+    .table-prospectos th {
+        vertical-align: middle;
+    }
+
+    .btn-action {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+
+    /* Estado administrativo separado del estado comercial. */
+    .prospectos-page .estado-inactivo {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        background: #ffe2e5;
+        color: #b42332;
+    }
+    .prospectos-page .fila-inactiva > td { background-color: #fcfcfd; }
+    .prospectos-page .btn-activar { color: #16803c; background-color: #e4f8ee; }
+
+    .campo-error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
+    }
+
+    .is-invalid-custom {
+        border-color: #dc3545 !important;
+    }
+
+    .prospectos-header {
+    padding: 24px 26px;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #17386f 0%, #2f61a9 100%);
+    box-shadow: 0 8px 22px rgba(23, 56, 111, .12);
+}
+
+.prospectos-header-section {
+    color: #b9d2ff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.prospectos-header-description {
+    color: rgba(255, 255, 255, .88);
+    font-size: 13px;
+}
+
+.prospectos-header .btn {
+    background: #f4f8ff;
+    border: 0;
+}
+
+.prospectos-header .btn:hover {
+    background: #ffffff;
+}
+
+.metric-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #edf0f5 !important;
+}
+
+.metric-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #315fa8;
+}
+
+.metric-card.card-nuevo::before {
+    background: #20c997;
+}
+
+.metric-card.card-contactado::before {
+    background: #f4b740;
+}
+
+.metric-card.card-interesado::before {
+    background: #8b5cf6;
+}
+
+.metric-card.card-negociacion::before {
+    background: #31a7df;
+}
+
+.metric-card.card-ganado::before {
+    background: #25b46b;
+}
+
+    .app-svg {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .metric-icon .app-svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .btn-icon-soft {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+    }
+
+    .btn-icon-soft .app-svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .next-management {
+        white-space: nowrap;
+        font-weight: 600;
+    }
+
+    .next-management.overdue {
+        color: #dc3545;
+    }
+
+    .timeline-item {
+        border-left: 3px solid #e5e9f2;
+        padding: 0 0 18px 18px;
+        position: relative;
+    }
+
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -7px;
+        top: 3px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: #2f61a9;
+    }
+
+.prospect-wizard{display:flex;align-items:flex-start}.prospect-wizard i{flex:1;height:1px;background:#d9e1ec;margin-top:16px}.wizard-step{min-width:110px;text-align:center;color:#8b97ad}.wizard-step b{width:32px;height:32px;border-radius:50%;margin:auto auto 7px;display:flex;align-items:center;justify-content:center;background:#e9eef6}.wizard-step span{font-size:12px;font-weight:700}.wizard-step.active b,.wizard-step.done b{background:#2f6fed;color:#fff}.wizard-step.active span,.wizard-step.done span{color:#234b86}.wizard-ok{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e6f7ef;color:#19a866;font-size:28px}.wizard-summary{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e8edf5;border-radius:10px;overflow:hidden}.wizard-summary>div{padding:14px 16px;border-bottom:1px solid #edf1f6}.wizard-summary span{display:block;color:#8995aa;font-size:11px}.wizard-summary strong{font-size:13px}.wizard-summary .wide{grid-column:1/-1}@@media(max-width:767px){.wizard-step{min-width:75px}.wizard-summary{grid-template-columns:1fr}.wizard-summary .wide{grid-column:auto}}
+/* Corrección de iconos de la columna Acciones */
+.prospectos-page .btn-action svg {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px !important;
+    min-height: 18px !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+}
+
+.prospectos-page .btn-action svg path,
+.prospectos-page .btn-action svg rect,
+.prospectos-page .btn-action svg circle,
+.prospectos-page .btn-action svg line,
+.prospectos-page .btn-action svg polyline {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
+}
+</style>
+
+<div class="prospectos-page">
+
+    <!-- ENCABEZADO -->
+<div class="prospectos-header mb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
+        <div>
+            <div class="prospectos-header-section mb-2">
+                COMERCIAL
+            </div>
+
+            <h1 class="text-white fw-bold mb-2">
+                Prospectos
+            </h1>
+
+            <div class="prospectos-header-description">
+                Gestiona los potenciales clientes y su proceso comercial.
+            </div>
+        </div>
+
+        <button type="button"
+                class="btn btn-light-primary fw-semibold"
+                data-bs-toggle="modal"
+                data-bs-target="#modalNuevoProspecto">
+            <svg class="app-svg me-1" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Nuevo prospecto
+        </button>
+    </div>
+</div>
+
+    <!-- INDICADORES -->
+    <div class="row g-3 mb-5">
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="card metric-card h-100">
+                <div class="card-body p-4 d-flex align-items-center gap-3">
+                    <div class="metric-icon metric-blue">
+                        <svg class="app-svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div><div class="metric-number">@total</div><div class="metric-label">Total</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="card metric-card card-nuevo h-100">
+                <div class="card-body p-4 d-flex align-items-center gap-3">
+                    <div class="metric-icon metric-green">
+                        <svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+                    </div>
+                    <div><div class="metric-number">@nuevos</div><div class="metric-label">Nuevos</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="card metric-card card-contactado h-100">
+                <div class="card-body p-4 d-flex align-items-center gap-3">
+                    <div class="metric-icon metric-orange">
+                        <svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                    </div>
+                    <div><div class="metric-number">@seguimientosPendientes</div><div class="metric-label">Seg. pendientes</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="card metric-card card-negociacion h-100">
+                <div class="card-body p-4 d-flex align-items-center gap-3">
+                    <div class="metric-icon metric-cyan">
+                        <svg class="app-svg" viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"/></svg>
+                    </div>
+                    <div><div class="metric-number">@enSeguimiento</div><div class="metric-label">En seguimiento</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="card metric-card card-interesado h-100">
+                <div class="card-body p-4 d-flex align-items-center gap-3">
+                    <div class="metric-icon metric-purple">
+                        <svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>
+                    </div>
+                    <div><div class="metric-number">@calificados</div><div class="metric-label">Calificados</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="card metric-card card-ganado h-100">
+                <div class="card-body p-4 d-flex align-items-center gap-3">
+                    <div class="metric-icon metric-green">
+                        <svg class="app-svg" viewBox="0 0 24 24"><path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="9"/></svg>
+                    </div>
+                    <div><div class="metric-number">@convertidos</div><div class="metric-label">Convertidos</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-md-4 col-6">
+            <div class="card metric-card h-100" style="border-top:3px solid #dc3545 !important;">
+                <div class="card-body p-4 d-flex align-items-center gap-3">
+                    <div class="metric-icon" style="background:#fde8eb;color:#dc3545;">
+                        <svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg>
+                    </div>
+                    <div><div class="metric-number">@noInteresados</div><div class="metric-label">No interesados</div></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FILTROS -->
+    <div class="card mb-5">
+        <div class="card-body">
+            <form method="get"
+                  asp-controller="Prospecto"
+                  asp-action="Index">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-xl-3 col-lg-6">
+                        <label class="form-label fw-semibold">
+                            Buscar
+                        </label>
+
+                        <input type="text"
+                               name="buscar"
+                               class="form-control"
+                               value="@ViewBag.Buscar"
+                               placeholder="Empresa, RUC, contacto..." />
+                    </div>
+
+                    <div class="col-xl-2 col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold">
+                            Estado
+                        </label>
+
+                        <select name="idEstadoProspecto"
+                                class="form-select">
+                            <option value="">Todos</option>
+                            <option value="1" selected="@(ViewBag.IdEstadoProspecto == 1)">Nuevo</option>
+                            <option value="2" selected="@(ViewBag.IdEstadoProspecto == 2)">En seguimiento</option>
+                            <option value="3" selected="@(ViewBag.IdEstadoProspecto == 3)">Calificado</option>
+                            <option value="4" selected="@(ViewBag.IdEstadoProspecto == 4)">Convertido</option>
+                            <option value="5" selected="@(ViewBag.IdEstadoProspecto == 5)">No interesado</option>
+                        </select>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold">
+                            Origen
+                        </label>
+
+                        <select name="origen"
+                                class="form-select">
+                            <option value="">Todos</option>
+                            <option value="REFERIDO" selected="@(ViewBag.Origen == "REFERIDO")">Referido</option>
+                            <option value="WEB" selected="@(ViewBag.Origen == "WEB")">Web</option>
+                            <option value="EVENTO" selected="@(ViewBag.Origen == "EVENTO")">Evento</option>
+                            <option value="LICITACIÓN" selected="@(ViewBag.Origen == "LICITACIÓN")">Licitación</option>
+                            <option value="CONTACTO DIRECTO" selected="@(ViewBag.Origen == "CONTACTO DIRECTO")">Contacto directo</option>
+                            <option value="CLIENTE ACTUAL" selected="@(ViewBag.Origen == "CLIENTE ACTUAL")">Cliente actual</option>
+                            <option value="OTRO" selected="@(ViewBag.Origen == "OTRO")">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="col-xl-3 col-lg-8">
+                        <label class="form-label fw-semibold">
+                            Fecha de registro
+                        </label>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="date"
+                                   name="fechaDesde"
+                                   class="form-control"
+                                   value="@ViewBag.FechaDesde" />
+
+                            <span class="text-muted">—</span>
+
+                            <input type="date"
+                                   name="fechaHasta"
+                                   class="form-control"
+                                   value="@ViewBag.FechaHasta" />
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-4">
+                        <div class="d-flex gap-2">
+                            <button type="submit"
+                                    class="btn btn-primary flex-grow-1">
+                                <svg class="app-svg me-1" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+                                Buscar
+                            </button>
+
+                            <a asp-controller="Prospecto"
+                               asp-action="Index"
+                               class="btn btn-light flex-grow-1">
+                                Limpiar
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="card">
+        <div class="card-header border-0 pt-5">
+            <div class="card-title">
+                <h3 class="fw-bold mb-0">
+                    Lista de Prospectos
+                    <span class="text-muted fs-7">
+                        (@total registros)
+                    </span>
+                </h3>
+            </div>
+        </div>
+
+        <div class="card-body pt-2">
+
+            <div class="table-responsive">
+                <table class="table table-row-bordered table-row-gray-200 align-middle table-prospectos"
+                       id="tablaProspectos">
+                    <thead>
+                        <tr class="fw-bold text-muted">
+                            <th>#</th>
+                            <th>Empresa / Nombre comercial</th>
+                            <th>RUC</th>
+                            <th>Contacto</th>
+                            <th>Teléfono</th>
+                            <th>Origen</th>
+                            <th>Estado</th>
+                            <th>Fecha registro</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in prospectos)
+                        {
+                            var estado = item.NombreEstadoProspecto ?? "NUEVO";
+
+                            var claseEstado = estado switch
+                            {
+                                "NUEVO" => "estado-nuevo",
+                                "EN SEGUIMIENTO" => "estado-contactado",
+                                "CALIFICADO" => "estado-interesado",
+                                "CONVERTIDO" => "estado-ganado",
+                                "NO INTERESADO" => "estado-perdido",
+                                "PERDIDO" => "estado-inactivo",
+                                _ => "estado-nuevo"
+                            };
+
+                            <tr data-estado="@estado" class="@(item.IdEstado == 2 ? "fila-inactiva" : "")">
+
+                                <td>@item.IdProspecto</td>
+
+                                <td>
+                                    <div class="fw-bold">@item.RazonSocial</div>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.NombreComercial))
+                                    {
+                                        <div class="text-muted fs-7">
+                                            @item.NombreComercial
+                                        </div>
+                                    }
+                                </td>
+
+                                <td>@(item.Ruc ?? "-")</td>
+
+                                <td>@(item.NombreContacto ?? "-")</td>
+
+                                <td>@(item.Telefono ?? "-")</td>
+
+                                <td>@(item.Origen ?? "-")</td>
+
+                                <td>
+                                    <div class="d-flex flex-column align-items-start gap-1">
+                                        <span class="estado-badge @claseEstado">@estado</span>
+                                        @if (item.IdEstado == 2)
+                                        {
+                                            <span class="estado-inactivo" title="Registro dado de baja; conserva su estado comercial">INACTIVO</span>
+                                        }
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @item.FechaRegistro.ToString("dd/MM/yyyy")
+                                </td>
+
+                                <td class="text-center">
+
+                                    <button type="button"
+                                            class="btn btn-light-primary btn-action btn-editar"
+                                            title="Editar"
+                                            data-id="@item.IdProspecto"
+                                            data-razon="@item.RazonSocial"
+                                            data-ruc="@item.Ruc"
+                                            data-comercial="@item.NombreComercial"
+                                            data-contacto="@item.NombreContacto"
+                                            data-cargo="@item.CargoContacto"
+                                            data-telefono="@item.Telefono"
+                                            data-correo="@item.Correo"
+                                            data-direccion="@item.Direccion"
+                                            data-origen="@item.Origen"
+                                            data-observacion="@item.Observacion"
+                                            data-estadoprospecto="@item.IdEstadoProspecto">
+                                        <svg class="app-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/></svg>
+                                    </button>
+
+                                    <button type="button" class="btn btn-light-warning btn-action btnSeguimiento"
+                                            title="Registrar seguimiento" data-id="@item.IdProspecto"
+                                            data-nombre="@item.RazonSocial" data-estado="@item.IdEstadoProspecto"
+                                            data-bs-toggle="modal" data-bs-target="#modalSeguimiento">
+                                        <svg class="app-svg" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+                                    </button>
+                                    <button type="button" class="btn btn-light-info btn-action btnHistorial"
+                                            title="Historial" data-id="@item.IdProspecto" data-nombre="@item.RazonSocial">
+                                        <svg class="app-svg" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg>
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-action btn-cambiar-estado @(item.IdEstado == 1 ? "btn-light-danger" : "btn-activar")"
+                                            title="@(item.IdEstado == 1 ? "Dar de baja" : "Activar")"
+                                            data-id="@item.IdProspecto"
+                                            data-nombre="@item.RazonSocial"
+                                            data-estado="@item.IdEstado">
+                                        @if (item.IdEstado == 1)
+                                        {
+                                            <svg class="app-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="8" cy="12" r="3"/></svg>
+                                        }
+                                        else
+                                        {
+                                            <svg class="app-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="16" cy="12" r="3"/></svg>
+                                        }
+                                    </button>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (!prospectos.Any())
+            {
+                <div class="text-center py-10">
+                    <div class="text-muted fs-5">
+                        Todavía no existen prospectos registrados.
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NUEVO PROSPECTO - WIZARD 4 PASOS -->
+<div class="modal fade" id="modalNuevoProspecto" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content">
+<form asp-controller="Prospecto" asp-action="Registrar" method="post" id="formNuevoProspecto">
+@Html.AntiForgeryToken()
+<div class="modal-header"><div><h3 class="modal-title fw-bold">Registrar nuevo prospecto</h3><div class="text-muted fs-7">Información general, comercial y contactos.</div></div><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+<div class="px-7 pt-6"><div class="prospect-wizard">
+<div class="wizard-step active" data-wstep="1"><b>1</b><span>Identificación</span></div><i></i>
+<div class="wizard-step" data-wstep="2"><b>2</b><span>Comercial</span></div><i></i>
+<div class="wizard-step" data-wstep="3"><b>3</b><span>Contactos</span></div><i></i>
+<div class="wizard-step" data-wstep="4"><b>4</b><span>Confirmar</span></div></div></div>
+<div class="modal-body px-7 py-6">
+<div class="wizard-panel" data-panel="1"><h5 class="fw-bold mb-5">Identificación del prospecto</h5><div class="row g-4">
+<div class="col-md-4"><label class="form-label required">Tipo de persona</label><select name="TipoPersona" id="nuevoTipoPersona" class="form-select" required><option value="">Seleccionar...</option><option value="JURIDICA">Persona jurídica</option><option value="NATURAL">Persona natural</option></select></div>
+<div class="col-md-4"><label class="form-label">RUC</label><input name="Ruc" id="nuevoRuc" class="form-control" maxlength="11" inputmode="numeric"><div class="campo-error" id="errorNuevoRuc"></div></div>
+<div class="col-md-4"><label class="form-label required">Razón social / Nombre</label><input name="RazonSocial" id="nuevoRazonSocial" class="form-control" maxlength="200" required><div class="campo-error" id="errorNuevoRazon"></div></div>
+<div class="col-md-4"><label class="form-label">Nombre comercial</label><input name="NombreComercial" id="nuevoNombreComercial" class="form-control" maxlength="200"></div>
+<div class="col-md-4"><label class="form-label">Sector / Rubro</label><select name="IdSector" class="form-select"><option value="">Seleccionar...</option>@foreach(var x in (ViewBag.Sectores ?? new List<dynamic>())){<option value="@x.Id">@x.Nombre</option>}</select></div>
+<div class="col-md-4"><label class="form-label">Actividad / Servicio</label><select name="IdActividad" class="form-select"><option value="">Seleccionar...</option>@foreach(var x in (ViewBag.Actividades ?? new List<dynamic>())){<option value="@x.Id">@x.Nombre</option>}</select></div>
+<div class="col-md-8"><label class="form-label">Dirección</label><input name="Direccion" id="nuevoDireccion" class="form-control" maxlength="300"></div>
+<div class="col-md-4"><label class="form-label">Página web</label><input name="PaginaWeb" class="form-control" maxlength="250" placeholder="https://..."></div>
+<div class="col-md-4"><label class="form-label">Departamento</label><select name="IdDepartamento" id="nuevoDepartamento" class="form-select"><option value="">Seleccionar...</option>@foreach(var x in (ViewBag.Departamentos ?? new List<dynamic>())){<option value="@x.Id">@x.Nombre</option>}</select></div>
+<div class="col-md-4"><label class="form-label">Provincia</label><select name="IdProvincia" id="nuevoProvincia" class="form-select" disabled><option value="">Seleccionar...</option></select></div>
+<div class="col-md-4"><label class="form-label">Distrito</label><select name="IdDistrito" id="nuevoDistrito" class="form-select" disabled><option value="">Seleccionar...</option></select><div class="form-text">UBIGEO: <strong id="nuevoUbigeo">—</strong></div></div>
+</div></div>
+
+<div class="wizard-panel d-none" data-panel="2"><h5 class="fw-bold mb-5">Información comercial</h5><div class="row g-4">
+<div class="col-md-4"><label class="form-label required">Origen</label><select name="Origen" id="nuevoOrigen" class="form-select" required><option value="">Seleccionar...</option><option>REFERIDO</option><option>WEB</option><option>EVENTO</option><option>LICITACIÓN</option><option>CONTACTO DIRECTO</option><option>CLIENTE ACTUAL</option><option>OTRO</option></select></div>
+<div class="col-md-4"><label class="form-label">Fuente</label><input name="Fuente" class="form-control" maxlength="150" placeholder="Campaña, referido, evento..."></div>
+<div class="col-md-4"><label class="form-label">Próxima gestión</label><input type="datetime-local" name="ProximaGestion" class="form-control"></div>
+<div class="col-md-4"><label class="form-label">Prioridad</label><select name="Prioridad" class="form-select"><option value="">Seleccionar...</option><option>BAJA</option><option>MEDIA</option><option>ALTA</option></select></div>
+<div class="col-md-4"><label class="form-label">Tamaño estimado</label><select name="TamanoEstimado" class="form-select"><option value="">Seleccionar...</option><option>PEQUEÑO</option><option>MEDIANO</option><option>GRANDE</option></select></div>
+<div class="col-md-4"><label class="form-label">Probabilidad estimada (%)</label><input type="number" min="0" max="100" step="1" name="ProbabilidadEstimada" class="form-control"></div>
+<div class="col-md-4"><label class="form-label">Tipo de cliente</label><select name="TipoCliente" class="form-select"><option value="">Seleccionar...</option><option>PRIVADO</option><option>ESTADO</option></select></div>
+<div class="col-md-4"><label class="form-label">Competencia actual</label><input name="CompetenciaActual" class="form-control" maxlength="200"></div>
+<div class="col-md-4"><label class="form-label">Fecha estimada de inicio</label><input type="date" name="FechaEstimadaInicio" class="form-control"></div>
+<div class="col-12"><label class="form-label">Observaciones generales</label><textarea name="Observacion" id="nuevoObservacion" class="form-control" rows="4" maxlength="1000"></textarea><div class="text-end text-muted fs-8"><span id="contadorObservacion">0</span>/1000</div></div>
+</div></div>
+
+<div class="wizard-panel d-none" data-panel="3"><div class="d-flex justify-content-between align-items-center mb-4"><div><h5 class="fw-bold mb-1">Contactos</h5><div class="text-muted fs-7">Puedes registrar varios contactos y elegir uno como principal.</div></div><button type="button" class="btn btn-light-primary btn-sm" id="btnAgregarContacto">+ Agregar contacto</button></div>
+<div id="listaContactos"></div></div>
+
+<div class="wizard-panel d-none" data-panel="4"><div class="text-center mb-5"><div class="wizard-ok mx-auto mb-3">✓</div><h4 class="fw-bold">Confirmar prospecto</h4><div class="text-muted">Revisa la información antes de guardar.</div></div>
+<div class="wizard-summary"><div><span>Razón social / Nombre</span><strong id="resumenRazon">—</strong></div><div><span>RUC</span><strong id="resumenRuc">—</strong></div><div><span>Nombre comercial</span><strong id="resumenComercial">—</strong></div><div><span>Origen</span><strong id="resumenOrigen">—</strong></div><div><span>Ubicación</span><strong id="resumenUbicacion">—</strong></div><div><span>Contactos</span><strong id="resumenContactos">0</strong></div><div class="wide"><span>Observación</span><strong id="resumenObservacion">—</strong></div><div><span>Estado inicial</span><strong>NUEVO</strong></div></div>
+</div></div>
+<div class="modal-footer d-flex justify-content-between"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><div class="d-flex gap-2"><button type="button" class="btn btn-light-primary d-none" id="btnWizardAtras">← Atrás</button><button type="button" class="btn btn-primary" id="btnWizardSiguiente">Continuar →</button><button type="submit" class="btn btn-primary d-none" id="btnGuardarProspecto">Guardar prospecto</button></div></div>
+</form></div></div></div>
+<!-- ============================================================= -->
+
+<div class="modal fade"
+     id="modalEditarProspecto"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content">
+
+            <form asp-controller="Prospecto"
+                  asp-action="Editar"
+                  method="post"
+                  id="formEditarProspecto">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="IdProspecto"
+                       id="editarIdProspecto" />
+
+                <div class="modal-header">
+                    <h2 class="fw-bold mb-0">
+                        Editar prospecto
+                    </h2>
+
+                    <button type="button"
+                            class="btn btn-sm btn-icon btn-light"
+                            data-bs-dismiss="modal">
+                        <svg class="app-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row g-4">
+
+                        <div class="col-md-8">
+                            <label class="form-label required">
+                                Razón social
+                            </label>
+
+                            <input type="text"
+                                   name="RazonSocial"
+                                   id="editarRazonSocial"
+                                   class="form-control"
+                                   maxlength="200" />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">RUC</label>
+
+                            <input type="text"
+                                   name="Ruc"
+                                   id="editarRuc"
+                                   class="form-control"
+                                   maxlength="11"
+                                   inputmode="numeric" />
+
+                            <div id="errorEditarRuc"
+                                 class="campo-error"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Nombre comercial
+                            </label>
+
+                            <input type="text"
+                                   name="NombreComercial"
+                                   id="editarNombreComercial"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Origen
+                            </label>
+
+                            <select name="Origen"
+                                    id="editarOrigen"
+                                    class="form-select">
+
+                                <option value="">Seleccionar</option>
+                                <option value="REFERIDO">Referido</option>
+                                <option value="WEB">Web</option>
+                                <option value="EVENTO">Evento</option>
+                                <option value="LICITACIÓN">Licitación</option>
+                                <option value="CONTACTO DIRECTO">Contacto directo</option>
+                                <option value="CLIENTE ACTUAL">Cliente actual</option>
+                                <option value="OTRO">Otro</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Nombre del contacto
+                            </label>
+
+                            <input type="text"
+                                   name="NombreContacto"
+                                   id="editarNombreContacto"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Cargo</label>
+
+                            <input type="text"
+                                   name="CargoContacto"
+                                   id="editarCargoContacto"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono</label>
+
+                            <input type="text"
+                                   name="Telefono"
+                                   id="editarTelefono"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Correo
+                            </label>
+
+                            <input type="email"
+                                   name="Correo"
+                                   id="editarCorreo"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Dirección</label>
+
+                            <input type="text"
+                                   name="Direccion"
+                                   id="editarDireccion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                Estado comercial
+                            </label>
+
+                            <select name="IdEstadoProspecto"
+                                    id="editarEstadoProspecto"
+                                    class="form-select">
+
+                                <option value="1">Nuevo</option>
+                                <option value="2">En seguimiento</option>
+                                <option value="3">Calificado</option>
+                                <option value="4">Convertido</option>
+                                <option value="5">No interesado</option>
+                                <option value="6">Perdido</option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">
+                                Observación
+                            </label>
+
+                            <textarea name="Observacion"
+                                      id="editarObservacion"
+                                      class="form-control"
+                                      rows="3"></textarea>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-light"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- MODAL SEGUIMIENTO -->
+<!-- ========================================================= -->
+
+<div class="modal fade" id="modalSeguimiento" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <form asp-controller="Prospecto"
+                  asp-action="RegistrarSeguimiento"
+                  method="post"
+                  id="formSeguimiento">
+
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header">
+                    <div>
+                        <h3 class="modal-title fw-bold">
+                            Registrar seguimiento
+                        </h3>
+                        <div class="text-muted fs-7 mt-1" id="seguimientoProspectoNombre"></div>
+                    </div>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden"
+                           name="idProspecto"
+                           id="seguimientoIdProspecto" />
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label required">Tipo de gestión</label>
+                            <select name="idTipoGestion"
+                                    class="form-select"
+                                    required>
+                                <option value="">Seleccionar...</option>
+                                <option value="1">LLAMADA</option>
+                                <option value="2">WHATSAPP</option>
+                                <option value="3">CORREO</option>
+                                <option value="4">REUNIÓN</option>
+                                <option value="5">VISITA</option>
+                                <option value="6">COTIZACIÓN</option>
+                                <option value="7">OTRO</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required">Fecha de gestión</label>
+                            <input type="datetime-local"
+                                   name="fechaGestion"
+                                   id="seguimientoFechaGestion"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Comentario / resultado</label>
+                            <textarea name="comentario"
+                                      class="form-control"
+                                      rows="4"
+                                      maxlength="1000"
+                                      placeholder="Describe el resultado de la gestión..."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Próxima gestión</label>
+                            <input type="datetime-local"
+                                   name="proximaGestion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label required">Estado del prospecto</label>
+                            <select name="idEstadoProspecto"
+                                    id="seguimientoEstadoProspecto"
+                                    class="form-select"
+                                    required>
+                                <option value="1">NUEVO</option>
+                                <option value="2">EN SEGUIMIENTO</option>
+                                <option value="3">CALIFICADO</option>
+                                <option value="4">CONVERTIDO</option>
+                                <option value="5">NO INTERESADO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-light"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Guardar seguimiento
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================================================= -->
+<!-- MODAL HISTORIAL -->
+<!-- ========================================================= -->
+
+<div class="modal fade" id="modalHistorialSeguimientos" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <h3 class="modal-title fw-bold">
+                        Historial de seguimientos
+                    </h3>
+                    <div class="text-muted fs-7 mt-1" id="historialProspectoNombre"></div>
+                </div>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="historialSeguimientosContenido">
+                    <div class="text-center text-muted py-5">
+                        Cargando...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const $=id=>document.getElementById(id), modalNuevo=$("modalNuevoProspecto"), form=$("formNuevoProspecto");
+    let paso=1, contactoSeq=0;
+
+    function mostrarPaso(n){
+        paso=n;
+        document.querySelectorAll("[data-panel]").forEach(x=>x.classList.toggle("d-none",+x.dataset.panel!==n));
+        document.querySelectorAll("[data-wstep]").forEach(x=>{let i=+x.dataset.wstep;x.classList.toggle("active",i===n);x.classList.toggle("done",i<n)});
+        $("btnWizardAtras").classList.toggle("d-none",n===1);
+        $("btnWizardSiguiente").classList.toggle("d-none",n===4);
+        $("btnGuardarProspecto").classList.toggle("d-none",n!==4);
+    }
+    async function validarPaso1(){
+        let ok=true, razon=$("nuevoRazonSocial"),ruc=$("nuevoRuc");
+        if(!razon.value.trim()){razon.classList.add("is-invalid-custom");$("errorNuevoRazon").textContent="Ingresa la razón social o nombre.";$("errorNuevoRazon").style.display="block";ok=false}
+        if(!$("nuevoTipoPersona").value){toastr.warning("Selecciona el tipo de persona.");ok=false}
+        if(ruc.value){
+            if(!/^\d{11}$/.test(ruc.value)){ruc.classList.add("is-invalid-custom");$("errorNuevoRuc").textContent="El RUC debe contener 11 dígitos.";$("errorNuevoRuc").style.display="block";ok=false}
+            else {try{let d=await (await fetch('@Url.Action("VerificarRuc","Prospecto")?ruc='+encodeURIComponent(ruc.value))).json();if(d.existe){$("errorNuevoRuc").textContent="Este RUC ya está registrado.";$("errorNuevoRuc").style.display="block";ok=false}}catch{toastr.error("No se pudo verificar el RUC.");ok=false}}
+        }
+        return ok;
+    }
+    function agregarContacto(){
+        const i=contactoSeq++, div=document.createElement("div"); div.className="card border mb-3 contacto-item";
+        div.innerHTML=`<div class="card-body p-4"><div class="row g-3 align-items-end">
+        <div class="col-md-3"><label class="form-label">Nombre</label><input name="contactoNombre" class="form-control contacto-nombre" maxlength="150"></div>
+        <div class="col-md-2"><label class="form-label">Cargo</label><input name="contactoCargo" class="form-control" maxlength="100"></div>
+        <div class="col-md-2"><label class="form-label">Teléfono</label><input name="contactoTelefono" class="form-control" maxlength="20"></div>
+        <div class="col-md-3"><label class="form-label">Correo</label><input type="email" name="contactoCorreo" class="form-control" maxlength="150"></div>
+        <div class="col-md-1 text-center"><label class="form-label">Principal</label><div><input type="radio" name="contactoPrincipal" value="${i}" class="form-check-input contacto-principal"></div></div>
+        <div class="col-md-1 text-end"><button type="button" class="btn btn-light-danger btn-sm quitar-contacto">×</button></div>
+        </div></div>`;
+        $("listaContactos").appendChild(div);
+        if(document.querySelectorAll(".contacto-item").length===1) div.querySelector(".contacto-principal").checked=true;
+        div.querySelector(".quitar-contacto").onclick=()=>{div.remove();if(!document.querySelector(".contacto-principal:checked"))document.querySelector(".contacto-principal")?.click()};
+    }
+    $("btnAgregarContacto").onclick=agregarContacto; agregarContacto();
+    $("nuevoRuc").oninput=function(){this.value=this.value.replace(/\D/g,"").slice(0,11);$("errorNuevoRuc").style.display="none";this.classList.remove("is-invalid-custom")};
+    $("nuevoRazonSocial").oninput=function(){$("errorNuevoRazon").style.display="none";this.classList.remove("is-invalid-custom")};
+    $("nuevoObservacion").oninput=function(){$("contadorObservacion").textContent=this.value.length};
+
+    $("nuevoDepartamento").onchange=async function(){
+        $("nuevoProvincia").innerHTML='<option value="">Seleccionar...</option>';$("nuevoDistrito").innerHTML='<option value="">Seleccionar...</option>';$("nuevoUbigeo").textContent="—";
+        $("nuevoProvincia").disabled=!this.value;$("nuevoDistrito").disabled=true;if(!this.value)return;
+        let d=await (await fetch('@Url.Action("Provincias","Prospecto")?idDepartamento='+this.value)).json();
+        d.forEach(x=>$("nuevoProvincia").add(new Option(x.nombre,x.id)));
+    };
+    $("nuevoProvincia").onchange=async function(){
+        $("nuevoDistrito").innerHTML='<option value="">Seleccionar...</option>';$("nuevoUbigeo").textContent="—";$("nuevoDistrito").disabled=!this.value;if(!this.value)return;
+        let d=await (await fetch('@Url.Action("Distritos","Prospecto")?idProvincia='+this.value)).json();
+        d.forEach(x=>{let o=new Option(x.nombre,x.id);o.dataset.ubigeo=x.ubigeo;$("nuevoDistrito").add(o)});
+    };
+    $("nuevoDistrito").onchange=function(){$("nuevoUbigeo").textContent=this.selectedOptions[0]?.dataset.ubigeo||"—"};
+
+    function resumen(){
+        $("resumenRazon").textContent=$("nuevoRazonSocial").value||"—";$("resumenRuc").textContent=$("nuevoRuc").value||"—";
+        $("resumenComercial").textContent=$("nuevoNombreComercial").value||"—";$("resumenOrigen").textContent=$("nuevoOrigen").value||"—";
+        $("resumenUbicacion").textContent=[$("nuevoDepartamento").selectedOptions[0]?.text,$("nuevoProvincia").selectedOptions[0]?.text,$("nuevoDistrito").selectedOptions[0]?.text].filter(x=>x&&x!=="Seleccionar...").join(" / ")||"—";
+        $("resumenContactos").textContent=document.querySelectorAll(".contacto-item").length;$("resumenObservacion").textContent=$("nuevoObservacion").value||"—";
+    }
+    $("btnWizardSiguiente").onclick=async()=>{if(paso===1&&!(await validarPaso1()))return;if(paso===2&&!$("nuevoOrigen").value){toastr.warning("Selecciona el origen del prospecto.");return}if(paso===3)resumen();mostrarPaso(paso+1)};
+    $("btnWizardAtras").onclick=()=>mostrarPaso(paso-1);
+    form.onsubmit=e=>{$("btnGuardarProspecto").disabled=true};
+    modalNuevo.addEventListener("hidden.bs.modal",()=>{form.reset();$("listaContactos").innerHTML="";contactoSeq=0;agregarContacto();$("nuevoProvincia").disabled=true;$("nuevoDistrito").disabled=true;$("nuevoUbigeo").textContent="—";$("contadorObservacion").textContent="0";$("btnGuardarProspecto").disabled=false;mostrarPaso(1)});
+    mostrarPaso(1);
+
+    function fechaLocalInput(d){const p=n=>String(n).padStart(2,"0");return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`}
+    document.querySelectorAll(".btnSeguimiento").forEach(b=>b.onclick=function(){$("seguimientoIdProspecto").value=this.dataset.id;$("seguimientoProspectoNombre").textContent=this.dataset.nombre;$("seguimientoEstadoProspecto").value=this.dataset.estado||"1";$("seguimientoFechaGestion").value=fechaLocalInput(new Date())});
+    const esc=v=>{const d=document.createElement("div");d.textContent=v??"";return d.innerHTML};
+    document.querySelectorAll(".btnHistorial").forEach(b=>b.onclick=async function(){
+        $("historialProspectoNombre").textContent=this.dataset.nombre;const c=$("historialSeguimientosContenido");c.innerHTML='<div class="text-center text-muted py-5">Cargando...</div>';bootstrap.Modal.getOrCreateInstance($("modalHistorialSeguimientos")).show();
+        try{let d=await (await fetch('@Url.Action("HistorialSeguimientos","Prospecto")?idProspecto='+this.dataset.id)).json();c.innerHTML=d.length?d.map(x=>`<div class="timeline-item"><div class="d-flex justify-content-between"><b>${esc(x.tipoGestion)}</b><span class="text-muted fs-7">${esc(x.fechaGestion)}</span></div><div class="mt-2">${esc(x.comentario||"Sin comentario")}</div><div class="fs-7 mt-2"><b>Estado:</b> ${esc(x.estadoProspecto)} · <b>Próxima:</b> ${esc(x.proximaGestion||"Sin próxima gestión")}</div></div>`).join(""):'<div class="text-center text-muted py-5">Todavía no existen seguimientos.</div>'}catch{c.innerHTML='<div class="text-center text-danger py-5">No se pudo cargar el historial.</div>'}
+    });
+
+    document.querySelectorAll(".btn-editar").forEach(b=>b.onclick=function(){
+        const map={editarIdProspecto:"id",editarRazonSocial:"razon",editarRuc:"ruc",editarNombreComercial:"comercial",editarNombreContacto:"contacto",editarCargoContacto:"cargo",editarTelefono:"telefono",editarCorreo:"correo",editarDireccion:"direccion",editarOrigen:"origen",editarObservacion:"observacion",editarEstadoProspecto:"estadoprospecto"};
+        Object.entries(map).forEach(([id,k])=>$(id).value=this.dataset[k]||"");bootstrap.Modal.getOrCreateInstance($("modalEditarProspecto")).show();
+    });
+    document.querySelectorAll(".btn-cambiar-estado").forEach(b=>b.onclick=async function(){
+        const nuevo=+this.dataset.estado===1?2:1,r=await Swal.fire({title:"¿Confirmar acción?",text:`¿Deseas ${nuevo===1?"activar":"dar de baja"} al prospecto ${this.dataset.nombre}?`,icon:"question",showCancelButton:true,confirmButtonText:"Sí, continuar",cancelButtonText:"Cancelar"});if(!r.isConfirmed)return;
+        const token=form.querySelector('[name="__RequestVerificationToken"]').value,datos=new URLSearchParams({idProspecto:this.dataset.id,idEstado:nuevo,__RequestVerificationToken:token});
+        try{let d=await (await fetch('@Url.Action("CambiarEstado","Prospecto")',{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:datos})).json();d.ok?toastr.success(d.mensaje):toastr.error(d.mensaje);if(d.ok)setTimeout(()=>location.reload(),600)}catch{toastr.error("No se pudo cambiar el estado.")}
+    });
+});
+</script>
+@if (TempData["Success"] != null){<script>toastr.success('@Html.Raw(TempData["Success"])');</script>}
+@if (TempData["Exito"] != null){<script>toastr.success('@Html.Raw(TempData["Exito"])');</script>}
+@if (TempData["Error"] != null){<script>toastr.error('@Html.Raw(TempData["Error"])');</script>}
+}
