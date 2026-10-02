@@ -1,0 +1,101 @@
+﻿@model SistGurkas.Models.Comercial.PenalidadNuevaVm
+@{
+    Layout = null;
+}
+<style>
+    .np {
+        height: min(92vh,900px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #fff
+    }
+
+        .np .modal-header {
+            flex: 0 0 auto
+        }
+
+    .np-form {
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+        flex-direction: column;
+        overflow: hidden
+    }
+
+    .np .modal-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto !important;
+        overflow-x: hidden;
+        padding: 20px
+    }
+
+    .np .modal-footer {
+        flex: 0 0 auto;
+        background: #fff;
+        border-top: 1px solid #e6edf7;
+        padding: 12px 20px;
+        box-shadow: 0 -4px 14px rgba(15,23,42,.06)
+    }
+
+    .np .section {
+        background: #fff;
+        border: 1px solid #e6edf7;
+        border-left: 4px solid #1473e6;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px #0f172a08
+    }
+
+    .np label {
+        font-size: 12px;
+        color: #284a7a;
+        margin-bottom: 5px
+    }
+
+    .np h5 {
+        color: #102b5c
+    }
+
+    .calc {
+        background: #eaf4ff;
+        border-radius: 8px;
+        padding: 14px;
+        font-size: 22px;
+        font-weight: 700;
+        color: #092c70
+    }
+</style>
+<div class="np">
+    <div class="modal-header"><div><div class="text-primary small">PENALIDADES › REGISTRO DE PENALIDAD</div><h4 class="modal-title mb-0">Nueva Penalidad</h4><div class="text-muted small">Registra una penalidad real derivada de TDR o contrato.</div></div><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form asp-action="Registrar" method="post" enctype="multipart/form-data" id="frmPen" class="np-form">
+        @Html.AntiForgeryToken()
+        <div class="modal-body">
+            <div class="section"><h5>1. Información general</h5><div class="row g-3"><div class="col-md-2"><label>N.º Penalidad</label><input class="form-control" value="Automático" disabled></div><div class="col-md-2"><label>Fecha *</label><input type="date" name="fecha" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" required></div><div class="col-md-3"><label>N.º Carta del cliente *</label><input name="numeroDocumento" class="form-control" required></div><div class="col-md-5"><label>Adjuntar carta del cliente</label><input type="file" name="carta" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"></div></div></div>
+            <div class="section"><h5>2. Origen contractual</h5><div class="row g-3"><div class="col-md-4"><label>Cliente *</label><select id="cliente" name="idUnidad" class="form-select" required><option value="">Seleccionar</option>@foreach(var x in Model.Clientes){
+                <option value="@x.IdUnidad">@(string.IsNullOrWhiteSpace(x.NombreComercial) ? x.RazonSocial : x.NombreComercial)</option>
+            }
+        </select></div><div class="col-md-4"><label>Contrato *</label><select id="contrato" name="idContrato" class="form-select" required><option value="">Seleccionar</option>@foreach(var x in Model.Contratos){
+        <option value="@x.IdContrato" data-u="@x.IdUnidad">@x.NumeroContrato - @x.Descripcion</option>
+    }
+</select></div><div class="col-md-4"><label>Sede *</label><select id="sede" name="idSede" class="form-select" required><option value="">Seleccionar</option>@foreach(var x in Model.Sedes){
+<option value="@x.IdSede" data-u="@x.IdUnidad">@x.NombreSede</option>
+}
+</select></div></div></div>
+<div class="section"><h5>3. Penalidad</h5><div class="row g-3"><div class="col-md-4"><label>Tipo de penalidad *</label><select id="tipo" name="idPenalidadCliente" class="form-select" required><option value="">Seleccionar cláusula contractual</option>@foreach(var x in Model.Tipos){
+    <option value="@x.IdPenalidadCliente" data-u="@x.IdUnidad" data-cat="@x.Categoria" data-forma="@x.FormaCalculo" data-valor="@x.Valor" data-unidad="@x.UnidadCalculo">@x.Descripcion</option>
+}
+</select></div><div class="col-md-2"><label>Categoría</label><input id="cat" class="form-control" disabled></div><div class="col-md-2"><label>Forma de cálculo</label><input id="forma" class="form-control" disabled></div><div class="col-md-2"><label>Valor / Condición</label><input id="valor" class="form-control" disabled></div><div class="col-md-2"><label>UIT vigente</label><input class="form-control" value="Configurable" disabled></div></div></div>
+<div class="section"><h5>4. Responsables</h5><div class="row g-3"><div class="col-md-4"><label>Coordinador responsable *</label><input name="responsable" class="form-control" placeholder="Responsable de seguimiento" required></div><div class="col-md-8"><label>Trabajador involucrado</label><div class="alert alert-primary mb-0 py-2">La vinculación con trabajadores se activará cuando implementemos RR.HH./Planillas. La penalidad ya queda preparada para esa relación.</div></div></div></div>
+<div class="section"><h5>5. Detalle y cálculo</h5><div class="row g-3"><div class="col-md-2"><label>Cantidad *</label><input id="cantidad" type="number" min="1" value="1" name="cantidad" class="form-control" required></div><div class="col-md-3"><label>Monto total calculado</label><div class="calc" id="monto">S/ 0.00</div></div><div class="col-md-7"><label>Descripción del hecho *</label><textarea name="descripcion" class="form-control" rows="3" required></textarea></div></div></div>
+<div class="section"><h5>6. Observaciones y estado</h5><div class="row g-3"><div class="col-md-8"><label>Observaciones</label><textarea name="observacion" class="form-control" rows="2"></textarea></div><div class="col-md-2"><label>Fecha límite de pago</label><input type="date" name="fechaLimitePago" class="form-control"></div><div class="col-md-2"><label>Estado inicial</label><input class="form-control" value="REGISTRADA" disabled></div></div></div>
+</div>
+<div class="modal-footer d-flex justify-content-end gap-2"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary px-5">Guardar Penalidad</button></div>
+</form>
+</div>
+<script>
+    window.initNuevaPenalidad = function(){const c=document.querySelector('#cliente'),co=document.querySelector('#contrato'),s=document.querySelector('#sede'),t=document.querySelector('#tipo'),q=document.querySelector('#cantidad');function fil(sel){[...sel.options].forEach((o,i)=>{if(!i)return;o.hidden=o.dataset.u!==c.value});sel.value=''}function calc(){let o=t.selectedOptions[0],v=parseFloat(o?.dataset.valor||0),n=parseFloat(q.value||0);document.querySelector('#cat').value=o?.dataset.cat||'';document.querySelector('#forma').value=o?.dataset.forma||'';document.querySelector('#valor').value=v?(v+' '+(o?.dataset.unidad||'')):'';document.querySelector('#monto').textContent='S/ '+(v*n).toFixed(2)+' *'}c.addEventListener('change',()=>{fil(co);fil(s);fil(t)});t.addEventListener('change',calc);q.addEventListener('input',calc)};
+    window.initNuevaPenalidad();
+</script>

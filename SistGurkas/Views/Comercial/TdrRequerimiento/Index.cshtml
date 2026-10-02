@@ -1,0 +1,96 @@
+﻿@model SistGurkas.Models.Comercial.TdrDashboardVm
+@{ ViewData["Title"] = "TDR / Requerimientos"; var total = Math.Max(Model.TotalRequerimientos, 1); }
+<style>
+.tdr-page{color:#10224b}.tdr-head{background:linear-gradient(110deg,#17386f 0%,#2f61a9 100%);border:0;border-radius:12px;padding:24px 26px;box-shadow:0 8px 22px rgba(23,56,111,.12);color:#fff}.tdr-crumb{font-size:12px;color:#bcd2f5}.tdr-head h2{font-size:27px;font-weight:700;margin:5px 0 2px;color:#fff}.tdr-muted{color:#7283a6}.tdr-head .tdr-muted{color:#d7e4f7}.tdr-card{background:#fff;border:0;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.05)}.filter-card{padding:12px}.filter-card label{font-size:11px;color:#42629b;margin-bottom:4px}.filter-card .form-select,.filter-card .form-control{height:39px;border-color:#cfe0f7;font-size:13px}.kpi-card{height:105px;padding:15px 16px;display:flex;align-items:center;gap:14px;transition:transform .2s ease,box-shadow .2s ease}.kpi-card:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.08)}.kpi-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:700}.kpi-blue{background:#e7f1ff;color:#1672ff}.kpi-green{background:#e5f8ed;color:#19a85b}.kpi-orange{background:#fff0e5;color:#ff720d}.kpi-purple{background:#f0e8ff;color:#8247e5}.kpi-card small{color:#46618e}.kpi-card strong{display:block;font-size:24px;color:#10224b;line-height:1.05;margin-top:4px}.dash-panel{padding:14px 15px;height:100%}.dash-title{font-weight:700;font-size:14px;margin-bottom:13px}.bar-row{display:grid;grid-template-columns:135px 1fr 42px;gap:10px;align-items:center;margin:12px 0;font-size:12px}.bar-track{height:14px;background:#edf3fb;border-radius:2px;overflow:hidden}.bar{height:100%;border-radius:2px}.bar-blue{background:linear-gradient(90deg,#3d8bfd,#6aa6ff)}.bar-orange{background:linear-gradient(90deg,#ff8a34,#ffb15f)}.bar-purple{background:linear-gradient(90deg,#8358e8,#a77bf4)}.bar-green{background:linear-gradient(90deg,#27b968,#61d58f)}.donut{width:150px;height:150px;border-radius:50%;margin:auto;display:grid;place-items:center;background:conic-gradient(#2fbd68 0 var(--active),#ef5350 var(--active) 100%)}.donut:after{content:"";width:92px;height:92px;background:#fff;border-radius:50%;position:absolute}.donut-wrap{position:relative;text-align:center}.donut-center{position:absolute;inset:0;display:grid;place-content:center;z-index:2;font-size:12px}.donut-center b{font-size:24px}.stack-row{display:grid;grid-template-columns:70px 1fr 32px;gap:8px;align-items:center;margin:10px 0;font-size:11px}.stack{height:13px;display:flex;background:#edf3fb}.stack span{height:100%}.table-dashboard{font-size:12px;margin:0}.table-dashboard thead th{background:#f1f7ff;color:#17356d;border-color:#dfeaf7;white-space:nowrap;font-weight:600}.table-dashboard td{border-color:#edf2f8;vertical-align:middle}.badge-cat{padding:5px 9px;border-radius:7px;font-size:10px;font-weight:700}.cat-personal{background:#e8f2ff;color:#0866d8}.cat-equipo{background:#fff0e5;color:#dc650d}.cat-documentacion{background:#efe8ff;color:#7144d6}.area-chip{font-size:10px;color:#375d9b}.nav-tdr .nav-link{font-size:12px;border-radius:5px;color:#2680eb;padding:8px 13px}.nav-tdr .nav-link.active{background:#1672f9;color:#fff}.empty-box{padding:35px;text-align:center;color:#8492ad}.mini-list{max-height:275px;overflow:auto}.mini-item{padding:9px 0;border-bottom:1px solid #edf2f8;font-size:12px}.mini-item:last-child{border:0}.btn-primary{background:#3d8bfd;border-color:#3d8bfd}.btn-primary:hover{background:#2f78e6;border-color:#2f78e6}.tdr-pager{display:flex;justify-content:space-between;align-items:center;padding:14px 10px 6px;color:#8492ad;font-size:12px}.tdr-page-btn{min-width:32px;height:32px;border:1px solid #e2eaf5;background:#fff;border-radius:6px;color:#526174;margin-left:4px}.tdr-page-btn.active{background:#3d8bfd;border-color:#3d8bfd;color:#fff}.tdr-page-btn:disabled{opacity:.45}.section-grid{min-height:265px}
+</style>
+<div class="container-fluid py-4 tdr-page">
+  <div class="tdr-head mb-2">
+    <div class="tdr-crumb"><i class="ki-duotone ki-home"></i> &nbsp; Comercial &nbsp;›&nbsp; TDR / Requerimientos</div>
+    <h2>Dashboard TDR / Requerimientos del Servicio</h2>
+    <div class="tdr-muted">Vista general de los requerimientos detectados en TDR por cliente, contrato, sede y área responsable.</div>
+  </div>
+
+  <form method="get" class="tdr-card filter-card mb-2">
+    <div class="row g-2 align-items-end">
+      <div class="col-lg-2"><label>Cliente</label><select class="form-select" name="cliente"><option value="">Todos</option>@foreach(var x in Model.Clientes){<option value="@x" selected="@(Model.FiltroCliente==x)">@x</option>}</select></div>
+      <div class="col-lg-2"><label>Contrato</label><select class="form-select" name="contrato"><option value="">Todos</option>@foreach(var x in Model.Contratos){<option value="@x" selected="@(Model.FiltroContrato==x)">@x</option>}</select></div>
+      <div class="col-lg-2"><label>Estado</label><select class="form-select" name="estado"><option value="">Todos</option><option value="1" selected="@(Model.FiltroEstado==1)">Activo</option><option value="0" selected="@(Model.FiltroEstado==0)">Inactivo</option></select></div>
+      <div class="col-lg-2"><label>Sede</label><select class="form-select" name="sede"><option value="">Todas</option>@foreach(var x in Model.Sedes){<option value="@x" selected="@(Model.FiltroSede==x)">@x</option>}</select></div>
+      <div class="col-lg-2"><label>Tipo</label><select class="form-select" name="categoria"><option value="">Todos</option><option value="PERSONAL" selected="@(Model.FiltroCategoria=="PERSONAL")">Personal</option><option value="EQUIPO" selected="@(Model.FiltroCategoria=="EQUIPO")">Equipos / EPP</option><option value="DOCUMENTACION" selected="@(Model.FiltroCategoria=="DOCUMENTACION")">Documentación</option></select></div>
+      <div class="col-lg-2 d-flex gap-2"><button class="btn btn-primary flex-grow-1" type="submit"><i class="ki-duotone ki-magnifier"></i> Buscar</button><a class="btn btn-light" href="@Url.Action("Index")" title="Limpiar">✕</a></div>
+    </div>
+  </form>
+
+  <div class="row g-2 mb-2">
+    <div class="col-lg"><div class="tdr-card kpi-card"><div class="kpi-icon kpi-blue">▣</div><div><small>Total de TDR</small><strong>@Model.TotalTdr</strong><span class="tdr-muted small">Analizados y publicados</span></div></div></div>
+    <div class="col-lg"><div class="tdr-card kpi-card"><div class="kpi-icon kpi-green">✓</div><div><small>Cumplimiento general</small><strong>@Model.CumplimientoGeneral.ToString("0.0")%</strong><span class="tdr-muted small">@Model.Cumplidos cumplidos de @Model.TotalRequerimientos</span></div></div></div>
+    <div class="col-lg"><div class="tdr-card kpi-card"><div class="kpi-icon kpi-blue">♟</div><div><small>Requerimientos de personal</small><strong>@Model.Personal</strong><span class="tdr-muted small">RR.HH. / Operaciones</span></div></div></div>
+    <div class="col-lg"><div class="tdr-card kpi-card"><div class="kpi-icon kpi-orange">◇</div><div><small>Equipos, uniformes y EPP</small><strong>@Model.Equipos</strong><span class="tdr-muted small">Logística / Armamento</span></div></div></div>
+    <div class="col-lg"><div class="tdr-card kpi-card"><div class="kpi-icon kpi-purple">▤</div><div><small>Documentación y planes</small><strong>@Model.Documentacion</strong><span class="tdr-muted small">Documentación contractual</span></div></div></div>
+  </div>
+
+  <div class="row g-2 mb-2 section-grid">
+    <div class="col-lg-4"><div class="tdr-card dash-panel"><div class="dash-title">Cumplimiento por tipo de requerimiento</div>
+      @foreach(var x in Model.CumplimientoPorTipo){ var cls=x.Nombre=="PERSONAL"?"bar-blue":x.Nombre=="EQUIPO"?"bar-orange":"bar-purple"; var nombre=x.Nombre=="PERSONAL"?"Personal":x.Nombre=="EQUIPO"?"Equipos / EPP":"Documentación y planes";<div class="bar-row"><span>@nombre</span><div class="bar-track"><div class="bar @cls" style="width:@(x.Porcentaje.ToString(System.Globalization.CultureInfo.InvariantCulture))%"></div></div><b>@x.Porcentaje.ToString("0.#")%</b></div>}
+    </div></div>
+    <div class="col-lg-4"><div class="tdr-card dash-panel"><div class="dash-title">Estado de los requerimientos (Total: @Model.TotalRequerimientos)</div>
+      @{ var donePct = Model.TotalRequerimientos == 0 ? 0 : Model.Cumplidos * 100.0 / Model.TotalRequerimientos; var procPct = Model.TotalRequerimientos == 0 ? 0 : Model.EnProceso * 100.0 / Model.TotalRequerimientos; }
+      <div class="d-flex align-items-center justify-content-around pt-2"><div class="donut-wrap"><div class="donut" style="--active:@(donePct.ToString(System.Globalization.CultureInfo.InvariantCulture))%"></div><div class="donut-center"><b>@Model.TotalRequerimientos</b><span>Requerimientos</span></div></div><div style="font-size:12px"><div class="mb-2"><span class="badge bg-success me-2">●</span> Cumplidos <b>@Model.Cumplidos</b></div><div class="mb-2"><span class="badge bg-warning me-2">●</span> En proceso <b>@Model.EnProceso</b></div><div class="mb-2"><span class="badge bg-danger me-2">●</span> Pendientes <b>@Model.Pendientes</b></div><div><span class="badge bg-secondary me-2">●</span> No aplica <b>@Model.NoAplica</b></div></div></div>
+    </div></div>
+    <div class="col-lg-4"><div class="tdr-card dash-panel"><div class="dash-title">Requerimientos por cliente</div>
+      @if(Model.PorCliente.Any()){foreach(var x in Model.PorCliente){<div class="stack-row"><b>@x.Nombre</b><div class="stack"><span class="bar-blue" style="width:@(x.Personal*100.0/Math.Max(x.Total,1))%"></span><span class="bar-orange" style="width:@(x.Equipos*100.0/Math.Max(x.Total,1))%"></span><span class="bar-purple" style="width:@(x.Documentacion*100.0/Math.Max(x.Total,1))%"></span></div><b>@x.Total</b></div>}}else{<div class="empty-box">Sin datos para mostrar.</div>}
+    </div></div>
+  </div>
+
+  <div class="row g-2 mb-2 section-grid">
+    <div class="col-lg-4"><div class="tdr-card dash-panel"><div class="dash-title">Cumplimiento por sede</div>@if(Model.CumplimientoPorSede.Any()){foreach(var x in Model.CumplimientoPorSede.Take(8)){<div class="bar-row"><span>@x.Nombre</span><div class="bar-track"><div class="bar bar-green" style="width:@(x.Porcentaje.ToString(System.Globalization.CultureInfo.InvariantCulture))%"></div></div><b>@x.Porcentaje.ToString("0.#")%</b></div>}}else{<div class="empty-box">Sin sedes asociadas.</div>}</div></div>
+    <div class="col-lg-4"><div class="tdr-card dash-panel"><div class="dash-title">Evolución del cumplimiento</div>@if(Model.Evolucion.Any()){foreach(var x in Model.Evolucion.TakeLast(6)){<div class="bar-row"><span>@x.Periodo</span><div class="bar-track"><div class="bar bar-blue" style="width:@(x.Porcentaje.ToString(System.Globalization.CultureInfo.InvariantCulture))%"></div></div><b>@x.Porcentaje.ToString("0.#")%</b></div>}}else{<div class="empty-box">Aún no hay avances registrados. La evolución aparecerá desde la primera actualización operativa.</div>}</div></div>
+    <div class="col-lg-4"><div class="tdr-card dash-panel"><div class="dash-title">Requerimientos pendientes por área responsable</div>@if(Model.PendientesPorArea.Any()){var maxArea=Math.Max(1,Model.PendientesPorArea.Max(x=>x.Pendientes));foreach(var x in Model.PendientesPorArea.Take(8)){<div class="bar-row"><span>@x.Area.Replace("|"," / ")</span><div class="bar-track"><div class="bar bar-orange" style="width:@(x.Pendientes*100.0/maxArea)%"></div></div><b>@x.Pendientes</b></div>}}else{<div class="empty-box">No hay pendientes.</div>}</div></div>
+  </div>
+  <div class="tdr-card p-2">
+    <ul class="nav nav-pills nav-tdr mb-2">
+      <li class="nav-item"><a class="nav-link @(string.IsNullOrWhiteSpace(Model.FiltroCategoria)?"active":"")" href="@Url.Action("Index", new { cliente=Model.FiltroCliente, contrato=Model.FiltroContrato, sede=Model.FiltroSede, estado=Model.FiltroEstado })">Todos</a></li>
+      <li class="nav-item"><a class="nav-link @(Model.FiltroCategoria=="PERSONAL"?"active":"")" href="@Url.Action("Index", new { categoria="PERSONAL", cliente=Model.FiltroCliente, contrato=Model.FiltroContrato, sede=Model.FiltroSede, estado=Model.FiltroEstado })">1. Personal</a></li>
+      <li class="nav-item"><a class="nav-link @(Model.FiltroCategoria=="EQUIPO"?"active":"")" href="@Url.Action("Index", new { categoria="EQUIPO", cliente=Model.FiltroCliente, contrato=Model.FiltroContrato, sede=Model.FiltroSede, estado=Model.FiltroEstado })">2. Equipos, Uniformes y EPP</a></li>
+      <li class="nav-item"><a class="nav-link @(Model.FiltroCategoria=="DOCUMENTACION"?"active":"")" href="@Url.Action("Index", new { categoria="DOCUMENTACION", cliente=Model.FiltroCliente, contrato=Model.FiltroContrato, sede=Model.FiltroSede, estado=Model.FiltroEstado })">3. Documentación</a></li>
+    </ul>
+    <div class="table-responsive"><table class="table table-dashboard align-middle"><thead><tr><th>Cliente</th><th>Contrato</th><th>Sede</th><th>Tipo</th><th>Requerimiento</th><th>Cant.</th><th>Área responsable</th><th>Fuente</th><th>Estado</th></tr></thead><tbody>
+    @foreach(var x in Model.Items){var cls=x.Categoria=="PERSONAL"?"cat-personal":x.Categoria=="EQUIPO"?"cat-equipo":"cat-documentacion";<tr class="tdr-data-row"><td><b>@x.Cliente</b></td><td>@x.Contrato</td><td>@(string.IsNullOrWhiteSpace(x.Sede)?"—":x.Sede)</td><td><span class="badge-cat @cls">@x.Categoria</span></td><td style="min-width:330px">@x.Descripcion</td><td>@x.Cantidad @x.UnidadMedida</td><td><span class="area-chip">@x.AreaResponsable.Replace("|"," / ")</span></td><td class="tdr-muted" style="min-width:210px">@x.Fuente</td><td>@if(x.IdEstado==1){<span class="badge bg-light-success text-success">Activo</span>}else{<span class="badge bg-light-danger text-danger">Inactivo</span>}</td></tr>}
+    @if(!Model.Items.Any()){<tr><td colspan="9" class="empty-box">No hay requerimientos para los filtros seleccionados.</td></tr>}</tbody></table></div>
+    @if(Model.Items.Any()){<div class="tdr-pager"><span id="tdrPageInfo"></span><div id="tdrPagerButtons"></div></div>}
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const rows = Array.from(document.querySelectorAll('.tdr-data-row'));
+    if (!rows.length) return;
+    const pageSize = 10;
+    const totalPages = Math.ceil(rows.length / pageSize);
+    let currentPage = 1;
+    const info = document.getElementById('tdrPageInfo');
+    const buttons = document.getElementById('tdrPagerButtons');
+
+    function renderPage(page) {
+        currentPage = Math.max(1, Math.min(page, totalPages));
+        const start = (currentPage - 1) * pageSize;
+        const end = Math.min(start + pageSize, rows.length);
+        rows.forEach((row, i) => row.style.display = (i >= start && i < end) ? '' : 'none');
+        info.textContent = `Mostrando ${start + 1} - ${end} de ${rows.length} requerimientos`;
+        buttons.innerHTML = '';
+
+        const addButton = (label, page, active, disabled) => {
+            const b = document.createElement('button');
+            b.type = 'button'; b.className = 'tdr-page-btn' + (active ? ' active' : '');
+            b.textContent = label; b.disabled = disabled; b.addEventListener('click', () => renderPage(page));
+            buttons.appendChild(b);
+        };
+        addButton('‹', currentPage - 1, false, currentPage === 1);
+        let from = Math.max(1, currentPage - 2), to = Math.min(totalPages, from + 4);
+        from = Math.max(1, to - 4);
+        for (let p = from; p <= to; p++) addButton(String(p), p, p === currentPage, false);
+        addButton('›', currentPage + 1, false, currentPage === totalPages);
+    }
+    renderPage(1);
+});
+</script>

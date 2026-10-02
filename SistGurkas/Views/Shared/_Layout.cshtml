@@ -3350,7 +3350,9 @@
     var controllerActual = ViewContext.RouteData.Values["controller"]?.ToString();
     var comercialActivo = controllerActual == "Prospecto"
                     || controllerActual == "Oportunidad"
-                    || controllerActual == "Cliente";
+                    || controllerActual == "Cliente"
+                    || controllerActual == "TdrRequerimiento"
+                    || controllerActual == "Penalidad";
 }
 
 <div data-kt-menu-trigger="click"
@@ -3424,6 +3426,8 @@
         <span class="menu-title">Clientes</span>
     </a>
 </div>
+<div class="menu-item"><a class="menu-link @(controllerActual == "TdrRequerimiento" ? "active" : "")" asp-controller="TdrRequerimiento" asp-action="Index"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">TDR / Requerimientos</span></a></div>
+<div data-kt-menu-trigger="click" class="menu-item menu-accordion @(controllerActual == "Penalidad" ? "here show" : "")"><span class="menu-link"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">Penalidades</span><span class="menu-arrow"></span></span><div class="menu-sub menu-sub-accordion"><div class="menu-item"><a class="menu-link" asp-controller="Penalidad" asp-action="Index"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">Dashboard</span></a></div><div class="menu-item"><a class="menu-link" asp-controller="Penalidad" asp-action="Tipos"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">Tipos de Penalidades</span></a></div><div class="menu-item"><a class="menu-link" asp-controller="Penalidad" asp-action="PorCliente"><span class="menu-bullet"><span class="bullet bullet-dot"></span></span><span class="menu-title">Penalidades por Cliente</span></a></div></div></div>
 
             </div>
         </div>

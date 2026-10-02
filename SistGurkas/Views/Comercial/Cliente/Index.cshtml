@@ -1,8 +1,8 @@
-﻿@model IEnumerable<SistGurkas.Models.Comercial.Unidad>
+@model IEnumerable<SistGurkas.Models.Comercial.Unidad>
 @using SistGurkas.Models.Comercial
 @using System.Text.Json
 @{
-    ViewData["Title"] = "Clientes"; var items = Model?.ToList() ?? new(); var empresas = ViewBag.Empresas as List<(int Id, string Nombre)> ?? new(); var activos = items.Count(x => x.IdEstado == 1); var inactivos = items.Count(x => x.IdEstado == 2);
+    ViewData["Title"] = "Clientes"; var items = Model?.ToList() ?? new(); var empresas = ViewBag.Empresas as List<(int Id, string Nombre)> ?? new(); var sectores = ViewBag.Sectores as List<(int Id, string Nombre)> ?? new(); var departamentos = ViewBag.Departamentos as List<(int Id, string Nombre)> ?? new(); var activos = items.Count(x => x.IdEstado == 1); var inactivos = items.Count(x => x.IdEstado == 2);
 }
 <style>
     .cli-page .card {
@@ -13,69 +13,237 @@
     .cli-header {
         padding: 24px 26px;
         border-radius: 12px;
-        background: linear-gradient(110deg,#17386f,#2f61a9)
+        background: linear-gradient(110deg,#17386f 0%,#2f61a9 100%);
+        box-shadow: 0 8px 22px rgba(23,56,111,.12)
     }
 
     .cli-sub {
         color: #b9d2ff;
         font-size: 11px;
-        font-weight: 700
+        font-weight: 700;
+        letter-spacing: .5px
     }
 
     .cli-desc {
-        color: #ffffffdd
+        color: rgba(255,255,255,.88);
+        font-size: 13px
     }
 
-    .metric {
-        border: 1px solid #edf0f5 !important
+    .cli-header .btn {
+        background: #f4f8ff;
+        border: 0
     }
 
-    .num {
+        .cli-header .btn:hover {
+            background: #fff
+        }
+
+    .metric-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #edf0f5 !important;
+        transition: transform .2s ease,box-shadow .2s ease
+    }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 18px rgba(0,0,0,.08)
+        }
+
+        .metric-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #315fa8
+        }
+
+        .metric-card.card-active::before {
+            background: #25b46b
+        }
+
+        .metric-card.card-inactive::before {
+            background: #dc3545
+        }
+
+    .metric-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0
+    }
+
+    .metric-total {
+        background: #e8f1ff;
+        color: #0d6efd
+    }
+
+    .metric-active {
+        background: #e4f8ee;
+        color: #0f9d58
+    }
+
+    .metric-inactive {
+        background: #fde8eb;
+        color: #dc3545
+    }
+
+    .metric-number {
         font-size: 22px;
+        line-height: 1.1;
         font-weight: 700;
-        color: #152348
+        color: #152348;
+        margin-bottom: 5px
     }
 
-    .lbl {
+    .metric-label {
         font-size: 12px;
-        color: #71809f
+        line-height: 1.2;
+        font-weight: 500;
+        color: #71809f;
+        white-space: nowrap
     }
 
-    ..cli-table th,
-    .cli-table td {
-        padding: 14px 12px;
+    .app-svg {
+        width: 20px;
+        height: 20px;
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
         vertical-align: middle;
+        stroke: currentColor !important;
+        fill: none !important;
+        stroke-width: 1.8 !important;
+        stroke-linecap: round !important;
+        stroke-linejoin: round !important
     }
 
-        .cli-table th:first-child,
-        .cli-table td:first-child {
-            padding-left: 24px !important;
-        }
+    .metric-icon .app-svg {
+        width: 22px;
+        height: 22px
+    }
 
-        .cli-table th:last-child,
-        .cli-table td:last-child {
-            padding-right: 24px !important;
-        }
-
-    .cli-table th {
+    .cli-filter-card label {
         font-size: 12px;
-        color: #71809f
+        font-weight: 600;
+        color: #344563
     }
 
-    .code {
+    .cli-table-card {
+        overflow: hidden
+    }
+
+    .cli-table-title {
+        padding: 18px 20px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between
+    }
+
+        .cli-table-title h3 {
+            margin: 0;
+            color: #152348;
+            font-size: 16px;
+            font-weight: 700
+        }
+
+    .cli-table {
+        margin-bottom: 0
+    }
+
+        .cli-table th, .cli-table td {
+            vertical-align: middle;
+            padding: 14px 12px
+        }
+
+            .cli-table th:first-child, .cli-table td:first-child {
+                padding-left: 24px !important
+            }
+
+            .cli-table th:last-child, .cli-table td:last-child {
+                padding-right: 24px !important
+            }
+
+        .cli-table thead th {
+            color: #71809f;
+            font-weight: 700;
+            font-size: 12px;
+            white-space: nowrap
+        }
+
+    .cli-code {
         font-weight: 700;
-        color: #31547e
+        color: #31547e;
+        white-space: nowrap
     }
 
-    .name {
+    .cli-name {
         font-weight: 700;
-        color: #182a4e
+        color: #182a4e;
+        display: block
     }
 
-    .btn-act {
-        width: 36px;
-        height: 36px;
-        padding: 0
+    .cli-subtext {
+        display: block;
+        color: #71809f;
+        font-size: 11px;
+        margin-top: 2px
+    }
+
+    .cli-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 78px;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 600
+    }
+
+    .status-active {
+        background: #dff6e8;
+        color: #16803c
+    }
+
+    .status-inactive {
+        background: #ffe2e5;
+        color: #c62828
+    }
+
+    .cli-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px
+    }
+
+    .btn-action {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        border-radius: 8px !important
+    }
+
+        .btn-action .app-svg {
+            width: 18px !important;
+            height: 18px !important;
+            stroke-width: 2 !important
+        }
+
+    .btn-activar {
+        color: #16803c !important;
+        background: #e4f8ee !important
     }
 
     .info-label {
@@ -89,22 +257,55 @@
         color: #8491aa;
         padding: 45px
     }
+
+    @@media(max-width:1100px) {
+        .cli-table {
+            min-width: 980px
+        }
+    }
 </style>
 <div class="cli-page">
-    <div class="cli-header mb-5"><div class="d-flex justify-content-between align-items-center"><div><div class="cli-sub">COMERCIAL · CRM</div><h1 class="text-white fw-bold my-2">Clientes</h1><div class="cli-desc">Administra clientes, contactos, sedes y su información comercial.</div></div><button class="btn btn-light-primary" id="btnNuevo">+ Nuevo cliente</button></div></div>
-    <div class="row g-3 mb-5"><div class="col-md-4"><div class="card metric"><div class="card-body"><div class="num">@items.Count</div><div class="lbl">Clientes registrados</div></div></div></div><div class="col-md-4"><div class="card metric"><div class="card-body"><div class="num">@activos</div><div class="lbl">Clientes activos</div></div></div></div><div class="col-md-4"><div class="card metric"><div class="card-body"><div class="num">@inactivos</div><div class="lbl">Clientes inactivos</div></div></div></div></div>
-    <div class="card mb-4"><div class="card-body"><form class="row g-3 align-items-end"><div class="col-md-4"><label class="form-label">Buscar</label><input name="buscar" value="@ViewBag.Buscar" class="form-control" placeholder="Código, RUC, razón social..."></div><div class="col-md-3"><label class="form-label">Empresa Gurkas</label><select name="idEmpresa" class="form-select"><option value="">Todas</option>@foreach(var e in empresas){
-        <option value="@e.Id" selected="@(ViewBag.IdEmpresa==e.Id)">@e.Nombre</option>
-    }
-</select></div><div class="col-md-2"><label class="form-label">Estado</label><select name="idEstado" class="form-select"><option value="">Todos</option><option value="1">Activo</option><option value="2">Inactivo</option></select></div><div class="col-md-3 d-flex gap-2"><button class="btn btn-primary flex-fill">Buscar</button><a asp-action="Index" class="btn btn-light flex-fill">Limpiar</a></div></form></div></div>
-<div class="card">
-    <div class="p-5 pb-2"><h3>Lista de Clientes <span class="text-muted fs-7">(@items.Count registros)</span></h3></div><div class="table-responsive">
+    <div class="cli-header mb-5"><div class="d-flex justify-content-between align-items-center"><div><div class="cli-sub">COMERCIAL · CRM</div><h1 class="text-white fw-bold my-2">Clientes</h1><div class="cli-desc">Administra clientes, contactos, sedes y su información comercial.</div></div><button class="btn btn-light-primary d-inline-flex align-items-center gap-2" id="btnNuevo"><svg class="app-svg" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>Nuevo cliente</button></div></div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="card metric-card h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-total"><svg class="app-svg" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg></div><div><div class="metric-number">@items.Count</div><div class="metric-label">Clientes registrados</div></div></div></div></div>
+        <div class="col-md-4"><div class="card metric-card card-active h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-active"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></div><div><div class="metric-number">@activos</div><div class="metric-label">Clientes activos</div></div></div></div></div>
+        <div class="col-md-4"><div class="card metric-card card-inactive h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-inactive"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg></div><div><div class="metric-number">@inactivos</div><div class="metric-label">Clientes inactivos</div></div></div></div></div>
+    </div>
+    <div class="card cli-filter-card mb-4">
+        <div class="card-body">
+            <form class="row g-3 align-items-end">
+                <div class="col-md-4"><label class="form-label">Buscar</label><input name="buscar" value="@ViewBag.Buscar" class="form-control" placeholder="Código, RUC, razón social..."></div><div class="col-md-3">
+                <label class="form-label">Empresa Gurkas</label><select name="idEmpresa" class="form-select">
+                <option value="">Todas</option>@foreach(var e in empresas){
+                <option value="@e.Id" selected="@(ViewBag.IdEmpresa==e.Id)">@e.Nombre</option>
+            }
+        </select>
+    </div><div class="col-md-2"><label class="form-label">Estado</label><select name="idEstado" class="form-select"><option value="">Todos</option><option value="1">Activo</option><option value="2">Inactivo</option></select></div><div class="col-md-3 d-flex gap-2"><button class="btn btn-primary flex-fill">Buscar</button><a asp-action="Index" class="btn btn-light flex-fill">Limpiar</a></div>
+</form>
+</div>
+</div>
+<div class="card cli-table-card">
+    <div class="cli-table-title"><h3>Lista de Clientes <span class="text-muted fs-7">(@items.Count registros)</span></h3></div><div class="table-responsive">
     <table class="table cli-table mb-0">
         <thead><tr><th>Código</th><th>Cliente</th><th>RUC</th><th>Empresa Gurkas</th><th>Contacto</th><th>Estado</th><th>Acciones</th></tr></thead>
         <tbody>
             @foreach (var x in items)
             {
-                <tr><td><span class="code">@x.CodigoUnidad</span><div class="text-muted fs-8">@x.CodigoCliente</div></td><td><span class="name">@x.RazonSocial</span><div class="text-muted fs-8">@(x.NombreComercial??"—")</div></td><td>@(x.RucUnidad??"—")</td><td>@x.EmpresaNombre</td><td>@(x.Telefono??"—")<div class="text-muted fs-8">@(x.Correo??"—")</div></td><td><span class="badge @(x.IdEstado==1?"badge-light-success":"badge-light-danger")">@(x.IdEstado==1?"ACTIVO":"INACTIVO")</span></td><td><button class="btn btn-light-info btn-act btnDetalle" data-id="@x.IdUnidad">👁</button> <button class="btn btn-light-primary btn-act btnEditar" data-item='@JsonSerializer.Serialize(x,new JsonSerializerOptions{PropertyNamingPolicy=JsonNamingPolicy.CamelCase})'>✎</button> <button class="btn @(x.IdEstado==1?"btn-light-danger":"btn-light-success") btn-act btnEstado" data-id="@x.IdUnidad" data-estado="@x.IdEstado" data-nombre="@x.RazonSocial">↔</button></td></tr>
+                <tr>
+                    <td><span class="cli-code">@x.CodigoCliente</span></td>
+                    <td><span class="cli-name">@x.RazonSocial</span><span class="cli-subtext">@(string.IsNullOrWhiteSpace(x.NombreComercial) ? "—" : x.NombreComercial)</span></td>
+                    <td>@(x.RucUnidad??"—")</td>
+                    <td>@x.EmpresaNombre</td>
+                    <td>@(x.Telefono??"—")<span class="cli-subtext">@(x.Correo??"—")</span></td>
+                    <td><span class="cli-status @(x.IdEstado==1?"status-active":"status-inactive")">@(x.IdEstado==1?"ACTIVO":"INACTIVO")</span></td>
+                    <td>
+                        <div class="cli-actions">
+                            <button type="button" class="btn btn-light-info btn-action btnDetalle" title="Ver detalle" data-id="@x.IdUnidad"><svg class="app-svg" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg></button>
+                            <button type="button" class="btn btn-light-primary btn-action btnEditar" title="Editar" data-item='@JsonSerializer.Serialize(x,new JsonSerializerOptions{PropertyNamingPolicy=JsonNamingPolicy.CamelCase})'><svg class="app-svg" viewBox="0 0 24 24"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z" /></svg></button>
+                            <button type="button" class="btn btn-action @(x.IdEstado==1?"btn-light-danger":"btn-activar") btnEstado" title="@(x.IdEstado==1?"Dar de baja":"Activar")" data-id="@x.IdUnidad" data-estado="@x.IdEstado" data-nombre="@x.RazonSocial"><svg class="app-svg" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="5" /><circle cx="@(x.IdEstado==1 ? 8 : 16)" cy="12" r="3" /></svg></button>
+                        </div>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
@@ -118,16 +319,31 @@
             <form asp-action="Guardar" method="post" id="formCliente">
                 @Html.AntiForgeryToken()<input type="hidden" name="IdUnidad" id="cId" value="0"><div class="modal-header"><h3 id="cTitulo">Nuevo cliente</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
                 <div class="row g-4">
-                    <div class="col-md-3"><label class="form-label required">Código Unidad</label><input name="CodigoUnidad" id="cCodigo" class="form-control" required></div><div class="col-md-5"><label class="form-label required">Empresa Gurkas</label><select name="IdEmpresa" id="cEmpresa" class="form-select" required><option value="">Seleccionar...</option>@foreach(var e in empresas){
+                    <div class="col-md-3"><label class="form-label required">Código Unidad</label><input name="CodigoUnidad" id="cCodigo" class="form-control" required></div><div class="col-md-5">
+                    <label class="form-label required">Empresa Gurkas</label><select name="IdEmpresa" id="cEmpresa" class="form-select" required>
+                    <option value="">Seleccionar...</option>@foreach(var e in empresas){
                     <option value="@e.Id">@e.Nombre</option>
                 }
-            </select></div><div class="col-md-4"><label class="form-label">RUC</label><input name="RucUnidad" id="cRuc" maxlength="11" class="form-control"></div>
-            <div class="col-md-6"><label class="form-label required">Razón social</label><input name="RazonSocial" id="cRazon" class="form-control" required></div><div class="col-md-6"><label class="form-label">Nombre comercial</label><input name="NombreComercial" id="cNombre" class="form-control"></div>
-            <div class="col-md-4"><label class="form-label">Sector (ID)</label><input name="IdSector" id="cSector" type="number" class="form-control"></div><div class="col-md-4"><label class="form-label">Centro costo</label><input name="CentroCosto" id="cCC" class="form-control"></div><div class="col-md-4"><label class="form-label">Página web</label><input name="PaginaWeb" id="cWeb" class="form-control"></div>
-            <div class="col-md-4"><label class="form-label">Departamento (ID)</label><input name="IdDepartamento" id="cDep" type="number" class="form-control"></div><div class="col-md-4"><label class="form-label">Provincia (ID)</label><input name="IdProvincia" id="cProv" type="number" class="form-control"></div><div class="col-md-4"><label class="form-label">Distrito (ID)</label><input name="IdDistrito" id="cDist" type="number" class="form-control"></div>
-            <div class="col-12"><label class="form-label">Dirección</label><input name="Direccion" id="cDir" class="form-control"></div><div class="col-md-4"><label class="form-label">Teléfono</label><input name="Telefono" id="cTel" class="form-control"></div><div class="col-md-4"><label class="form-label">Correo</label><input name="Correo" id="cCorreo" type="email" class="form-control"></div><div class="col-md-4"><label class="form-label">Fecha activación</label><input name="FechaActivacion" id="cFecha" type="date" class="form-control"></div><div class="col-12"><label class="form-label">Observación</label><textarea name="Observacion" id="cObs" class="form-control"></textarea></div>
-        </div>
-    </div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar cliente</button></div>
+            </select>
+        </div><div class="col-md-4"><label class="form-label">RUC</label><input name="RucUnidad" id="cRuc" maxlength="11" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label required">Razón social</label><input name="RazonSocial" id="cRazon" class="form-control" required></div><div class="col-md-6"><label class="form-label">Nombre comercial</label><input name="NombreComercial" id="cNombre" class="form-control"></div>
+        <div class="col-md-4">
+            <label class="form-label">Sector / Rubro</label><select name="IdSector" id="cSector" class="form-select">
+            <option value="">Seleccionar</option>@foreach(var x in sectores){
+            <option value="@x.Id">@x.Nombre</option>
+        }
+    </select>
+</div><div class="col-md-4"><label class="form-label">Centro costo</label><input name="CentroCosto" id="cCC" class="form-control"></div><div class="col-md-4"><label class="form-label">Página web</label><input name="PaginaWeb" id="cWeb" class="form-control"></div>
+<div class="col-md-4">
+    <label class="form-label">Departamento</label><select name="IdDepartamento" id="cDep" class="form-select">
+    <option value="">Seleccionar</option>@foreach(var x in departamentos){
+    <option value="@x.Id">@x.Nombre</option>
+}
+</select>
+</div><div class="col-md-4"><label class="form-label">Provincia</label><select name="IdProvincia" id="cProv" class="form-select"><option value="">Seleccionar</option></select></div><div class="col-md-4"><label class="form-label">Distrito</label><select name="IdDistrito" id="cDist" class="form-select"><option value="">Seleccionar</option></select></div>
+<div class="col-12"><label class="form-label">Dirección</label><input name="Direccion" id="cDir" class="form-control"></div><div class="col-md-4"><label class="form-label">Teléfono</label><input name="Telefono" id="cTel" class="form-control"></div><div class="col-md-4"><label class="form-label">Correo</label><input name="Correo" id="cCorreo" type="email" class="form-control"></div><div class="col-md-4"><label class="form-label">Fecha activación</label><input name="FechaActivacion" id="cFecha" type="date" class="form-control"></div><div class="col-12"><label class="form-label">Observación</label><textarea name="Observacion" id="cObs" class="form-control"></textarea></div>
+</div>
+</div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar cliente</button></div>
 </form>
 </div>
 </div>
@@ -138,7 +354,7 @@
         <div class="modal-content">
             <div class="modal-header border-0"><div><div class="text-muted fs-8">COMERCIAL · CLIENTE</div><h2 id="dTitulo" class="mb-1"></h2><div id="dSub" class="text-muted"></div></div><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
             <ul class="nav nav-tabs nav-line-tabs mb-5"><li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tg">Datos Generales</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tc">Contactos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tco">Contratos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ts">Sedes</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tr">Requerimientos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#td">Documentos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#th">Historial</button></li></ul>
-            <div class="tab-content"><div id="tg" class="tab-pane fade show active"><div class="card border"><div class="card-body"><div class="row g-4" id="general"></div></div></div></div><div id="tc" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Contactos</h4><button class="btn btn-primary btn-sm" id="nuevoContacto">Nuevo contacto</button></div><div id="contactos"></div></div><div id="tco" class="tab-pane fade placeholder-tab">Contratos: siguiente fase.</div><div id="ts" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Sedes</h4><button class="btn btn-primary btn-sm" id="nuevaSede">Nueva sede</button></div><div id="sedes"></div></div><div id="tr" class="tab-pane fade placeholder-tab">Requerimientos: siguiente fase.</div><div id="td" class="tab-pane fade placeholder-tab">Documentos: siguiente fase.</div><div id="th" class="tab-pane fade placeholder-tab">Historial: siguiente fase.</div></div>
+            <div class="tab-content"><div id="tg" class="tab-pane fade show active"><div class="d-flex justify-content-between align-items-center mb-3"><h4 class="mb-0">Información del Cliente</h4></div><div class="card border"><div class="card-body"><div class="row g-4" id="general"></div></div></div></div><div id="tc" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Contactos</h4><button class="btn btn-primary btn-sm" id="nuevoContacto">Nuevo contacto</button></div><div id="contactos"></div></div><div id="tco" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Contratos del Cliente</h4><button class="btn btn-primary btn-sm" id="nuevoContrato">+ Nuevo contrato</button></div><div id="contratos"></div></div><div id="ts" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Sedes</h4><button class="btn btn-primary btn-sm" id="nuevaSede">Nueva sede</button></div><div id="sedes"></div></div><div id="tr" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Requerimientos</h4><button class="btn btn-primary btn-sm" id="nuevoReq">+ Agregar requerimiento</button></div><div id="reqKpis" class="row g-3 my-2"></div><div id="requerimientos"></div></div><div id="td" class="tab-pane fade"><div class="d-flex justify-content-between"><h4>Documentos del Cliente</h4><button class="btn btn-primary btn-sm" id="nuevoDoc">+ Nuevo documento</button></div><div id="documentos"></div></div><div id="th" class="tab-pane fade"><h4>Historial del Cliente</h4><div id="historial"></div></div></div>
         </div><div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal">Cerrar</button></div>
     </div>
 </div>
@@ -146,31 +362,162 @@
 
 <div class="modal fade" id="modalContacto"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><form id="formContacto">@Html.AntiForgeryToken()<input type="hidden" name="IdContactoUnidad" id="ctId"><input type="hidden" name="IdUnidad" id="ctUnidad"><div class="modal-header"><h3 id="ctTitulo">Nuevo contacto</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="form-label required">Nombre</label><input name="Nombre" id="ctNombre" class="form-control" required></div><div class="col-md-6"><label class="form-label">Cargo</label><input name="Cargo" id="ctCargo" class="form-control"></div><div class="col-md-6"><label class="form-label">Teléfono</label><input name="Telefono" id="ctTel" class="form-control"></div><div class="col-md-6"><label class="form-label">Correo</label><input name="Correo" id="ctCorreo" class="form-control"></div><div class="col-12 form-check ms-2"><input name="EsPrincipal" value="true" id="ctPrincipal" type="checkbox" class="form-check-input"><label class="form-check-label">Contacto principal</label></div><div class="col-12"><textarea name="Observacion" id="ctObs" class="form-control" placeholder="Observación"></textarea></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar</button></div></form></div></div></div>
 
-<div class="modal fade" id="modalSede"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><form id="formSede">@Html.AntiForgeryToken()<input type="hidden" name="IdSede" id="sId"><input type="hidden" name="IdUnidad" id="sUnidad"><div class="modal-header"><h3 id="sTitulo">Nueva sede</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-3"><label class="form-label required">Código</label><input name="CodigoSede" id="sCodigo" class="form-control" required></div><div class="col-md-9"><label class="form-label required">Nombre</label><input name="NombreSede" id="sNombre" class="form-control" required></div><div class="col-12"><label class="form-label">Dirección</label><input name="Direccion" id="sDir" class="form-control"></div><div class="col-md-3"><label class="form-label">Latitud</label><input name="Latitud" id="sLat" type="number" step=".0000001" class="form-control"></div><div class="col-md-3"><label class="form-label">Longitud</label><input name="Longitud" id="sLng" type="number" step=".0000001" class="form-control"></div><div class="col-md-3"><label class="form-label">Contacto</label><input name="Contacto" id="sContacto" class="form-control"></div><div class="col-md-3"><label class="form-label">Celular</label><input name="Celular" id="sCel" class="form-control"></div><div class="col-md-6"><label class="form-label">Correo</label><input name="Correo" id="sCorreo" class="form-control"></div><div class="col-md-6"><label class="form-label">Centro costo</label><input name="CentroCostoSede" id="sCC" class="form-control"></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar sede</button></div></form></div></div></div>
+<div class="modal fade" id="modalSede">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <form id="formSede">
+                @Html.AntiForgeryToken()<input type="hidden" name="IdSede" id="sId"><input type="hidden" name="IdUnidad" id="sUnidad"><div class="modal-header"><h3 id="sTitulo">Nueva sede</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-3"><label class="form-label">Código</label><input name="CodigoSede" id="sCodigo" class="form-control" placeholder="Automático: CS+ID" readonly></div><div class="col-md-9"><label class="form-label required">Nombre</label><input name="NombreSede" id="sNombre" class="form-control" required></div><div class="col-12"><label class="form-label">Dirección</label><input name="Direccion" id="sDir" class="form-control"></div><div class="col-md-4">
+                    <label class="form-label">Departamento</label><select name="IdDepartamento" id="sDep" class="form-select">
+                    <option value="">Seleccionar</option>@foreach(var x in departamentos){
+                    <option value="@x.Id">@x.Nombre</option>
+                }
+            </select>
+        </div><div class="col-md-4"><label class="form-label">Provincia</label><select name="IdProvincia" id="sProv" class="form-select"><option value="">Seleccionar</option></select></div><div class="col-md-4"><label class="form-label">Distrito</label><select name="IdDistrito" id="sDist" class="form-select"><option value="">Seleccionar</option></select></div><div class="col-md-3"><label class="form-label">Latitud</label><input name="Latitud" id="sLat" type="number" step=".0000001" class="form-control"></div><div class="col-md-3"><label class="form-label">Longitud</label><input name="Longitud" id="sLng" type="number" step=".0000001" class="form-control"></div><div class="col-md-3"><label class="form-label">Contacto</label><input name="Contacto" id="sContacto" class="form-control"></div><div class="col-md-3"><label class="form-label">Celular</label><input name="Celular" id="sCel" class="form-control"></div><div class="col-md-6"><label class="form-label">Correo</label><input name="Correo" id="sCorreo" class="form-control"></div><div class="col-md-6"><label class="form-label">Centro costo</label><input name="CentroCostoSede" id="sCC" class="form-control"></div>
+    </div>
+</div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar sede</button></div>
+</form>
+</div>
+</div>
+</div>
 
 @section Scripts {
-    <script>
-                         document.addEventListener('DOMContentLoaded',()=>{const g=x=>document.getElementById(x),mc=bootstrap.Modal.getOrCreateInstance(g('modalCliente')),md=bootstrap.Modal.getOrCreateInstance(g('modalDetalle')),mct=bootstrap.Modal.getOrCreateInstance(g('modalContacto')),ms=bootstrap.Modal.getOrCreateInstance(g('modalSede'));let actual=0,det=null;const token=()=>g('formCliente').querySelector('[name="__RequestVerificationToken"]').value,fmt=v=>v?String(v).substring(0,10):'',esc=v=>{let d=document.createElement('div');d.textContent=v??'—';return d.innerHTML};
-                         g('btnNuevo').onclick=()=>{g('formCliente').reset();g('cId').value=0;g('cTitulo').textContent='Nuevo cliente';mc.show()};
-                         document.querySelectorAll('.btnEditar').forEach(b=>b.onclick=()=>{let x=JSON.parse(b.dataset.item);g('formCliente').reset();[['cId','idUnidad'],['cCodigo','codigoUnidad'],['cEmpresa','idEmpresa'],['cRuc','rucUnidad'],['cRazon','razonSocial'],['cNombre','nombreComercial'],['cSector','idSector'],['cCC','centroCosto'],['cWeb','paginaWeb'],['cDep','idDepartamento'],['cProv','idProvincia'],['cDist','idDistrito'],['cDir','direccion'],['cTel','telefono'],['cCorreo','correo'],['cObs','observacion']].forEach(a=>g(a[0]).value=x[a[1]]??'');g('cFecha').value=fmt(x.fechaActivacion);g('cTitulo').textContent='Editar cliente';mc.show()});
-                         async function cargar(id){let r=await fetch(`@Url.Action("Detalle","Cliente")?id=${id}`),j=await r.json();if(!j.ok)return toastr.error(j.mensaje);det=j.data;actual=det.cliente.idUnidad;render();md.show()}
-                         document.querySelectorAll('.btnDetalle').forEach(b=>b.onclick=()=>cargar(b.dataset.id));
-                         function render(){let c=det.cliente;g('dTitulo').textContent=`Cliente ${c.codigoCliente}`;g('dSub').textContent=c.razonSocial;let a=[['CÓDIGO UNIDAD',c.codigoUnidad],['EMPRESA GURKAS',c.empresaNombre],['RUC',c.rucUnidad],['RAZÓN SOCIAL',c.razonSocial],['NOMBRE COMERCIAL',c.nombreComercial],['DIRECCIÓN',c.direccion],['TELÉFONO',c.telefono],['CORREO',c.correo],['WEB',c.paginaWeb],['CENTRO COSTO',c.centroCosto],['OBSERVACIÓN',c.observacion]];g('general').innerHTML=a.map(x=>`<div class="col-md-4"><div class="info-label">${x[0]}</div><div>${esc(x[1])}</div></div>`).join('');
-                         g('contactos').innerHTML='<div class="table-responsive"><table class="table"><thead><tr><th>Nombre</th><th>Cargo</th><th>Teléfono</th><th>Correo</th><th>Principal</th><th>Estado</th><th></th></tr></thead><tbody>'+det.contactos.map(x=>`<tr><td>${esc(x.nombre)}</td><td>${esc(x.cargo)}</td><td>${esc(x.telefono)}</td><td>${esc(x.correo)}</td><td>${x.esPrincipal?'Sí':'—'}</td><td>${x.idEstado===1?'Activo':'Inactivo'}</td><td><button class="btn btn-sm btn-light-primary" onclick='editC(${JSON.stringify(x)})'>Editar</button></td></tr>`).join('')+'</tbody></table></div>';
-                         g('sedes').innerHTML='<div class="table-responsive"><table class="table"><thead><tr><th>Código</th><th>Sede</th><th>Dirección</th><th>Contacto</th><th>Estado</th><th></th></tr></thead><tbody>'+det.sedes.map(x=>`<tr><td>${esc(x.codigoSede)}</td><td>${esc(x.nombreSede)}</td><td>${esc(x.direccion)}</td><td>${esc(x.contacto)}</td><td>${x.idEstado===1?'Activo':'Inactivo'}</td><td><button class="btn btn-sm btn-light-primary" onclick='editS(${JSON.stringify(x)})'>Editar</button></td></tr>`).join('')+'</tbody></table></div>'}
-                         g('nuevoContacto').onclick=()=>{g('formContacto').reset();g('ctId').value=0;g('ctUnidad').value=actual;mct.show()};window.editC=x=>{g('formContacto').reset();g('ctId').value=x.idContactoUnidad;g('ctUnidad').value=x.idUnidad;g('ctNombre').value=x.nombre;g('ctCargo').value=x.cargo??'';g('ctTel').value=x.telefono??'';g('ctCorreo').value=x.correo??'';g('ctPrincipal').checked=x.esPrincipal;g('ctObs').value=x.observacion??'';mct.show()};
-                         g('formContacto').onsubmit=async e=>{e.preventDefault();let r=await fetch('@Url.Action("GuardarContacto","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();if(j.ok){toastr.success(j.mensaje);mct.hide();cargar(actual)}else toastr.error(j.mensaje)};
-                         g('nuevaSede').onclick=()=>{g('formSede').reset();g('sId').value=0;g('sUnidad').value=actual;ms.show()};window.editS=x=>{g('formSede').reset();g('sId').value=x.idSede;g('sUnidad').value=x.idUnidad;g('sCodigo').value=x.codigoSede;g('sNombre').value=x.nombreSede;g('sDir').value=x.direccion??'';g('sLat').value=x.latitud??'';g('sLng').value=x.longitud??'';g('sContacto').value=x.contacto??'';g('sCel').value=x.celular??'';g('sCorreo').value=x.correo??'';g('sCC').value=x.centroCostoSede??'';ms.show()};
-                         g('formSede').onsubmit=async e=>{e.preventDefault();let r=await fetch('@Url.Action("GuardarSede","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();if(j.ok){toastr.success(j.mensaje);ms.hide();cargar(actual)}else toastr.error(j.mensaje)};
-                         document.querySelectorAll('.btnEstado').forEach(b=>b.onclick=async()=>{let ne=+b.dataset.estado===1?2:1,q=await Swal.fire({title:'¿Confirmar acción?',text:`¿Deseas ${ne===1?'activar':'dar de baja'} a ${b.dataset.nombre}?`,icon:'question',showCancelButton:true});if(!q.isConfirmed)return;let body=new URLSearchParams({idUnidad:b.dataset.id,idEstado:ne,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("CambiarEstado","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();if(j.ok){toastr.success(j.mensaje);setTimeout(()=>location.reload(),600)}else toastr.error(j.mensaje)});
-        });</script>
-        @if (TempData["Success"] is string s)
-        {
-            <script>toastr.success(@Html.Raw(JsonSerializer.Serialize(s)));</script>
-        }
-        @if (TempData["Error"] is string e)
-        {
-            <script>toastr.error(@Html.Raw(JsonSerializer.Serialize(e)));</script>
+
+    <div class="modal fade" id="modalContrato"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><form id="formContrato">@Html.AntiForgeryToken()<input type="hidden" name="IdContrato" id="coId"><input type="hidden" name="IdUnidad" id="coUnidad"><div class="modal-header"><h3>Contrato</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-4"><label class="form-label required">N.º Contrato</label><input class="form-control" name="NumeroContrato" id="coNumero" required></div><div class="col-md-8"><label class="form-label required">Descripción</label><input class="form-control" name="Descripcion" id="coDesc" required></div><div class="col-md-4"><label>Inicio</label><input type="date" class="form-control" name="FechaInicio" id="coIni"></div><div class="col-md-4"><label>Fin</label><input type="date" class="form-control" name="FechaFin" id="coFin"></div><div class="col-md-3"><label>Monto</label><input type="number" step=".01" class="form-control" name="Monto" id="coMonto"></div><div class="col-md-1"><label>Moneda</label><select class="form-select" name="Moneda" id="coMon"><option>PEN</option><option>USD</option></select></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar</button></div></form></div></div></div>
+    <div class="modal fade" id="modalReq"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content"><form id="formReq">@Html.AntiForgeryToken()<input type="hidden" name="IdRequerimiento" id="rqId"><input type="hidden" name="IdUnidad" id="rqUnidad"><input type="hidden" name="Horario" id="rqHorario"><input type="hidden" name="Dias" id="rqDias"><input type="hidden" name="RequisitosEspeciales" id="rqReq"><input type="hidden" name="RecursosAsociados" id="rqRec"><div class="modal-header"><div><h3 class="mb-1">Requerimiento de Sede</h3><span class="text-muted fs-7">Define el personal, condiciones, requisitos y recursos del servicio.</span></div><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-4 mb-4"><div class="col-md-6"><label class="form-label required">Contrato</label><select class="form-select" name="IdContrato" id="rqContrato" required></select></div><div class="col-md-6"><label class="form-label required">Sede</label><select class="form-select" name="IdSede" id="rqSede" required></select></div></div><div class="row g-4 req-sections"><div class="col-xl-3 col-md-6"><div class="req-panel h-100"><div class="req-title"><span>1.</span> Personal requerido</div><label class="form-label required">Puesto / Perfil</label><input class="form-control mb-3" name="PuestoPerfil" id="rqPuesto" required><div class="row g-2"><div class="col-6"><label class="form-label required">Cantidad</label><input type="number" min="1" class="form-control" name="Cantidad" id="rqCant" required></div><div class="col-6"><label class="form-label">Sexo</label><select class="form-select" name="Sexo" id="rqSexo"><option>Indistinto</option><option>Masculino</option><option>Femenino</option></select></div></div><label class="form-label mt-3">Observaciones</label><textarea class="form-control" name="Observacion" id="rqObs" rows="4"></textarea></div></div><div class="col-xl-3 col-md-6"><div class="req-panel h-100"><div class="req-title"><span>2.</span> Condiciones del servicio</div><label class="form-label">Modalidad</label><select class="form-select mb-3" name="Modalidad" id="rqMod"><option>Simple</option><option>Armado</option></select><div class="row g-2"><div class="col-6"><label class="form-label">Hora de inicio</label><input type="time" class="form-control" id="rqHoraIni"></div><div class="col-6"><label class="form-label">Hora de fin</label><input type="time" class="form-control" id="rqHoraFin"></div></div><label class="form-label mt-3 mb-2">Días de cobertura</label><div class="req-days" id="rqDiasChecks"><label><input type="checkbox" value="Lu"><span>Lu</span></label><label><input type="checkbox" value="Ma"><span>Ma</span></label><label><input type="checkbox" value="Mi"><span>Mi</span></label><label><input type="checkbox" value="Ju"><span>Ju</span></label><label><input type="checkbox" value="Vi"><span>Vi</span></label><label><input type="checkbox" value="Sa"><span>Sa</span></label><label><input type="checkbox" value="Do"><span>Do</span></label></div><div class="row g-2 mt-3"><div class="col-6"><label class="form-label">Fecha de inicio</label><input type="date" class="form-control" name="FechaInicio" id="rqIni"></div><div class="col-6"><label class="form-label">Fecha de fin</label><input type="date" class="form-control" name="FechaFin" id="rqFin"></div></div></div></div><div class="col-xl-3 col-md-6"><div class="req-panel h-100"><div class="req-title"><span>3.</span> Requisitos especiales</div><div class="req-check-list" id="rqReqChecks"><label><input type="checkbox" value="SUCAMEC vigente"><span>SUCAMEC vigente</span></label><label><input type="checkbox" value="Licencia de arma"><span>Licencia de arma</span></label><label><input type="checkbox" value="Experiencia mínima"><span>Experiencia mínima</span></label><label><input type="checkbox" value="Estudios (Secundaria/Técnico)"><span>Estudios (Secundaria/Técnico)</span></label><label><input type="checkbox" value="FF.AA. / PNP (deseable)"><span>FF.AA. / PNP (deseable)</span></label><label><input type="checkbox" value="Manejo de computadora"><span>Manejo de computadora</span></label><label><input type="checkbox" value="Otros"><span>Otros</span></label></div></div></div><div class="col-xl-3 col-md-6"><div class="req-panel h-100"><div class="req-title"><span>4.</span> Recursos asociados</div><div class="req-check-list" id="rqRecChecks"><label><input type="checkbox" value="Arma"><span>Arma</span></label><label><input type="checkbox" value="Radio"><span>Radio</span></label><label><input type="checkbox" value="Chaleco"><span>Chaleco</span></label><label><input type="checkbox" value="Linterna"><span>Linterna</span></label><label><input type="checkbox" value="Celular"><span>Celular</span></label><label><input type="checkbox" value="Computadora"><span>Computadora</span></label><label><input type="checkbox" value="EPP"><span>EPP</span></label><label><input type="checkbox" value="Otros"><span>Otros</span></label></div></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar requerimiento</button></div></form></div></div></div>
+    <style>    .req-panel {
+            border: 1px solid #e4e9f2;
+            border-radius: 10px;
+            padding: 16px;
+            background: #fff
         }
 
-    }
+        .req-title {
+            font-size: .92rem;
+            font-weight: 700;
+            color: #1473e6;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #edf0f5
+        }
+
+            .req-title span {
+                margin-right: 4px
+            }
+
+        .req-days {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap
+        }
+
+            .req-days label {
+                cursor: pointer
+            }
+
+            .req-days input {
+                display: none
+            }
+
+            .req-days span {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                border: 1px solid #d9e0ea;
+                border-radius: 7px;
+                font-size: 12px;
+                font-weight: 600;
+                color: #6b7893;
+                transition: .15s
+            }
+
+            .req-days input:checked + span {
+                background: #eef6ff;
+                border-color: #4094ff;
+                color: #1473e6
+            }
+
+        .req-check-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+            .req-check-list label {
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                cursor: pointer;
+                font-size: 13px
+            }
+
+            .req-check-list input {
+                margin-top: 3px;
+                accent-color: #2589ff
+            }
+
+        .req-sections .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4c5870
+        }</style>
+        <div class="modal fade" id="modalAnalisisTdr" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><div><div class="text-primary fw-semibold small">ANÁLISIS INTELIGENTE · TDR</div><h3 class="mb-0" id="iaTitulo">Ficha estructurada del TDR</h3><div class="text-muted small" id="iaSubtitulo">Información extraída y preparada para Comercial, Operaciones y RR.HH.</div></div><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-primary d-flex align-items-center"><div><b>✨ Análisis IA</b><div class="small">La ficha queda vinculada al documento y podrá ser consultada por otras áreas. Los datos deben validarse antes de generar requerimientos operativos.</div></div></div><div class="row g-3 mb-4"><div class="col-md-3"><div class="card border h-100"><div class="card-body"><div class="text-muted small">PERSONAL TOTAL</div><div class="fs-2 fw-bold" id="iaTotal">—</div></div></div></div><div class="col-md-3"><div class="card border h-100"><div class="card-body"><div class="text-muted small">ARMADOS</div><div class="fs-2 fw-bold" id="iaArmados">—</div></div></div></div><div class="col-md-3"><div class="card border h-100"><div class="card-body"><div class="text-muted small">SIMPLES</div><div class="fs-2 fw-bold" id="iaSimples">—</div></div></div></div><div class="col-md-3"><div class="card border h-100"><div class="card-body"><div class="text-muted small">SEDES DETECTADAS</div><div class="fs-2 fw-bold" id="iaSedes">—</div></div></div></div></div><ul class="nav nav-tabs mb-4"><li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#iaResumen">Resumen</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#iaPersonal">Personal</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#iaRequisitos">Requisitos</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#iaPenalidades">Penalidades</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#iaSedesDetalle">Sedes detectadas</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#iaChat">Preguntar al TDR</button></li></ul><div class="tab-content"><div class="tab-pane fade show active" id="iaResumen"><div class="card border"><div class="card-body"><h5>Resumen ejecutivo</h5><p id="iaResumenTexto" class="text-muted mb-3">Este documento todavía no cuenta con un análisis persistido.</p><div class="row g-3"><div class="col-md-6"><b>Contrato relacionado</b><div id="iaContrato" class="text-muted">—</div></div><div class="col-md-6"><b>Documento</b><div id="iaDocumento" class="text-muted">—</div></div></div></div></div></div><div class="tab-pane fade" id="iaPersonal"><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Puesto / Perfil</th><th>Cantidad</th><th>Modalidad</th><th>Horario</th><th>Fuente</th><th></th></tr></thead><tbody id="iaPersonalBody"><tr><td colspan="6" class="text-center text-muted py-5">Sin datos analizados.</td></tr></tbody></table></div></div><div class="tab-pane fade" id="iaRequisitos"><div class="row g-3"><div class="col-md-6"><div class="card border h-100"><div class="card-body"><h5>Requisitos detectados</h5><div id="iaReqLista" class="text-muted">Sin datos analizados.</div></div></div></div><div class="col-md-6"><div class="card border h-100"><div class="card-body"><div class="d-flex justify-content-between align-items-center mb-2"><h5 class="mb-0">Recursos detectados</h5><button type="button" class="btn btn-sm btn-light-primary" onclick="publicarDatosTdr('REQUERIMIENTOS')">Publicar requerimientos</button></div><div id="iaRecLista" class="text-muted">Sin datos analizados.</div></div></div></div></div></div><div class="tab-pane fade" id="iaPenalidades"><div class="card border"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><h5>Penalidades detectadas</h5><button type="button" class="btn btn-sm btn-light-primary" onclick="publicarDatosTdr('PENALIDAD')">Publicar penalidades contractuales</button></div><p class="text-muted small">Incumplimientos y penalidades extraídos literalmente del TDR. Verifica siempre la fuente antes de aplicar una penalidad.</p><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Incumplimiento</th><th>Penalidad</th><th>Cálculo</th><th>Frecuencia</th><th>Fuente</th></tr></thead><tbody id="iaPenalidadesBody"></tbody></table></div></div></div></div><div class="tab-pane fade" id="iaSedesDetalle"><div class="card border"><div class="card-body"><div class="d-flex justify-content-between align-items-center mb-3"><div><h5 class="mb-1">Sedes detectadas en el TDR</h5><div class="text-muted small">Revísalas antes de incorporarlas al maestro de sedes del cliente.</div></div><button class="btn btn-sm btn-primary" id="btnImportarSedesIa" type="button" onclick="importarSedesTdr()">Importar seleccionadas</button></div><div class="table-responsive"><table class="table align-middle"><thead><tr><th style="width:35px"><input type="checkbox" id="iaSedesTodas"></th><th>Sede</th><th>Dirección / Ubigeo</th><th>Personal</th><th>Horario</th><th>Fuente</th></tr></thead><tbody id="iaSedesBody"></tbody></table></div></div></div></div><div class="tab-pane fade" id="iaChat"><div class="card border"><div class="card-body"><h5>Pregúntale al TDR</h5><p class="text-muted">Las respuestas usarán exclusivamente el contenido del documento y mostrarán la página de origen.</p><div class="input-group"><input class="form-control" id="iaPregunta" placeholder="Ej.: ¿Cuántos agentes armados se requieren?"><button class="btn btn-primary" type="button" onclick="preguntarTdrIa()">Preguntar</button></div><div id="iaRespuesta" class="mt-4"></div></div></div></div></div></div><div class="modal-footer"><span class="me-auto badge bg-light text-dark">Preparado para persistencia en SQL Server</span><button class="btn btn-light" data-bs-dismiss="modal">Cerrar</button><button class="btn btn-warning d-none" id="btnCompletarTdrIa" type="button" onclick="completarTdrIa()">✨ Completar análisis</button><button class="btn btn-primary" id="btnProcesarTdrIa" type="button" onclick="procesarTdrIa()">✨ Procesar con IA</button></div></div></div></div>
+        <div class="modal fade" id="modalDoc"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><form id="formDoc" enctype="multipart/form-data">@Html.AntiForgeryToken()<input type="hidden" name="idUnidad" id="dcUnidad"><div class="modal-header"><h3>Nuevo documento</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="required">Nombre</label><input class="form-control" name="nombre" required></div><div class="col-md-6"><label class="required">Tipo</label><select class="form-select" name="tipo" required><option>Contrato</option><option>Adenda</option><option>TDR</option><option>Plano</option><option>Base</option><option>Otro</option></select></div><div class="col-md-6"><label>Contrato relacionado</label><select class="form-select" name="idContrato" id="dcContrato"></select></div><div class="col-md-6"><label>Sede relacionada</label><select class="form-select" name="idSede" id="dcSede"></select></div><div class="col-12"><label class="required">Archivo (máx. 100 MB)</label><input type="file" class="form-control" name="archivo" required></div><div class="col-12"><label>Observación</label><textarea class="form-control" name="observacion"></textarea></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary">Guardar documento</button></div></form></div></div></div>
+        <script>
+                             document.addEventListener('DOMContentLoaded',()=>{const g=x=>document.getElementById(x),mc=bootstrap.Modal.getOrCreateInstance(g('modalCliente')),md=bootstrap.Modal.getOrCreateInstance(g('modalDetalle')),mct=bootstrap.Modal.getOrCreateInstance(g('modalContacto')),ms=bootstrap.Modal.getOrCreateInstance(g('modalSede')),mco=bootstrap.Modal.getOrCreateInstance(g('modalContrato')),mrq=bootstrap.Modal.getOrCreateInstance(g('modalReq')),mdoc=bootstrap.Modal.getOrCreateInstance(g('modalDoc'));let actual=0,det=null;const token=()=>g('formCliente').querySelector('[name="__RequestVerificationToken"]').value,fmt=v=>v?String(v).substring(0,10):'',esc=v=>{let d=document.createElement('div');d.textContent=v??'—';return d.innerHTML};
+                             g('btnNuevo').onclick=()=>{g('formCliente').reset();g('cId').value=0;g('cTitulo').textContent='Nuevo cliente';mc.show()};
+                             document.querySelectorAll('.btnEditar').forEach(b=>b.onclick=()=>{let x=JSON.parse(b.dataset.item);g('formCliente').reset();[['cId','idUnidad'],['cCodigo','codigoUnidad'],['cEmpresa','idEmpresa'],['cRuc','rucUnidad'],['cRazon','razonSocial'],['cNombre','nombreComercial'],['cSector','idSector'],['cCC','centroCosto'],['cWeb','paginaWeb'],['cDep','idDepartamento'],['cProv','idProvincia'],['cDist','idDistrito'],['cDir','direccion'],['cTel','telefono'],['cCorreo','correo'],['cObs','observacion']].forEach(a=>g(a[0]).value=x[a[1]]??'');cargarUbigeoCliente(x.idDepartamento,x.idProvincia,x.idDistrito);g('cFecha').value=fmt(x.fechaActivacion);g('cTitulo').textContent='Editar cliente';mc.show()});
+                             async function cargar(id){let r=await fetch(`@Url.Action("Detalle","Cliente")?id=${id}`),j=await r.json();if(!j.ok)return toastr.error(j.mensaje);det=j.data;actual=det.cliente.idUnidad;render();md.show()}
+                             document.querySelectorAll('.btnDetalle').forEach(b=>b.onclick=()=>cargar(b.dataset.id));
+                             function render(){let c=det.cliente;g('dTitulo').textContent=`Cliente ${c.codigoCliente}`;g('dSub').textContent=c.razonSocial;let a=[['CÓDIGO UNIDAD',c.codigoUnidad],['EMPRESA GURKAS',c.empresaNombre],['RUC',c.rucUnidad],['RAZÓN SOCIAL',c.razonSocial],['NOMBRE COMERCIAL',c.nombreComercial],['DIRECCIÓN',c.direccion],['TELÉFONO',c.telefono],['CORREO',c.correo],['WEB',c.paginaWeb],['CENTRO COSTO',c.centroCosto],['OBSERVACIÓN',c.observacion]];g('general').innerHTML=a.map(x=>`<div class="col-md-4"><div class="info-label">${x[0]}</div><div>${esc(x[1])}</div></div>`).join('');
+                             g('contactos').innerHTML='<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Nombre</th><th>Cargo</th><th>Teléfono</th><th>Correo</th><th>Principal</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead><tbody>'+det.contactos.map(x=>`<tr><td>${esc(x.nombre)}</td><td>${esc(x.cargo)}</td><td>${esc(x.telefono)}</td><td>${esc(x.correo)}</td><td>${x.esPrincipal?'<span class="badge badge-light-primary">Principal</span>':'—'}</td><td><span class="badge ${x.idEstado===1?'badge-light-success':'badge-light-danger'}">${x.idEstado===1?'Activo':'Inactivo'}</span></td><td class="text-end"><button type="button" class="btn btn-sm btn-light-primary me-1" onclick='editC(${JSON.stringify(x)})' title="Editar">✎</button><button type="button" class="btn btn-sm ${x.idEstado===1?'btn-light-danger':'btn-light-success'}" onclick="estadoContacto(${x.idContactoUnidad},${x.idEstado})" title="${x.idEstado===1?'Dar de baja':'Activar'}">${x.idEstado===1?'×':'✓'}</button></td></tr>`).join('')+'</tbody></table></div>';
+                             g('sedes').innerHTML='<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Código</th><th>Sede</th><th>Dirección</th><th>Contacto</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead><tbody>'+det.sedes.map(x=>`<tr><td><strong>${esc(x.codigoSede)}</strong></td><td>${esc(x.nombreSede)}</td><td>${esc(x.direccion)}</td><td>${esc(x.contacto)}</td><td><span class="badge ${x.idEstado===1?'badge-light-success':'badge-light-danger'}">${x.idEstado===1?'Activa':'Inactiva'}</span></td><td class="text-end"><button type="button" class="btn btn-sm btn-light-primary me-1" onclick='editS(${JSON.stringify(x)})' title="Editar">✎</button><button type="button" class="btn btn-sm ${x.idEstado===1?'btn-light-danger':'btn-light-success'}" onclick="estadoSede(${x.idSede},${x.idEstado})" title="${x.idEstado===1?'Dar de baja':'Activar'}">${x.idEstado===1?'×':'✓'}</button></td></tr>`).join('')+'</tbody></table></div>';
+                             g('contratos').innerHTML='<div class="table-responsive"><table class="table align-middle"><thead><tr><th>N.º Contrato</th><th>Descripción</th><th>Inicio</th><th>Fin</th><th>Monto</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+det.contratos.map(x=>`<tr><td><b>${esc(x.numeroContrato)}</b></td><td>${esc(x.descripcion)}</td><td>${fmt(x.fechaInicio)||'—'}</td><td>${fmt(x.fechaFin)||'—'}</td><td>${x.monto!=null?(x.moneda+' '+Number(x.monto).toLocaleString()):'—'}</td><td><span class="badge ${x.idEstado===1?'badge-light-success':'badge-light-danger'}">${x.idEstado===1?'Vigente':'Finalizado'}</span></td><td><button class="btn btn-sm btn-light-primary" onclick='editContrato(${JSON.stringify(x)})'>✎</button> <button class="btn btn-sm ${x.idEstado===1?'btn-light-danger':'btn-light-success'}" onclick="estadoContrato(${x.idContrato},${x.idEstado})">${x.idEstado===1?'×':'✓'}</button></td></tr>`).join('')+'</tbody></table></div>';
+                             let rr=det.requerimientos||[],total=rr.filter(x=>x.idEstado===1).reduce((a,x)=>a+x.cantidad,0),sim=rr.filter(x=>x.idEstado===1&&x.modalidad==='Simple').reduce((a,x)=>a+x.cantidad,0),arm=rr.filter(x=>x.idEstado===1&&x.modalidad==='Armado').reduce((a,x)=>a+x.cantidad,0),fem=rr.filter(x=>x.idEstado===1&&x.sexo==='Femenino').reduce((a,x)=>a+x.cantidad,0);g('reqKpis').innerHTML=[['Total puestos',total],['Simples',sim],['Armados',arm],['Femeninos',fem]].map(x=>`<div class="col-md-3"><div class="card border"><div class="card-body py-3"><div class="text-muted fs-8">${x[0]}</div><div class="fs-2 fw-bold">${x[1]}</div></div></div></div>`).join('');
+                             g('requerimientos').innerHTML='<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Puesto / Perfil</th><th>Cantidad</th><th>Modalidad</th><th>Sexo</th><th>Horario</th><th>Contrato</th><th>Sede</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+rr.map(x=>`<tr><td>${esc(x.puestoPerfil)}</td><td>${x.cantidad}</td><td>${esc(x.modalidad)}</td><td>${esc(x.sexo)}</td><td>${esc(x.horario)}</td><td>${esc(x.numeroContrato)}</td><td>${esc(x.nombreSede)}</td><td>${x.idEstado===1?'Activo':'Inactivo'}</td><td><button class="btn btn-sm btn-light-primary" onclick='editReq(${JSON.stringify(x)})'>✎</button> <button class="btn btn-sm btn-light-danger" onclick="estadoReq(${x.idRequerimiento},${x.idEstado})">${x.idEstado===1?'×':'✓'}</button></td></tr>`).join('')+'</tbody></table></div>';
+                             g('documentos').innerHTML='<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Nombre</th><th>Tipo</th><th>Relacionado a</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+(det.documentos||[]).map(x=>`<tr><td>${esc(x.nombre)}</td><td>${esc(x.tipo)}</td><td>${esc(x.relacionadoA)}</td><td>${fmt(x.fechaRegistro)}</td><td>${x.idEstado===1?'Vigente':'Inactivo'}</td><td><a class="btn btn-sm btn-light-primary" href="${x.rutaArchivo}" target="_blank">Ver</a> ${String(x.tipo).toUpperCase()==='TDR'?`<button class="btn btn-sm btn-primary" onclick='abrirAnalisisTdr(${JSON.stringify(x)})'>✨ Análisis IA</button>`:''} <button class="btn btn-sm btn-light-danger" onclick="estadoDoc(${x.idDocumento},${x.idEstado})">×</button></td></tr>`).join('')+'</tbody></table></div>';
+                             g('historial').innerHTML='<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Evento</th><th>Detalle</th></tr></thead><tbody>'+(det.historial||[]).map(x=>`<tr><td>${new Date(x.fechaHora).toLocaleString()}</td><td>${esc(x.usuario)}</td><td><b>${esc(x.evento)}</b></td><td>${esc(x.detalle)}</td></tr>`).join('')+'</tbody></table></div>'; }
+                             async function cargarProvincias(dep,select,valor){select.innerHTML='<option value="">Seleccionar</option>';if(!dep)return;let a=await (await fetch(`@Url.Action("Provincias","Cliente")?idDepartamento=${dep}`)).json();a.forEach(x=>select.add(new Option(x.nombre,x.id)));if(valor)select.value=valor;}
+                             async function cargarDistritos(prov,select,valor){select.innerHTML='<option value="">Seleccionar</option>';if(!prov)return;let a=await (await fetch(`@Url.Action("Distritos","Cliente")?idProvincia=${prov}`)).json();a.forEach(x=>select.add(new Option(x.nombre,x.id)));if(valor)select.value=valor;}
+                             async function cargarUbigeoCliente(dep,prov,dist){g('cDep').value=dep??'';await cargarProvincias(dep,g('cProv'),prov);await cargarDistritos(prov,g('cDist'),dist);}
+                             async function cargarUbigeoSede(dep,prov,dist){g('sDep').value=dep??'';await cargarProvincias(dep,g('sProv'),prov);await cargarDistritos(prov,g('sDist'),dist);}
+                             g('cDep').onchange=async()=>{await cargarProvincias(g('cDep').value,g('cProv'));g('cDist').innerHTML='<option value="">Seleccionar</option>'};g('cProv').onchange=()=>cargarDistritos(g('cProv').value,g('cDist'));g('sDep').onchange=async()=>{await cargarProvincias(g('sDep').value,g('sProv'));g('sDist').innerHTML='<option value="">Seleccionar</option>'};g('sProv').onchange=()=>cargarDistritos(g('sProv').value,g('sDist'));
+                             window.estadoContacto=async(id,e)=>{let ne=e===1?2:1,q=await Swal.fire({title:ne===1?'¿Activar contacto?':'¿Dar de baja contacto?',icon:'question',showCancelButton:true,confirmButtonText:'Confirmar',cancelButtonText:'Cancelar'});if(!q.isConfirmed)return;let body=new URLSearchParams({idContactoUnidad:id,idEstado:ne,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("CambiarEstadoContacto","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();j.ok?(toastr.success(j.mensaje),cargar(actual)):toastr.error(j.mensaje)};
+                             window.estadoSede=async(id,e)=>{let ne=e===1?2:1,q=await Swal.fire({title:ne===1?'¿Activar sede?':'¿Dar de baja sede?',icon:'question',showCancelButton:true,confirmButtonText:'Confirmar',cancelButtonText:'Cancelar'});if(!q.isConfirmed)return;let body=new URLSearchParams({idSede:id,idEstado:ne,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("CambiarEstadoSede","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();j.ok?(toastr.success(j.mensaje),cargar(actual)):toastr.error(j.mensaje)};
+                             g('nuevoContacto').onclick=()=>{g('formContacto').reset();g('ctId').value=0;g('ctUnidad').value=actual;mct.show()};window.editC=x=>{g('formContacto').reset();g('ctId').value=x.idContactoUnidad;g('ctUnidad').value=x.idUnidad;g('ctNombre').value=x.nombre;g('ctCargo').value=x.cargo??'';g('ctTel').value=x.telefono??'';g('ctCorreo').value=x.correo??'';g('ctPrincipal').checked=x.esPrincipal;g('ctObs').value=x.observacion??'';mct.show()};
+                             g('formContacto').onsubmit=async e=>{e.preventDefault();let r=await fetch('@Url.Action("GuardarContacto","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();if(j.ok){toastr.success(j.mensaje);mct.hide();cargar(actual)}else toastr.error(j.mensaje)};
+                             g('nuevaSede').onclick=()=>{g('formSede').reset();g('sId').value=0;g('sUnidad').value=actual;g('sCodigo').value='Automático';ms.show()};window.editS=x=>{g('formSede').reset();g('sId').value=x.idSede;g('sUnidad').value=x.idUnidad;g('sCodigo').value=x.codigoSede;g('sNombre').value=x.nombreSede;g('sDir').value=x.direccion??'';cargarUbigeoSede(x.idDepartamento,x.idProvincia,x.idDistrito);g('sLat').value=x.latitud??'';g('sLng').value=x.longitud??'';g('sContacto').value=x.contacto??'';g('sCel').value=x.celular??'';g('sCorreo').value=x.correo??'';g('sCC').value=x.centroCostoSede??'';ms.show()};
+                             g('formSede').onsubmit=async e=>{e.preventDefault();let r=await fetch('@Url.Action("GuardarSede","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();if(j.ok){toastr.success(j.mensaje);ms.hide();cargar(actual)}else toastr.error(j.mensaje)};
+                             function fillSelect(sel,arr,id,text){sel.innerHTML='<option value="">Seleccionar</option>';arr.filter(x=>x.idEstado===1).forEach(x=>sel.add(new Option(x[text],x[id])))}
+                             g('nuevoContrato').onclick=()=>{g('formContrato').reset();g('coId').value=0;g('coUnidad').value=actual;mco.show()};window.editContrato=x=>{g('coId').value=x.idContrato;g('coUnidad').value=x.idUnidad;g('coNumero').value=x.numeroContrato;g('coDesc').value=x.descripcion;g('coIni').value=fmt(x.fechaInicio);g('coFin').value=fmt(x.fechaFin);g('coMonto').value=x.monto??'';g('coMon').value=x.moneda;mco.show()};g('formContrato').onsubmit=async e=>{e.preventDefault();let r=await fetch('@Url.Action("GuardarContrato","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();j.ok?(toastr.success(j.mensaje),mco.hide(),cargar(actual)):toastr.error(j.mensaje)};window.estadoContrato=(id,e)=>cambiarEstado('@Url.Action("CambiarEstadoContrato","Cliente")','idContrato',id,e);
+                             function reqChecked(id){return [...g(id).querySelectorAll('input:checked')].map(x=>x.value)}
+                             function reqSetChecked(id,value){let vals=(value??'').split(/[|,]/).map(x=>x.trim()).filter(Boolean);g(id).querySelectorAll('input').forEach(x=>x.checked=vals.includes(x.value))}
+                             function reqSetHorario(value){let m=(value??'').match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/);g('rqHoraIni').value=m?m[1].padStart(5,'0'):'';g('rqHoraFin').value=m?m[2].padStart(5,'0'):''}
+                             function reqPreparar(){let hi=g('rqHoraIni').value,hf=g('rqHoraFin').value;g('rqHorario').value=hi&&hf?`${hi} - ${hf}`:(hi||hf);g('rqDias').value=reqChecked('rqDiasChecks').join(',');g('rqReq').value=reqChecked('rqReqChecks').join('|');g('rqRec').value=reqChecked('rqRecChecks').join('|')}
+                             g('nuevoReq').onclick=()=>{g('formReq').reset();g('rqId').value=0;g('rqUnidad').value=actual;fillSelect(g('rqContrato'),det.contratos,'idContrato','numeroContrato');fillSelect(g('rqSede'),det.sedes,'idSede','nombreSede');['rqDiasChecks','rqReqChecks','rqRecChecks'].forEach(id=>g(id).querySelectorAll('input').forEach(x=>x.checked=false));mrq.show()};window.editReq=x=>{g('formReq').reset();g('rqId').value=x.idRequerimiento;g('rqUnidad').value=x.idUnidad;fillSelect(g('rqContrato'),det.contratos,'idContrato','numeroContrato');fillSelect(g('rqSede'),det.sedes,'idSede','nombreSede');g('rqContrato').value=x.idContrato;g('rqSede').value=x.idSede;g('rqPuesto').value=x.puestoPerfil;g('rqCant').value=x.cantidad;g('rqMod').value=x.modalidad;g('rqSexo').value=x.sexo;reqSetHorario(x.horario);reqSetChecked('rqDiasChecks',x.dias);reqSetChecked('rqReqChecks',x.requisitosEspeciales);reqSetChecked('rqRecChecks',x.recursosAsociados);g('rqIni').value=fmt(x.fechaInicio);g('rqFin').value=fmt(x.fechaFin);g('rqObs').value=x.observacion??'';mrq.show()};g('formReq').onsubmit=async e=>{e.preventDefault();reqPreparar();if(!g('rqDias').value){toastr.warning('Selecciona al menos un día de cobertura.');return}let r=await fetch('@Url.Action("GuardarRequerimiento","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();j.ok?(toastr.success(j.mensaje),mrq.hide(),cargar(actual)):toastr.error(j.mensaje)};window.estadoReq=(id,e)=>cambiarEstado('@Url.Action("CambiarEstadoRequerimiento","Cliente")','idRequerimiento',id,e);
+                             const mia=new bootstrap.Modal(g('modalAnalisisTdr'));let iaDocId=0;
+                             function pintarIa(x){let b=g('btnProcesarTdrIa');b.disabled=true;b.className='btn btn-success';b.innerHTML='✓ TDR procesado';let bc=g('btnCompletarTdrIa');if(x.complementoContractualProcesado){bc.classList.add('d-none');bc.disabled=true}else{bc.classList.remove('d-none');bc.disabled=false;}g('iaTotal').textContent=x.personalTotal??0;g('iaArmados').textContent=x.armados??0;g('iaSimples').textContent=x.simples??0;g('iaSedes').textContent=x.sedesDetectadas??0;g('iaResumenTexto').textContent=x.resumenEjecutivo||'Sin resumen.';let pp=x.personal||[];g('iaPersonalBody').innerHTML=pp.length?pp.map(p=>`<tr><td>${esc(p.puestoPerfil)}</td><td>${p.cantidad??0}</td><td>${esc(p.modalidad)}</td><td>${esc(p.horario)}</td><td>${esc(p.fuente)}</td><td><button type="button" class="btn btn-sm btn-light-primary" onclick='prepararReqDesdeIa(${JSON.stringify(p)})'>Crear requerimiento</button></td></tr>`).join(''):'<tr><td colspan="6" class="text-center text-muted py-5">No se detectó personal.</td></tr>';let req=x.requisitos||[],rec=x.recursos||[];g('iaReqLista').innerHTML=req.length?req.map(i=>`<div class="mb-2">✓ ${esc(i.descripcion)} <span class="text-muted small">${esc(i.fuente)}</span></div>`).join(''):'Sin requisitos detectados.';g('iaRecLista').innerHTML=rec.length?rec.map(i=>`<div class="mb-2">✓ ${esc(i.descripcion)} <span class="text-muted small">${esc(i.fuente)}</span></div>`).join(''):'Sin recursos detectados.';let pen=x.penalidades||[];g('iaPenalidadesBody').innerHTML=pen.length?pen.map(i=>`<tr><td>${esc(i.incumplimiento)}</td><td><strong>${esc(i.penalidad)}</strong></td><td>${esc(i.calculo)}</td><td>${esc(i.frecuencia)}</td><td class="text-muted small">${esc(i.fuente)}</td></tr>`).join(''):'<tr><td colspan="5" class="text-center text-muted py-5">Este análisis no contiene penalidades estructuradas. Los TDR procesados con la nueva versión sí las extraerán.</td></tr>';window.iaSedesDetectadas=x.sedes||[];g('iaSedesBody').innerHTML=window.iaSedesDetectadas.length?window.iaSedesDetectadas.map((i,n)=>`<tr><td><input type="checkbox" class="ia-sede-check" value="${n}"></td><td><strong>${esc(i.nombre)}</strong></td><td>${esc(i.direccion)}<div class="text-muted small">${esc([i.distrito,i.provincia,i.departamento].filter(Boolean).join(' · '))}</div></td><td>${i.cantidadPersonal??0}${(i.armados||i.simples)?` <span class="text-muted small">(${i.armados||0} arm. / ${i.simples||0} simp.)</span>`:''}</td><td>${esc(i.horario)}</td><td class="text-muted small">${esc(i.fuente)}</td></tr>`).join(''):'<tr><td colspan="6" class="text-center text-muted py-5">Este análisis anterior solo guardó el número de sedes, no su detalle. Los nuevos TDR guardarán nombre, dirección y fuente de cada sede.</td></tr>';g('btnImportarSedesIa').disabled=!window.iaSedesDetectadas.length;}
+                             window.abrirAnalisisTdr=async x=>{iaDocId=x.idDocumento;let bp=g('btnProcesarTdrIa');bp.disabled=false;bp.className='btn btn-primary';bp.innerHTML='✨ Procesar con IA';let bc=g('btnCompletarTdrIa');bc.classList.add('d-none');bc.disabled=false;g('iaTitulo').textContent='Ficha IA · '+(x.nombre||'TDR');g('iaDocumento').textContent=x.nombreArchivo||x.nombre||'—';g('iaContrato').textContent=x.relacionadoA||'Cliente';g('iaTotal').textContent=g('iaArmados').textContent=g('iaSimples').textContent=g('iaSedes').textContent='—';g('iaResumenTexto').textContent='Consultando análisis almacenado...';g('iaPersonalBody').innerHTML='<tr><td colspan="6" class="text-center text-muted py-5">Cargando...</td></tr>';g('iaReqLista').textContent='—';g('iaRecLista').textContent='—';g('iaRespuesta').innerHTML='';mia.show();try{let r=await fetch(`@Url.Action("ObtenerAnalisisTdr","Cliente")?idDocumento=${x.idDocumento}`);let j=await r.json();if(j.ok===false){g('iaResumenTexto').textContent='Documento listo para procesamiento. Presiona “Procesar con IA”.';g('iaPersonalBody').innerHTML='<tr><td colspan="6" class="text-center text-muted py-5">Sin análisis todavía.</td></tr>';g('iaReqLista').textContent='Pendiente de análisis.';g('iaRecLista').textContent='Pendiente de análisis.'}else pintarIa(j)}catch{g('iaResumenTexto').textContent='Documento listo para procesamiento.'}}
+                             window.procesarTdrIa=async()=>{if(!iaDocId)return;let q=await Swal.fire({title:'¿Procesar este TDR con IA?',text:'El PDF será enviado a OpenAI y la ficha resultante se guardará en SQL Server.',icon:'question',showCancelButton:true,confirmButtonText:'Sí, analizar',cancelButtonText:'Cancelar'});if(!q.isConfirmed)return;Swal.fire({title:'Analizando TDR...',html:'Esto puede tardar algunos minutos si el PDF es grande o escaneado.',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});try{let body=new URLSearchParams({idDocumento:iaDocId,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("ProcesarTdrIa","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();if(!j.ok)throw new Error(j.mensaje);pintarIa(j.data);Swal.fire({title:'Análisis completado',text:j.mensaje,icon:'success'});}catch(e){Swal.fire({title:'No se pudo analizar',text:e.message||'Error inesperado.',icon:'error'})}}
+                             window.completarTdrIa=async()=>{if(!iaDocId)return;let q=await Swal.fire({title:'¿Completar este análisis?',html:'Se consultará nuevamente el PDF <b>solo para extraer penalidades y el detalle de sedes</b>.<br><br>Esta acción genera consumo de OpenAI y solo podrá ejecutarse una vez.',icon:'warning',showCancelButton:true,confirmButtonText:'Sí, completar',cancelButtonText:'Cancelar'});if(!q.isConfirmed)return;let bc=g('btnCompletarTdrIa');bc.disabled=true;Swal.fire({title:'Completando análisis...',html:'Buscando penalidades y detalle de sedes en el TDR. El análisis base no será reemplazado.',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});try{let body=new URLSearchParams({idDocumento:iaDocId,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("CompletarTdrIa","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();if(!j.ok)throw new Error(j.mensaje);pintarIa(j.data);Swal.fire({title:'Análisis completado',text:j.mensaje,icon:'success'});}catch(e){bc.disabled=false;Swal.fire({title:'No se pudo completar',text:e.message||'Error inesperado.',icon:'error'})}};
+                             window.preguntarTdrIa=async()=>{let q=g('iaPregunta').value.trim();if(!q){toastr.warning('Escribe una pregunta.');return}g('iaRespuesta').innerHTML='<div class="alert alert-light border"><span class="spinner-border spinner-border-sm me-2"></span>Consultando la ficha almacenada...</div>';try{let body=new URLSearchParams({idDocumento:iaDocId,pregunta:q,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("PreguntarTdrIa","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();if(!j.ok)throw new Error(j.mensaje);let d=j.data||{};g('iaRespuesta').innerHTML=`<div class="alert ${d.tieneEvidencia?'alert-primary':'alert-warning'}"><div class="fw-semibold mb-2">Respuesta IA</div><div>${esc(d.respuesta||'Sin respuesta.')}</div>${d.fuente?`<hr class="my-2"><div class="small"><b>Fuente:</b> ${esc(d.fuente)}</div>`:''}</div>`}catch(e){g('iaRespuesta').innerHTML=`<div class="alert alert-danger">${esc(e.message||'No se pudo responder.')}</div>`}};
+                                                      g('iaSedesTodas').onchange=e=>document.querySelectorAll('.ia-sede-check').forEach(c=>c.checked=e.target.checked);window.importarSedesTdr=async()=>{let sedes=window.iaSedesDetectadas||[],sel=[...document.querySelectorAll('.ia-sede-check:checked')].map(c=>sedes[Number(c.value)]).filter(Boolean);if(!sel.length){toastr.warning('Selecciona al menos una sede.');return}let q=await Swal.fire({title:`¿Importar ${sel.length} sede(s)?`,text:'Se crearán en el maestro de sedes del cliente. Los duplicados serán omitidos.',icon:'question',showCancelButton:true,confirmButtonText:'Importar',cancelButtonText:'Cancelar'});if(!q.isConfirmed)return;let ok=0,omit=0;for(let x of sel){let body=new URLSearchParams({idUnidad:actual,nombre:x.nombre||'',direccion:x.direccion||'',contacto:x.contacto||'',celular:x.celular||'',correo:x.correo||'',centroCosto:x.centroCosto||'',fuente:x.fuente||'',__RequestVerificationToken:token()}),r=await fetch('@Url.Action("ImportarSedeTdr","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();j.ok?ok++:omit++;}await Swal.fire({title:'Importación terminada',text:`${ok} sede(s) importadas. ${omit} omitida(s) o duplicadas.`,icon:ok?'success':'info'});if(ok)cargar(actual)};g('nuevoDoc').onclick=()=>{g('formDoc').reset();g('dcUnidad').value=actual;fillSelect(g('dcContrato'),det.contratos,'idContrato','numeroContrato');fillSelect(g('dcSede'),det.sedes,'idSede','nombreSede');mdoc.show()};g('formDoc').onsubmit=async e=>{e.preventDefault();let r=await fetch('@Url.Action("GuardarDocumento","Cliente")',{method:'POST',body:new FormData(e.target)}),j=await r.json();j.ok?(toastr.success(j.mensaje),mdoc.hide(),cargar(actual)):toastr.error(j.mensaje)};window.estadoDoc=(id,e)=>cambiarEstado('@Url.Action("CambiarEstadoDocumento","Cliente")','idDocumento',id,e);
+
+                             window.prepararReqDesdeIa=p=>{if(!det){toastr.error('Abre primero el detalle del cliente.');return;}g('formReq').reset();g('rqId').value=0;g('rqUnidad').value=actual;fillSelect(g('rqContrato'),det.contratos,'idContrato','numeroContrato');fillSelect(g('rqSede'),det.sedes,'idSede','nombreSede');g('rqPuesto').value=p.puestoPerfil||'';g('rqCant').value=p.cantidad||1;let m=(p.modalidad||'').toLowerCase();g('rqMod').value=m.includes('armad')?'Armado':'Simple';reqSetHorario(p.horario||'');g('rqObs').value=`Detectado por IA desde TDR. Fuente: ${p.fuente||'sin referencia'}. Validar sede, modalidad, días y fechas antes de guardar.`;mrq.show();toastr.info('Selecciona el contrato y la sede correctos antes de guardar.');};
+                             window.publicarDatosTdr=async tipo=>{if(!iaDocId)return;let destino=tipo==='REQUERIMIENTOS'?'TDR / Requerimientos':'Penalidades por cliente';let q=await Swal.fire({title:`¿Publicar para ${destino}?`,html:'Se copiarán los datos <b>ya almacenados</b> del análisis a la capa contractual del ERP.<br>No se realizará ninguna llamada a OpenAI.',icon:'question',showCancelButton:true,confirmButtonText:'Sí, publicar',cancelButtonText:'Cancelar'});if(!q.isConfirmed)return;try{let body=new URLSearchParams({idDocumento:iaDocId,tipo,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("PublicarDatosContractualesTdr","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();j.ok?toastr.success(j.mensaje):toastr.error(j.mensaje);}catch(e){toastr.error(e.message||'No se pudo publicar.')}};
+                             async function cambiarEstado(url,campo,id,e){let ne=e===1?2:1,q=await Swal.fire({title:'¿Confirmar acción?',icon:'question',showCancelButton:true});if(!q.isConfirmed)return;let o={idEstado:ne,__RequestVerificationToken:token()};o[campo]=id;let r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(o)}),j=await r.json();j.ok?(toastr.success(j.mensaje),cargar(actual)):toastr.error(j.mensaje)}
+                             document.querySelectorAll('.btnEstado').forEach(b=>b.onclick=async()=>{let ne=+b.dataset.estado===1?2:1,q=await Swal.fire({title:'¿Confirmar acción?',text:`¿Deseas ${ne===1?'activar':'dar de baja'} a ${b.dataset.nombre}?`,icon:'question',showCancelButton:true});if(!q.isConfirmed)return;let body=new URLSearchParams({idUnidad:b.dataset.id,idEstado:ne,__RequestVerificationToken:token()}),r=await fetch('@Url.Action("CambiarEstado","Cliente")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body}),j=await r.json();if(j.ok){toastr.success(j.mensaje);setTimeout(()=>location.reload(),600)}else toastr.error(j.mensaje)});
+            });</script>
+            @if (TempData["Success"] is string s)
+            {
+                <script>toastr.success(@Html.Raw(JsonSerializer.Serialize(s)));</script>
+            }
+            @if (TempData["Error"] is string e)
+            {
+                <script>toastr.error(@Html.Raw(JsonSerializer.Serialize(e)));</script>
+            }
+
+        }

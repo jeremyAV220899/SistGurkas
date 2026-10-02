@@ -1,7 +1,23 @@
+using SistGurkas.Services.OpenAI;
+using Microsoft.AspNetCore.Http.Features;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+const long maxUploadSize = 100L * 1024 * 1024; // 100 MB
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = maxUploadSize;
+});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = maxUploadSize;
+});
+
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<IOpenAiTdrService, OpenAiTdrService>(c => c.Timeout = TimeSpan.FromMinutes(10));
 
 var app = builder.Build();
 

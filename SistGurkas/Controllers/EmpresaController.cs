@@ -28,19 +28,16 @@ namespace SistGurkas.Controllers
         {
             var empresas = new List<Empresa>();
 
-            const string sql = """
-                SELECT e.IdEmpresa, e.NombreEmpresa, e.Ruc,
-                       e.Direccion, e.IdEstado, s.NombreEstado
-                FROM dbo.Empresa e
-                INNER JOIN dbo.Estado s ON s.IdEstado = e.IdEstado
-                ORDER BY e.IdEmpresa;
-                """;
-
             await using var conexion = CrearConexion();
             await conexion.OpenAsync();
 
-            await using var comando = new SqlCommand(sql, conexion);
-            await using var lector = await comando.ExecuteReaderAsync();
+            await using var comando =
+                new SqlCommand("dbo.sp_Empresa_Listar", conexion);
+
+            comando.CommandType = CommandType.StoredProcedure;
+
+            await using var lector =
+                await comando.ExecuteReaderAsync();
 
             while (await lector.ReadAsync())
             {
@@ -48,18 +45,25 @@ namespace SistGurkas.Controllers
                 {
                     IdEmpresa = lector.GetInt32(
                         lector.GetOrdinal("IdEmpresa")),
+
                     NombreEmpresa = lector.GetString(
                         lector.GetOrdinal("NombreEmpresa")),
-                    Ruc = lector.IsDBNull(lector.GetOrdinal("Ruc"))
-                        ? null
-                        : lector.GetString(lector.GetOrdinal("Ruc")),
+
+                    Ruc = lector.IsDBNull(
+                        lector.GetOrdinal("Ruc"))
+                            ? null
+                            : lector.GetString(
+                                lector.GetOrdinal("Ruc")),
+
                     Direccion = lector.IsDBNull(
                         lector.GetOrdinal("Direccion"))
-                        ? null
-                        : lector.GetString(
-                            lector.GetOrdinal("Direccion")),
+                            ? null
+                            : lector.GetString(
+                                lector.GetOrdinal("Direccion")),
+
                     IdEstado = lector.GetInt32(
                         lector.GetOrdinal("IdEstado")),
+
                     NombreEstado = lector.GetString(
                         lector.GetOrdinal("NombreEstado"))
                 });
@@ -71,16 +75,21 @@ namespace SistGurkas.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registrar(
-    string nombreEmpresa,
-    string? ruc,
-    string? direccion,
-    int idEstado)
+            string nombreEmpresa,
+            string? ruc,
+            string? direccion,
+            int idEstado)
         {
             nombreEmpresa = nombreEmpresa?.Trim() ?? "";
-            ruc = string.IsNullOrWhiteSpace(ruc) ? null : ruc.Trim();
+
+            ruc = string.IsNullOrWhiteSpace(ruc)
+                ? null
+                : ruc.Trim();
+
             direccion = string.IsNullOrWhiteSpace(direccion)
                 ? null
                 : direccion.Trim();
+
 
             if (nombreEmpresa.Length == 0 ||
                 nombreEmpresa.Length > 200)
@@ -91,12 +100,17 @@ namespace SistGurkas.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+
             if (ruc != null &&
-                (ruc.Length != 11 || !ruc.All(char.IsDigit)))
+                (ruc.Length != 11 ||
+                 !ruc.All(char.IsDigit)))
             {
-                TempData["Error"] = "El RUC debe tener exactamente 11 dígitos.";
+                TempData["Error"] =
+                    "El RUC debe tener exactamente 11 dígitos.";
+
                 return RedirectToAction(nameof(Index));
             }
+
 
             if (direccion?.Length > 500)
             {
@@ -106,48 +120,85 @@ namespace SistGurkas.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            if (idEstado != 1 && idEstado != 2)
+
+            if (idEstado != 1 &&
+                idEstado != 2)
             {
-                TempData["Error"] = "Selecciona un estado válido.";
+                TempData["Error"] =
+                    "Selecciona un estado válido.";
+
                 return RedirectToAction(nameof(Index));
             }
 
-            const string sql = """
-        INSERT INTO dbo.Empresa
-            (NombreEmpresa, Ruc, Direccion, IdEstado)
-        VALUES
-            (@NombreEmpresa, @Ruc, @Direccion, @IdEstado);
-        """;
 
             try
             {
                 await using var conexion = CrearConexion();
                 await conexion.OpenAsync();
 
-                await using var comando = new SqlCommand(sql, conexion);
+                await using var comando =
+                    new SqlCommand(
+                        "dbo.sp_Empresa_Registrar",
+                        conexion);
 
-                comando.Parameters.Add("@NombreEmpresa",
-                    SqlDbType.NVarChar, 200).Value = nombreEmpresa;
+                comando.CommandType =
+                    CommandType.StoredProcedure;
 
-                comando.Parameters.Add("@Ruc",
-                    SqlDbType.VarChar, 11).Value =
-                    (object?)ruc ?? DBNull.Value;
 
-                comando.Parameters.Add("@Direccion",
-                    SqlDbType.NVarChar, 500).Value =
-                    (object?)direccion ?? DBNull.Value;
+                comando.Parameters.Add(
+                    "@NombreEmpresa",
+                    SqlDbType.NVarChar,
+                    200).Value = nombreEmpresa;
 
-                comando.Parameters.Add("@IdEstado",
-                    SqlDbType.Int).Value = idEstado;
 
-                await comando.ExecuteNonQueryAsync();
+                comando.Parameters.Add(
+                    "@Ruc",
+                    SqlDbType.VarChar,
+                    11).Value =
+                        (object?)ruc ??
+                        DBNull.Value;
 
-                TempData["Exito"] = "Empresa registrada correctamente.";
-            }
-            catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
-            {
-                TempData["Error"] =
-                    "El RUC ingresado ya está registrado en otra empresa.";
+
+                comando.Parameters.Add(
+                    "@Direccion",
+                    SqlDbType.NVarChar,
+                    500).Value =
+                        (object?)direccion ??
+                        DBNull.Value;
+
+
+                comando.Parameters.Add(
+                    "@IdEstado",
+                    SqlDbType.Int).Value =
+                        idEstado;
+
+
+                await using var lector =
+                    await comando.ExecuteReaderAsync();
+
+
+                if (await lector.ReadAsync())
+                {
+                    var ok =
+                        lector.GetBoolean(
+                            lector.GetOrdinal("Ok"));
+
+                    var mensaje =
+                        lector.GetString(
+                            lector.GetOrdinal("Mensaje"));
+
+
+                    if (ok)
+                    {
+                        TempData["Exito"] =
+                            mensaje;
+                    }
+                    else
+                    {
+                        TempData["Error"] =
+                            mensaje;
+                    }
+                }
             }
             catch (SqlException)
             {
@@ -155,15 +206,19 @@ namespace SistGurkas.Controllers
                     "No se pudo registrar la empresa. Inténtalo nuevamente.";
             }
 
+
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        public async Task<IActionResult> VerificarRuc(string ruc)
+        public async Task<IActionResult> VerificarRuc(
+            string ruc)
         {
             ruc = ruc?.Trim() ?? "";
 
-            if (ruc.Length != 11 || !ruc.All(char.IsDigit))
+
+            if (ruc.Length != 11 ||
+                !ruc.All(char.IsDigit))
             {
                 return Json(new
                 {
@@ -172,25 +227,47 @@ namespace SistGurkas.Controllers
                 });
             }
 
-            const string sql = """
-        SELECT COUNT(1)
-        FROM dbo.Empresa
-        WHERE Ruc = @Ruc;
-        """;
 
-            await using var conexion = CrearConexion();
+            await using var conexion =
+                CrearConexion();
+
             await conexion.OpenAsync();
 
-            await using var comando = new SqlCommand(sql, conexion);
-            comando.Parameters.Add("@Ruc", SqlDbType.VarChar, 11).Value = ruc;
 
-            var cantidad = Convert.ToInt32(
-                await comando.ExecuteScalarAsync());
+            await using var comando =
+                new SqlCommand(
+                    "dbo.sp_Empresa_VerificarRuc",
+                    conexion);
+
+            comando.CommandType =
+                CommandType.StoredProcedure;
+
+
+            comando.Parameters.Add(
+                "@Ruc",
+                SqlDbType.VarChar,
+                11).Value = ruc;
+
+
+            var existe = false;
+
+
+            await using var lector =
+                await comando.ExecuteReaderAsync();
+
+
+            if (await lector.ReadAsync())
+            {
+                existe =
+                    lector.GetBoolean(
+                        lector.GetOrdinal("Existe"));
+            }
+
 
             return Json(new
             {
                 valido = true,
-                existe = cantidad > 0
+                existe
             });
         }
 
@@ -200,7 +277,8 @@ namespace SistGurkas.Controllers
             int idEmpresa,
             int idEstado)
         {
-            if (idEstado != 1 && idEstado != 2)
+            if (idEstado != 1 &&
+                idEstado != 2)
             {
                 return BadRequest(new
                 {
@@ -209,38 +287,74 @@ namespace SistGurkas.Controllers
                 });
             }
 
-            const string sql = """
-        UPDATE dbo.Empresa
-        SET IdEstado = @IdEstado
-        WHERE IdEmpresa = @IdEmpresa;
-        """;
 
-            await using var conexion = CrearConexion();
+            await using var conexion =
+                CrearConexion();
+
             await conexion.OpenAsync();
 
-            await using var comando = new SqlCommand(sql, conexion);
 
-            comando.Parameters.Add("@IdEmpresa", SqlDbType.Int)
-                .Value = idEmpresa;
+            await using var comando =
+                new SqlCommand(
+                    "dbo.sp_Empresa_CambiarEstado",
+                    conexion);
 
-            comando.Parameters.Add("@IdEstado", SqlDbType.Int)
-                .Value = idEstado;
+            comando.CommandType =
+                CommandType.StoredProcedure;
 
-            var filas = await comando.ExecuteNonQueryAsync();
 
-            if (filas == 0)
+            comando.Parameters.Add(
+                "@IdEmpresa",
+                SqlDbType.Int).Value =
+                    idEmpresa;
+
+
+            comando.Parameters.Add(
+                "@IdEstado",
+                SqlDbType.Int).Value =
+                    idEstado;
+
+
+            await using var lector =
+                await comando.ExecuteReaderAsync();
+
+
+            if (!await lector.ReadAsync())
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        ok = false,
+                        mensaje =
+                            "No se obtuvo respuesta del procedimiento almacenado."
+                    });
+            }
+
+
+            var ok =
+                lector.GetBoolean(
+                    lector.GetOrdinal("Ok"));
+
+            var mensaje =
+                lector.GetString(
+                    lector.GetOrdinal("Mensaje"));
+
+
+            if (!ok)
             {
                 return NotFound(new
                 {
                     ok = false,
-                    mensaje = "La empresa no existe."
+                    mensaje
                 });
             }
+
 
             return Json(new
             {
                 ok = true,
-                mensaje = "Estado actualizado correctamente."
+                mensaje
             });
         }
     }

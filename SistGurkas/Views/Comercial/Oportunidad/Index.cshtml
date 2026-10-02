@@ -25,33 +25,335 @@
 }
 
 <style>
-.op-page .card{border:0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-.op-header{padding:24px 26px;border-radius:12px;background:linear-gradient(110deg,#17386f 0%,#2f61a9 100%);box-shadow:0 8px 22px rgba(23,56,111,.12)}
-.op-header-section{color:#b9d2ff;font-size:11px;font-weight:700;letter-spacing:.5px}
-.op-header-description{color:rgba(255,255,255,.88);font-size:13px}
-.op-header .btn{background:#f4f8ff;border:0}.op-header .btn:hover{background:#fff}
-.metric-card{position:relative;overflow:hidden;border:1px solid #edf0f5!important;transition:transform .2s ease,box-shadow .2s ease}
-.metric-card:hover{transform:translateY(-2px);box-shadow:0 5px 18px rgba(0,0,0,.08)}
-.metric-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:#315fa8}
-.metric-card.card-evaluacion::before{background:#f4b740}.metric-card.card-propuesta::before{background:#3b82f6}.metric-card.card-negociacion::before{background:#8b5cf6}.metric-card.card-ganada::before{background:#25b46b}.metric-card.card-perdida::before{background:#dc3545}
-.metric-icon{width:46px;height:46px;min-width:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.metric-total{background:#e8f1ff;color:#0d6efd}.metric-evaluacion{background:#fff4dc;color:#f59f00}.metric-propuesta{background:#e8f1ff;color:#0d6efd}.metric-negociacion{background:#eee8ff;color:#6f42c1}.metric-ganada{background:#e4f8ee;color:#0f9d58}.metric-perdida{background:#fde8eb;color:#dc3545}
-.metric-number{font-size:22px;line-height:1.1;font-weight:700;color:#152348;margin-bottom:5px}.metric-label{font-size:12px;line-height:1.2;font-weight:500;color:#71809f;white-space:nowrap}
-.app-svg{width:20px;height:20px;display:inline-block!important;visibility:visible!important;opacity:1!important;vertical-align:middle;stroke:currentColor!important;fill:none!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
-.metric-icon .app-svg{width:22px;height:22px}
-.op-filter-card label{font-size:12px;font-weight:600;color:#344563}
-.op-table-card{overflow:hidden}.op-table-title{padding:18px 20px 12px;display:flex;align-items:center;justify-content:space-between}.op-table-title h3{margin:0;color:#152348;font-size:16px;font-weight:700}
-.op-table{margin-bottom:0}.op-table th,.op-table td{vertical-align:middle;padding-top:14px;padding-bottom:14px;padding-left:12px;padding-right:12px}
-.op-table th:first-child,.op-table td:first-child{padding-left:24px!important}.op-table th:last-child,.op-table td:last-child{padding-right:24px!important}
-.op-table thead th{color:#71809f;font-weight:700;font-size:12px;white-space:nowrap}
-.op-code{color:#31547e;font-weight:700;white-space:nowrap}.op-company{font-weight:700;color:#182a4e;display:block}.op-prospect-label{display:block;color:#71809f;font-size:11px;margin-top:2px}
-.op-stage{display:inline-flex;align-items:center;justify-content:center;min-width:105px;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:600}
-.stage-1{background:#fff2cf;color:#b26a00}.stage-2{background:#dcebff;color:#0561d9}.stage-3{background:#eee4ff;color:#6c2bd9}.stage-4{background:#dff6e8;color:#16803c}.stage-5{background:#ffe2e5;color:#c62828}
-.prob-wrap{display:flex;align-items:center;gap:8px;min-width:115px}.prob-value{width:32px;font-weight:600;color:#26385c}.prob-track{width:70px;height:5px;background:#e9edf4;border-radius:20px;overflow:hidden}.prob-fill{height:100%;background:#1769ff;border-radius:20px}
-.op-actions{display:flex;align-items:center;justify-content:center;gap:6px}.btn-action{width:36px!important;height:36px!important;min-width:36px!important;padding:0!important;display:inline-flex!important;justify-content:center!important;align-items:center!important;border-radius:8px!important}
-.btn-action .app-svg{width:18px!important;height:18px!important;display:inline-block!important;visibility:visible!important;opacity:1!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important}
-.btn-activar{color:#16803c!important;background-color:#e4f8ee!important}.op-empty{padding:50px 20px;text-align:center;color:#8491aa}
-@@media(max-width:1200px){.op-table{min-width:1100px}}
+    .op-page .card {
+        border: 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,.05)
+    }
+
+    .op-header {
+        padding: 24px 26px;
+        border-radius: 12px;
+        background: linear-gradient(110deg,#17386f 0%,#2f61a9 100%);
+        box-shadow: 0 8px 22px rgba(23,56,111,.12)
+    }
+
+    .op-header-section {
+        color: #b9d2ff;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .5px
+    }
+
+    .op-header-description {
+        color: rgba(255,255,255,.88);
+        font-size: 13px
+    }
+
+    .op-header .btn {
+        background: #f4f8ff;
+        border: 0
+    }
+
+        .op-header .btn:hover {
+            background: #fff
+        }
+
+    .metric-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #edf0f5 !important;
+        transition: transform .2s ease,box-shadow .2s ease
+    }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 18px rgba(0,0,0,.08)
+        }
+
+        .metric-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #315fa8
+        }
+
+        .metric-card.card-evaluacion::before {
+            background: #f4b740
+        }
+
+        .metric-card.card-propuesta::before {
+            background: #3b82f6
+        }
+
+        .metric-card.card-negociacion::before {
+            background: #8b5cf6
+        }
+
+        .metric-card.card-ganada::before {
+            background: #25b46b
+        }
+
+        .metric-card.card-perdida::before {
+            background: #dc3545
+        }
+
+    .metric-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0
+    }
+
+    .metric-total {
+        background: #e8f1ff;
+        color: #0d6efd
+    }
+
+    .metric-evaluacion {
+        background: #fff4dc;
+        color: #f59f00
+    }
+
+    .metric-propuesta {
+        background: #e8f1ff;
+        color: #0d6efd
+    }
+
+    .metric-negociacion {
+        background: #eee8ff;
+        color: #6f42c1
+    }
+
+    .metric-ganada {
+        background: #e4f8ee;
+        color: #0f9d58
+    }
+
+    .metric-perdida {
+        background: #fde8eb;
+        color: #dc3545
+    }
+
+    .metric-number {
+        font-size: 22px;
+        line-height: 1.1;
+        font-weight: 700;
+        color: #152348;
+        margin-bottom: 5px
+    }
+
+    .metric-label {
+        font-size: 12px;
+        line-height: 1.2;
+        font-weight: 500;
+        color: #71809f;
+        white-space: nowrap
+    }
+
+    .app-svg {
+        width: 20px;
+        height: 20px;
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        vertical-align: middle;
+        stroke: currentColor !important;
+        fill: none !important;
+        stroke-width: 1.8 !important;
+        stroke-linecap: round !important;
+        stroke-linejoin: round !important
+    }
+
+    .metric-icon .app-svg {
+        width: 22px;
+        height: 22px
+    }
+
+    .op-filter-card label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #344563
+    }
+
+    .op-table-card {
+        overflow: hidden
+    }
+
+    .op-table-title {
+        padding: 18px 20px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between
+    }
+
+        .op-table-title h3 {
+            margin: 0;
+            color: #152348;
+            font-size: 16px;
+            font-weight: 700
+        }
+
+    .op-table {
+        margin-bottom: 0
+    }
+
+        .op-table th, .op-table td {
+            vertical-align: middle;
+            padding-top: 14px;
+            padding-bottom: 14px;
+            padding-left: 12px;
+            padding-right: 12px
+        }
+
+            .op-table th:first-child, .op-table td:first-child {
+                padding-left: 24px !important
+            }
+
+            .op-table th:last-child, .op-table td:last-child {
+                padding-right: 24px !important
+            }
+
+        .op-table thead th {
+            color: #71809f;
+            font-weight: 700;
+            font-size: 12px;
+            white-space: nowrap
+        }
+
+    .op-code {
+        color: #31547e;
+        font-weight: 700;
+        white-space: nowrap
+    }
+
+    .op-company {
+        font-weight: 700;
+        color: #182a4e;
+        display: block
+    }
+
+    .op-prospect-label {
+        display: block;
+        color: #71809f;
+        font-size: 11px;
+        margin-top: 2px
+    }
+
+    .op-stage {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 105px;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 600
+    }
+
+    .stage-1 {
+        background: #fff2cf;
+        color: #b26a00
+    }
+
+    .stage-2 {
+        background: #dcebff;
+        color: #0561d9
+    }
+
+    .stage-3 {
+        background: #eee4ff;
+        color: #6c2bd9
+    }
+
+    .stage-4 {
+        background: #dff6e8;
+        color: #16803c
+    }
+
+    .stage-5 {
+        background: #ffe2e5;
+        color: #c62828
+    }
+
+    .prob-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 115px
+    }
+
+    .prob-value {
+        width: 32px;
+        font-weight: 600;
+        color: #26385c
+    }
+
+    .prob-track {
+        width: 70px;
+        height: 5px;
+        background: #e9edf4;
+        border-radius: 20px;
+        overflow: hidden
+    }
+
+    .prob-fill {
+        height: 100%;
+        background: #1769ff;
+        border-radius: 20px
+    }
+
+    .op-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px
+    }
+
+    .btn-action {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        border-radius: 8px !important
+    }
+
+        .btn-action .app-svg {
+            width: 18px !important;
+            height: 18px !important;
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            fill: none !important;
+            stroke: currentColor !important;
+            stroke-width: 2 !important
+        }
+
+    .btn-activar {
+        color: #16803c !important;
+        background-color: #e4f8ee !important
+    }
+
+    .op-empty {
+        padding: 50px 20px;
+        text-align: center;
+        color: #8491aa
+    }
+
+    @@media(max-width:1200px) {
+        .op-table {
+            min-width: 1100px
+        }
+    }
 </style>
 
 <div class="op-page">
@@ -63,72 +365,95 @@
                 <div class="op-header-description">Gestiona las oportunidades comerciales desde la propuesta hasta el cierre.</div>
             </div>
             <button type="button" class="btn btn-light-primary fw-semibold" id="btnNueva">
-                <svg class="app-svg me-1" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                <svg class="app-svg me-1" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
                 Nueva oportunidad
             </button>
         </div>
     </div>
 
     <div class="row g-3 mb-5">
-        <div class="col-xl col-md-4 col-6"><div class="card metric-card h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-total"><svg class="app-svg" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></div><div><div class="metric-number">@total</div><div class="metric-label">Oportunidades</div></div></div></div></div>
-        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-evaluacion h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-evaluacion"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><div class="metric-number">@evaluacion</div><div class="metric-label">En evaluación</div></div></div></div></div>
-        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-propuesta h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-propuesta"><svg class="app-svg" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h6"/></svg></div><div><div class="metric-number">@propuesta</div><div class="metric-label">Propuesta enviada</div></div></div></div></div>
-        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-negociacion h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-negociacion"><svg class="app-svg" viewBox="0 0 24 24"><path d="M4 12h4l3-3 3 3h6"/><path d="M7 16l3 3 7-7"/></svg></div><div><div class="metric-number">@negociacion</div><div class="metric-label">Negociación</div></div></div></div></div>
-        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-ganada h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-ganada"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg></div><div><div class="metric-number">@ganadas</div><div class="metric-label">Ganadas</div></div></div></div></div>
-        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-perdida h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-perdida"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg></div><div><div class="metric-number">@perdidas</div><div class="metric-label">Perdidas</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-total"><svg class="app-svg" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M8 9h8M8 13h8M8 17h5" /></svg></div><div><div class="metric-number">@total</div><div class="metric-label">Oportunidades</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-evaluacion h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-evaluacion"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></div><div><div class="metric-number">@evaluacion</div><div class="metric-label">En evaluación</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-propuesta h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-propuesta"><svg class="app-svg" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z" /><path d="M9 11h6M9 15h6" /></svg></div><div><div class="metric-number">@propuesta</div><div class="metric-label">Propuesta enviada</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-negociacion h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-negociacion"><svg class="app-svg" viewBox="0 0 24 24"><path d="M4 12h4l3-3 3 3h6" /><path d="M7 16l3 3 7-7" /></svg></div><div><div class="metric-number">@negociacion</div><div class="metric-label">Negociación</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-ganada h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-ganada"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></div><div><div class="metric-number">@ganadas</div><div class="metric-label">Ganadas</div></div></div></div></div>
+        <div class="col-xl col-md-4 col-6"><div class="card metric-card card-perdida h-100"><div class="card-body p-4 d-flex align-items-center gap-3"><div class="metric-icon metric-perdida"><svg class="app-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg></div><div><div class="metric-number">@perdidas</div><div class="metric-label">Perdidas</div></div></div></div></div>
     </div>
 
     <div class="card op-filter-card mb-4">
         <div class="card-body p-4">
             <form method="get" asp-controller="Oportunidad" asp-action="Index" class="row g-3 align-items-end">
                 <div class="col-xl-5 col-md-6"><label class="form-label">Buscar</label><input type="text" name="buscar" value="@ViewBag.Buscar" class="form-control" placeholder="Empresa, oportunidad..." /></div>
-                <div class="col-xl-3 col-md-6"><label class="form-label">Etapa</label><select name="idEstadoOportunidad" class="form-select"><option value="">Todas</option>@foreach(var e in estados){<option value="@e.Key" selected="@(ViewBag.Estado == e.Key)">@e.Value</option>}</select></div>
-                <div class="col-xl-2 col-md-6"><button type="submit" class="btn btn-primary w-100">Buscar</button></div>
-                <div class="col-xl-2 col-md-6"><a asp-controller="Oportunidad" asp-action="Index" class="btn btn-light w-100">Limpiar</a></div>
-            </form>
+                <div class="col-xl-3 col-md-6">
+                    <label class="form-label">Etapa</label><select name="idEstadoOportunidad" class="form-select">
+                    <option value="">Todas</option>@foreach(var e in estados){
+                    <option value="@e.Key" selected="@(ViewBag.Estado == e.Key)">@e.Value</option>
+                }
+            </select>
         </div>
-    </div>
+        <div class="col-xl-2 col-md-6"><button type="submit" class="btn btn-primary w-100">Buscar</button></div>
+        <div class="col-xl-2 col-md-6"><a asp-controller="Oportunidad" asp-action="Index" class="btn btn-light w-100">Limpiar</a></div>
+    </form>
+</div>
+</div>
 
-    <div class="card op-table-card">
-        <div class="op-table-title"><h3>Lista de Oportunidades <span class="text-muted fw-normal">(@items.Count registros)</span></h3></div>
-        <div class="table-responsive">
-            <table class="table op-table align-middle">
-                <thead><tr><th>Código</th><th>Empresa / Prospecto</th><th>Oportunidad</th><th>Monto estimado</th><th>Etapa</th><th>Probabilidad</th><th>Fecha estimada</th><th>Responsable</th><th class="text-center">Acciones</th></tr></thead>
-                <tbody>
-                @foreach(var x in items)
+<div class="card op-table-card">
+    <div class="op-table-title"><h3>Lista de Oportunidades <span class="text-muted fw-normal">(@items.Count registros)</span></h3></div>
+    <div class="table-responsive">
+        <table class="table op-table align-middle">
+            <thead><tr><th>Código</th><th>Empresa / Prospecto</th><th>Oportunidad</th><th>Monto estimado</th><th>Etapa</th><th>Probabilidad</th><th>Fecha estimada</th><th>Responsable</th><th class="text-center">Acciones</th></tr></thead>
+            <tbody>
+                @foreach (var x in items)
                 {
                     var probabilidad = x.ProbabilidadCierre ?? 0;
                     <tr>
                         <td><span class="op-code">@x.CodigoOportunidad</span></td>
                         <td><span class="op-company">@x.ProspectoNombre</span><span class="op-prospect-label">(Prospecto)</span></td>
-                        <td><strong>@x.Nombre</strong>@if(x.IdEstado==2){<span class="badge badge-light-danger ms-1">INACTIVA</span>}</td>
-                        <td>@if(x.MontoEstimado.HasValue){<strong>@(x.Moneda=="USD" ? "$ " : "S/ ")@x.MontoEstimado.Value.ToString("N2")</strong>}else{<span>—</span>}</td>
-                        <td><span class="op-stage stage-@x.IdEstadoOportunidad">@estados.GetValueOrDefault(x.IdEstadoOportunidad,"Sin etapa")</span></td>
-                        <td><div class="prob-wrap"><span class="prob-value">@probabilidad%</span><div class="prob-track"><div class="prob-fill" style="width:@probabilidad%"></div></div></div></td>
-                        <td>@(x.FechaEstimadaCierre?.ToString("dd/MM/yyyy") ?? "—")</td>
-                        <td><span class="text-muted">—</span></td>
-                        <td class="text-center">
-                            <div class="op-actions">
-                                <button type="button" class="btn btn-light-info btn-action btnVerDetalle" title="Ver detalle"
-                                        data-item='@JsonSerializer.Serialize(x,new JsonSerializerOptions { PropertyNamingPolicy=JsonNamingPolicy.CamelCase })'>
-                                    <svg class="app-svg" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                </button>
-                                <button type="button" class="btn btn-light-primary btn-action btnEditar" title="Editar"
-                                        data-item='@JsonSerializer.Serialize(x,new JsonSerializerOptions { PropertyNamingPolicy=JsonNamingPolicy.CamelCase })'>
-                                    <svg class="app-svg" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/></svg>
-                                </button>
-                                <button type="button" class="btn btn-action @(x.IdEstado==1 ? "btn-light-danger":"btn-activar") btnEstado" title="@(x.IdEstado==1 ? "Dar de baja":"Activar")" data-id="@x.IdOportunidad" data-nombre="@x.Nombre" data-estado="@x.IdEstado">
-                                    <svg class="app-svg" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="5"/><circle cx="@(x.IdEstado==1 ? 8 : 16)" cy="12" r="3"/></svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-        @if(!items.Any()){<div class="op-empty">No se encontraron oportunidades.</div>}
-    </div>
+                        <td>
+                            <strong>@x.Nombre</strong>@if(x.IdEstado==2){
+                            <span class="badge badge-light-danger ms-1">INACTIVA</span>
+                        }
+                    </td>
+                    <td>
+                        @if (x.MontoEstimado.HasValue)
+                        {
+                            <strong>@(x.Moneda == "USD" ? "$ " : "S/ ")@x.MontoEstimado.Value.ToString("N2")</strong>
+                        }
+                        else
+                        {
+
+                            <span>—</span>
+                        }
+                    </td>
+                    <td><span class="op-stage stage-@x.IdEstadoOportunidad">@estados.GetValueOrDefault(x.IdEstadoOportunidad, "Sin etapa")</span></td>
+                    <td><div class="prob-wrap"><span class="prob-value">@probabilidad%</span><div class="prob-track"><div class="prob-fill" style="width:@probabilidad%"></div></div></div></td>
+                    <td>@(x.FechaEstimadaCierre?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    <td><span class="text-muted">—</span></td>
+                    <td class="text-center">
+                        <div class="op-actions">
+                            <button type="button" class="btn btn-light-info btn-action btnVerDetalle" title="Ver detalle"
+                                    data-item='@JsonSerializer.Serialize(x, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })'>
+                                <svg class="app-svg" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+                            </button>
+                            <button type="button" class="btn btn-light-primary btn-action btnEditar" title="Editar"
+                                    data-item='@JsonSerializer.Serialize(x, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })'>
+                                <svg class="app-svg" viewBox="0 0 24 24"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z" /></svg>
+                            </button>
+                            <button type="button" class="btn btn-action @(x.IdEstado == 1 ? "btn-light-danger" : "btn-activar") btnEstado" title="@(x.IdEstado == 1 ? "Dar de baja" : "Activar")" data-id="@x.IdOportunidad" data-nombre="@x.Nombre" data-estado="@x.IdEstado">
+                                <svg class="app-svg" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="10" rx="5" /><circle cx="@(x.IdEstado == 1 ? 8 : 16)" cy="12" r="3" /></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (!items.Any())
+{
+    <div class="op-empty">No se encontraron oportunidades.</div>
+}
+</div>
 </div>
 
 
@@ -216,22 +541,42 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="detProspecto"><div class="alert alert-light-primary mb-0"><strong id="detProspectoNombre">—</strong><br>Esta pestaña se conectará con la ficha completa del prospecto/cliente.</div></div>
-                    <div class="tab-pane fade" id="detServicios"><div class="text-center text-muted py-10">Servicios se desarrollará en la siguiente etapa.</div></div>
-                    <div class="tab-pane fade" id="detPropuesta"><div class="text-center text-muted py-10">Propuesta comercial se desarrollará en la siguiente etapa.</div></div>
-                    <div class="tab-pane fade" id="detSeguimiento"><div class="text-center text-muted py-10">Seguimiento se desarrollará en la siguiente etapa.</div></div>
-                    <div class="tab-pane fade" id="detDocumentos"><div class="text-center text-muted py-10">Documentos se desarrollará en la siguiente etapa.</div></div>
-                    <div class="tab-pane fade" id="detCompetencia"><div class="text-center text-muted py-10">Competencia se desarrollará en la siguiente etapa.</div></div>
-                    <div class="tab-pane fade" id="detHistorial"><div class="text-center text-muted py-10">Historial se desarrollará en la siguiente etapa.</div></div>
+                    <div class="tab-pane fade" id="detProspecto"><div class="d-flex justify-content-between align-items-center mb-4"><div><h4 class="fw-bold mb-1">Contactos del Cliente / Prospecto</h4><span class="badge badge-light-primary" id="detProspectoNombre">—</span></div><button class="btn btn-primary btn-sm" type="button" id="btnAgregarContactoOp">+ Agregar contacto</button></div><div class="table-responsive"><table class="table table-row-bordered"><thead><tr><th>#</th><th>Nombre</th><th>Cargo</th><th>Teléfono</th><th>Correo</th><th>Principal</th><th class="text-end">Acciones</th></tr></thead><tbody id="tblContactosOp"></tbody></table></div></div>
+                    <div class="tab-pane fade" id="detServicios"><div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold mb-0">Servicios de la Oportunidad</h4><button class="btn btn-primary btn-sm" type="button" id="btnAgregarServicio">+ Agregar servicio</button></div><div class="table-responsive"><table class="table table-row-bordered"><thead><tr><th>#</th><th>Servicio</th><th>Cantidad</th><th>Tipo</th><th>Jornada</th><th>Observaciones</th><th class="text-end">Acciones</th></tr></thead><tbody id="tblServiciosOp"></tbody></table></div></div>
+                    <div class="tab-pane fade" id="detPropuesta">
+                        <div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold mb-0">Propuesta Comercial</h4><button class="btn btn-primary btn-sm" type="button" id="btnGestionarPropuesta">+ Registrar / actualizar</button></div>
+                        <div id="propuestaVacia" class="text-center text-muted py-8">Sin propuesta comercial registrada.</div>
+                        <div id="propuestaResumen" class="row g-4 d-none">
+                            <div class="col-md-3"><div class="text-muted fs-8">VERSIÓN</div><div class="fw-bold" id="propRVersion"></div></div>
+                            <div class="col-md-3"><div class="text-muted fs-8">FECHA ENVÍO</div><div class="fw-bold" id="propRFecha"></div></div>
+                            <div class="col-md-3"><div class="text-muted fs-8">MONTO</div><div class="fw-bold" id="propRMonto"></div></div>
+                            <div class="col-md-3"><div class="text-muted fs-8">ESTADO</div><div class="fw-bold" id="propREstado"></div></div>
+                            <div class="col-md-3"><div class="text-muted fs-8">VIGENCIA</div><div class="fw-bold" id="propRVigencia"></div></div>
+                            <div class="col-12"><div class="text-muted fs-8">OBSERVACIONES</div><div id="propRObs"></div></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="detSeguimiento"><div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold mb-0">Seguimiento Comercial</h4><button class="btn btn-primary btn-sm" type="button" id="btnAgregarSeguimiento">+ Registrar seguimiento</button></div><div class="table-responsive"><table class="table table-row-bordered"><thead><tr><th>Fecha</th><th>Tipo</th><th>Resultado / Comentario</th><th>Próxima acción</th><th>Fecha próxima</th><th>Responsable</th></tr></thead><tbody id="tblSeguimientosOp"></tbody></table></div></div>
+                    <div class="tab-pane fade" id="detDocumentos"><div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold mb-0">Documentos</h4><button class="btn btn-primary btn-sm" type="button" id="btnAgregarDocumento">+ Agregar documento</button></div><div class="table-responsive"><table class="table table-row-bordered"><thead><tr><th>#</th><th>Nombre</th><th>Fecha</th><th>Tipo</th><th>Archivo</th><th></th></tr></thead><tbody id="tblDocumentosOp"></tbody></table></div></div>
+                    <div class="tab-pane fade" id="detCompetencia"><div class="d-flex justify-content-between align-items-center mb-4"><h4 class="fw-bold mb-0">Competencia</h4><button class="btn btn-primary btn-sm" type="button" id="btnAgregarCompetencia">+ Agregar competidor</button></div><div class="table-responsive"><table class="table table-row-bordered"><thead><tr><th>#</th><th>Competidor</th><th>Monto conocido</th><th>Fortalezas</th><th>Debilidades</th><th>Principal</th><th></th></tr></thead><tbody id="tblCompetenciaOp"></tbody></table></div></div>
+                    <div class="tab-pane fade" id="detHistorial"><h4 class="fw-bold mb-4">Historial de la Oportunidad</h4><div class="table-responsive"><table class="table table-row-bordered"><thead><tr><th>Fecha</th><th>Evento</th><th>Detalle</th><th>Usuario</th></tr></thead><tbody id="tblHistorialOp"></tbody></table></div></div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-success d-none" id="btnConvertirCliente" disabled>Convertir en Cliente</button>
+                <button type="button" class="btn btn-success" id="btnConvertirCliente" disabled title="La oportunidad debe estar Ganada para convertirla en cliente">Convertir en Cliente</button>
             </div>
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="modalContactoOp" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formContactoOp">@Html.AntiForgeryToken()<input type="hidden" id="conId" value="0"><div class="modal-header"><h3 class="modal-title" id="tituloContactoOp">Agregar contacto</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body row g-3"><div class="col-12"><label class="form-label required">Nombre</label><input id="conNombre" class="form-control" maxlength="150" required></div><div class="col-md-6"><label class="form-label">Cargo</label><input id="conCargo" class="form-control" maxlength="100"></div><div class="col-md-6"><label class="form-label">Teléfono</label><input id="conTelefono" class="form-control" maxlength="20"></div><div class="col-12"><label class="form-label">Correo</label><input id="conCorreo" type="email" class="form-control" maxlength="150"></div><div class="col-12"><div class="form-check"><input id="conPrincipal" class="form-check-input" type="checkbox"><label class="form-check-label" for="conPrincipal">Marcar como contacto principal</label></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" type="submit">Guardar contacto</button></div></form></div></div></div>
+<div class="modal fade" id="modalServicioOp" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formServicioOp">@Html.AntiForgeryToken()<div class="modal-header"><h3 class="modal-title">Servicio de la oportunidad</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body row g-3"><input type="hidden" id="srvId" value="0"><div class="col-12"><label class="form-label required">Servicio</label><input id="srvNombre" class="form-control" maxlength="200" required></div><div class="col-4"><label class="form-label required">Cantidad</label><input id="srvCantidad" type="number" min="1" value="1" class="form-control" required></div><div class="col-4"><label class="form-label">Tipo</label><select id="srvTipo" class="form-select"><option value="Fijo">Fijo</option><option value="Eventual">Eventual</option><option value="Otro">Otro</option></select></div><div class="col-4"><label class="form-label">Jornada</label><input id="srvJornada" class="form-control" placeholder="12x12, 24x7..."></div><div class="col-12"><label class="form-label">Observaciones</label><textarea id="srvObs" class="form-control" rows="3"></textarea></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" type="submit">Guardar</button></div></form></div></div></div>
+<div class="modal fade" id="modalSeguimientoOp" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formSeguimientoOp">@Html.AntiForgeryToken()<div class="modal-header"><h3 class="modal-title">Registrar seguimiento</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body row g-3"><div class="col-6"><label class="form-label required">Fecha</label><input id="segFecha" type="datetime-local" class="form-control" required></div><div class="col-6"><label class="form-label required">Tipo</label><select id="segTipo" class="form-select"><option>Correo</option><option>Reunión</option><option>Llamada</option><option>Visita</option><option>WhatsApp</option><option>Otro</option></select></div><div class="col-12"><label class="form-label">Resultado / Comentario</label><textarea id="segComentario" class="form-control" rows="3"></textarea></div><div class="col-7"><label class="form-label">Próxima acción</label><input id="segProxima" class="form-control"></div><div class="col-5"><label class="form-label">Fecha próxima</label><input id="segFechaProxima" type="datetime-local" class="form-control"></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" type="submit">Registrar</button></div></form></div></div></div>
+<div class="modal fade" id="modalDocumentoOp" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formDocumentoOp" enctype="multipart/form-data">@Html.AntiForgeryToken()<div class="modal-header"><h3 class="modal-title">Agregar documento</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body row g-3"><div class="col-7"><label class="form-label required">Nombre</label><input id="docNombre" class="form-control" required></div><div class="col-5"><label class="form-label required">Tipo</label><select id="docTipo" class="form-select"><option>TDR</option><option>Propuesta Técnica</option><option>Propuesta Económica</option><option>Contrato</option><option>Otro</option></select></div><div class="col-12"><label class="form-label">Archivo</label><input id="docArchivo" type="file" class="form-control" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"></div><div class="col-12"><label class="form-label">Observación</label><textarea id="docObs" class="form-control" rows="2"></textarea></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" type="submit">Guardar</button></div></form></div></div></div>
+<div class="modal fade" id="modalPropuestaOp" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formPropuestaOp">@Html.AntiForgeryToken()<div class="modal-header"><h3 class="modal-title">Propuesta comercial</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body row g-3"><div class="col-4"><label class="form-label required">Versión</label><input id="propVersion" class="form-control" value="V1" maxlength="30" required></div><div class="col-4"><label class="form-label">Fecha envío</label><input id="propFecha" type="date" class="form-control"></div><div class="col-4"><label class="form-label required">Estado</label><select id="propEstado" class="form-select"><option>Borrador</option><option>Enviada</option><option>Observada</option><option>Aceptada</option><option>Rechazada</option></select></div><div class="col-6"><label class="form-label">Monto</label><input id="propMonto" type="number" min="0" step="0.01" class="form-control"></div><div class="col-3"><label class="form-label">Moneda</label><select id="propMoneda" class="form-select"><option value="PEN">PEN</option><option value="USD">USD</option></select></div><div class="col-3"><label class="form-label">Vigencia días</label><input id="propVigencia" type="number" min="0" class="form-control"></div><div class="col-12"><label class="form-label">Documento relacionado</label><select id="propDocumento" class="form-select"><option value="">Ninguno</option></select></div><div class="col-12"><label class="form-label">Observaciones</label><textarea id="propObs" class="form-control" rows="3"></textarea></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" type="submit">Guardar propuesta</button></div></form></div></div></div>
+<div class="modal fade" id="modalCompetenciaOp" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><form id="formCompetenciaOp">@Html.AntiForgeryToken()<div class="modal-header"><h3 class="modal-title">Competencia</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body row g-3"><input type="hidden" id="compId" value="0"><div class="col-12"><label class="form-label required">Competidor</label><input id="compNombre" class="form-control" maxlength="200" required></div><div class="col-8"><label class="form-label">Monto conocido</label><input id="compMonto" type="number" min="0" step="0.01" class="form-control"></div><div class="col-4"><label class="form-label">Moneda</label><select id="compMoneda" class="form-select"><option value="PEN">PEN</option><option value="USD">USD</option></select></div><div class="col-6"><label class="form-label">Fortalezas</label><textarea id="compFortalezas" class="form-control" rows="3"></textarea></div><div class="col-6"><label class="form-label">Debilidades</label><textarea id="compDebilidades" class="form-control" rows="3"></textarea></div><div class="col-12"><label class="form-label">Observaciones</label><textarea id="compObs" class="form-control" rows="2"></textarea></div><div class="col-12"><div class="form-check"><input id="compPrincipal" class="form-check-input" type="checkbox"><label class="form-check-label" for="compPrincipal">Competidor principal</label></div></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button class="btn btn-primary" type="submit">Guardar</button></div></form></div></div></div>
+<div class="modal fade" id="modalConvertirCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="formConvertirCliente">@Html.AntiForgeryToken()<div class="modal-header"><h3 class="modal-title">Convertir en Cliente</h3><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-primary">Al convertir esta oportunidad se creará un registro en <strong>Clientes</strong>, se copiarán los contactos seleccionados y el prospecto quedará como <strong>Convertido</strong>.</div><h5 class="fw-bold mt-4">Información de la Empresa</h5><div class="row g-3"><div class="col-md-6"><label class="form-label required">Empresa interna Gurkas</label><select id="convEmpresa" class="form-select" required></select></div><div class="col-md-6"><label class="form-label">RUC</label><input id="convRuc" class="form-control" maxlength="11"></div><div class="col-12"><label class="form-label required">Razón social</label><input id="convRazon" class="form-control" required></div><div class="col-md-6"><label class="form-label">Nombre comercial</label><input id="convComercial" class="form-control"></div><div class="col-md-6"><label class="form-label">Sector</label><select id="convSector" class="form-select"></select></div><div class="col-12"><label class="form-label">Dirección fiscal</label><input id="convDireccion" class="form-control"></div><div class="col-md-4"><label class="form-label">Departamento</label><select id="convDepartamento" class="form-select"></select></div><div class="col-md-4"><label class="form-label">Provincia</label><select id="convProvincia" class="form-select"></select></div><div class="col-md-4"><label class="form-label">Distrito</label><select id="convDistrito" class="form-select"></select></div><div class="col-md-6"><label class="form-label">Teléfono</label><input id="convTelefono" class="form-control"></div><div class="col-md-6"><label class="form-label">Correo</label><input id="convCorreo" class="form-control"></div><div class="col-md-6"><label class="form-label">Página web</label><input id="convWeb" class="form-control"></div><div class="col-md-6"><label class="form-label">Tipo de cliente</label><select id="convTipoCliente" class="form-select"><option value="Privado">Privado</option><option value="Estado">Estado</option></select></div></div><h5 class="fw-bold mt-5">Opciones adicionales</h5><div class="form-check"><input class="form-check-input" type="checkbox" id="convCopiarContactos" checked><label class="form-check-label" for="convCopiarContactos">Copiar todos los contactos activos del prospecto</label></div></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary" id="btnConfirmarConversion">Convertir</button></div></form></div></div></div>
 
 <div class="modal fade" id="modalOportunidad" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -245,126 +590,136 @@
                 </div>
                 <div class="modal-body">
                     <div class="row g-4">
-                        <div class="col-md-6"><label class="form-label required">Prospecto</label><select name="IdProspecto" id="opProspecto" class="form-select" required><option value="">Seleccionar prospecto...</option>@foreach(var p in prospectos){<option value="@p.Id">@p.Nombre</option>}</select></div>
-                        <div class="col-md-6"><label class="form-label required">Nombre de la oportunidad</label><input name="Nombre" id="opNombre" class="form-control" maxlength="200" required /></div>
-                        <div class="col-md-6"><label class="form-label">Descripción de la necesidad</label><textarea name="DescripcionNecesidad" id="opNecesidad" class="form-control" rows="3" maxlength="2000"></textarea></div>
-                        <div class="col-md-6"><label class="form-label">Objetivos y alcance</label><textarea name="ObjetivosAlcance" id="opAlcance" class="form-control" rows="3" maxlength="2000"></textarea></div>
-                        <div class="col-md-4"><label class="form-label">Etapa actual</label><select name="IdEstadoOportunidad" id="opEstado" class="form-select">@foreach(var e in estados){<option value="@e.Key">@e.Value</option>}</select></div>
-                        <div class="col-md-4"><label class="form-label">Probabilidad de cierre (%)</label><input name="ProbabilidadCierre" id="opProbabilidad" type="number" min="0" max="100" class="form-control" /></div>
-                        <div class="col-md-4"><label class="form-label">Fecha estimada de cierre</label><input name="FechaEstimadaCierre" id="opCierre" type="date" class="form-control" /></div>
-                        <div class="col-md-4"><label class="form-label">Monto estimado</label><input name="MontoEstimado" id="opMonto" type="number" min="0" step="0.01" class="form-control" /></div>
-                        <div class="col-md-4"><label class="form-label">Moneda</label><select name="Moneda" id="opMoneda" class="form-select"><option value="PEN">PEN (S/)</option><option value="USD">USD ($)</option></select></div>
-                        <div class="col-md-4"><label class="form-label">Tipo de contratación</label><input name="TipoContratacion" id="opContratacion" maxlength="100" class="form-control" /></div>
-                        <div class="col-md-4"><label class="form-label">Prioridad</label><select name="Prioridad" id="opPrioridad" class="form-select"><option value="">Seleccionar...</option><option value="BAJA">Baja</option><option value="MEDIA">Media</option><option value="ALTA">Alta</option></select></div>
-                        <div class="col-12"><label class="form-label">Observaciones</label><textarea name="Observacion" id="opObservacion" class="form-control" maxlength="2000" rows="3"></textarea></div>
-                    </div>
+                        <div class="col-md-6">
+                            <label class="form-label required">Prospecto</label><select name="IdProspecto" id="opProspecto" class="form-select" required>
+                            <option value="">Seleccionar prospecto...</option>@foreach(var p in prospectos){
+                            <option value="@p.Id">@p.Nombre</option>
+                        }
+                    </select>
                 </div>
-                <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary" id="opGuardar">Guardar oportunidad</button></div>
-            </form>
+                <div class="col-md-6"><label class="form-label required">Nombre de la oportunidad</label><input name="Nombre" id="opNombre" class="form-control" maxlength="200" required /></div>
+                <div class="col-md-6"><label class="form-label">Descripción de la necesidad</label><textarea name="DescripcionNecesidad" id="opNecesidad" class="form-control" rows="3" maxlength="2000"></textarea></div>
+                <div class="col-md-6"><label class="form-label">Objetivos y alcance</label><textarea name="ObjetivosAlcance" id="opAlcance" class="form-control" rows="3" maxlength="2000"></textarea></div>
+                <div class="col-md-4">
+                    <label class="form-label">Etapa actual</label><select name="IdEstadoOportunidad" id="opEstado" class="form-select">
+                    @foreach (var e in estados)
+                    {
+                        <option value="@e.Key">@e.Value</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4"><label class="form-label">Probabilidad de cierre (%)</label><input name="ProbabilidadCierre" id="opProbabilidad" type="number" min="0" max="100" class="form-control" /></div>
+            <div class="col-md-4"><label class="form-label">Fecha estimada de cierre</label><input name="FechaEstimadaCierre" id="opCierre" type="date" class="form-control" /></div>
+            <div class="col-md-4"><label class="form-label">Monto estimado</label><input name="MontoEstimado" id="opMonto" type="number" min="0" step="0.01" class="form-control" /></div>
+            <div class="col-md-4"><label class="form-label">Moneda</label><select name="Moneda" id="opMoneda" class="form-select"><option value="PEN">PEN (S/)</option><option value="USD">USD ($)</option></select></div>
+            <div class="col-md-4"><label class="form-label">Tipo de contratación</label><input name="TipoContratacion" id="opContratacion" maxlength="100" class="form-control" /></div>
+            <div class="col-md-4"><label class="form-label">Prioridad</label><select name="Prioridad" id="opPrioridad" class="form-select"><option value="">Seleccionar...</option><option value="BAJA">Baja</option><option value="MEDIA">Media</option><option value="ALTA">Alta</option></select></div>
+            <div class="col-12"><label class="form-label">Observaciones</label><textarea name="Observacion" id="opObservacion" class="form-control" maxlength="2000" rows="3"></textarea></div>
         </div>
     </div>
+    <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-primary" id="opGuardar">Guardar oportunidad</button></div>
+</form>
+</div>
+</div>
 </div>
 
 @section Scripts {
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const get=id=>document.getElementById(id);
-    const form=get('formOportunidad');
-    const modal=bootstrap.Modal.getOrCreateInstance(get('modalOportunidad'));
-    const modalDetalle=bootstrap.Modal.getOrCreateInstance(get('modalDetalleOportunidad'));
-    const nombresEtapa={1:'En evaluación',2:'Propuesta enviada',3:'Negociación',4:'Ganada',5:'Perdida'};
-    const fecha=v=>v ? new Date(v).toLocaleDateString('es-PE',{timeZone:'UTC'}) : '—';
-    const texto=(v,def='—')=>(v===null||v===undefined||v==='')?def:v;
-    const setText=(id,v)=>get(id).textContent=v;
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const get=id=>document.getElementById(id);
+            const form=get('formOportunidad');
+            const modal=bootstrap.Modal.getOrCreateInstance(get('modalOportunidad'));
+            const modalDetalle=bootstrap.Modal.getOrCreateInstance(get('modalDetalleOportunidad'));
+            const nombresEtapa={1:'En evaluación',2:'Propuesta enviada',3:'Negociación',4:'Ganada',5:'Perdida'};
+            const fecha=v=>v ? new Date(v).toLocaleDateString('es-PE',{timeZone:'UTC'}) : '—';
+            const texto=(v,def='—')=>(v===null||v===undefined||v==='')?def:v;
+            const setText=(id,v)=>get(id).textContent=v;
 
-    document.querySelectorAll('.btnVerDetalle').forEach(btn=>btn.addEventListener('click',()=>{
-        const x=JSON.parse(btn.dataset.item);
-        const etapa=Number(x.idEstadoOportunidad||1);
-        const prob=Number(x.probabilidadCierre||0);
-        const codigo=`OP-${new Date(x.fechaRegistro).getUTCFullYear()}-${String(x.idOportunidad).padStart(3,'0')}`;
-        const etapaNombre=nombresEtapa[etapa]||'Sin etapa';
+            let oportunidadActual=0;
+            const token=()=>form.querySelector('[name="__RequestVerificationToken"]').value;
+            const post=async(url,data)=>{const body=new URLSearchParams({...data,__RequestVerificationToken:token()});const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});return await res.json();};
+            const td=v=>`<td>${v??'—'}</td>`;
+            async function cargarDetalle(id,abrir=true){
+                const res=await fetch(`@Url.Action("Detalle", "Oportunidad")?id=${id}`);const d=await res.json();if(!d.ok){toastr.error(d.mensaje);return;} oportunidadActual=id;window.__opDetalle=d;const x=d.oportunidad,etapa=Number(x.idEstadoOportunidad||1),prob=Number(x.probabilidadCierre||0),codigo=`OP-${new Date(x.fechaRegistro).getUTCFullYear()}-${String(x.idOportunidad).padStart(3,'0')}`,etapaNombre=nombresEtapa[etapa]||'Sin etapa';
+                setText('detCodigo',`Oportunidad ${codigo}`);setText('detCodigoValor',codigo);setText('detNombreCabecera',texto(x.nombre));setText('detNombre',texto(x.nombre));setText('detFechaRegistro',fecha(x.fechaRegistro));setText('detFechaCierre',fecha(x.fechaEstimadaCierre));setText('detPrioridad',texto(x.prioridad));setText('detMoneda',texto(x.moneda));setText('detContratacion',texto(x.tipoContratacion));setText('detAceptacion',fecha(x.fechaAceptacion));setText('detNecesidad',texto(x.descripcionNecesidad,'Sin información registrada.'));setText('detAlcance',texto(x.objetivosAlcance,'Sin información registrada.'));setText('detObservacion',texto(x.observacion,'Sin observaciones.'));setText('detProspectoNombre',texto(d.prospecto.razonSocial));setText('detProbText',`${prob}%`);get('detProbBar').style.width=`${Math.max(0,Math.min(100,prob))}%`;setText('detMonto',x.montoEstimado==null?'—':`${x.moneda==='USD'?'$':'S/'} ${Number(x.montoEstimado).toLocaleString('es-PE',{minimumFractionDigits:2})}`);
+                ['detEtapa','detEtapaBadge'].forEach(i=>{const e=get(i);e.className=`op-stage stage-${etapa}`;e.textContent=etapaNombre;});for(let i=1;i<=5;i++){const e=get(`flow${i}`);e.classList.remove('bg-primary','text-white','bg-success','bg-danger');const activo=etapa<=3?i<=etapa:(i<=3||i===etapa);if(activo)e.classList.add(i===4?'bg-success':i===5?'bg-danger':'bg-primary','text-white');}
+                const contactosBloqueados=!!d.conversion.convertido;
+                get('btnAgregarContactoOp').disabled=contactosBloqueados;
+                get('btnAgregarContactoOp').title=contactosBloqueados?'El cliente ya fue creado. Gestiona sus contactos desde el módulo Clientes.':'Agregar contacto';
+                get('tblContactosOp').innerHTML=d.contactos.length?d.contactos.map((c,i)=>`<tr>${td(i+1)}${td(c.nombre)}${td(c.cargo)}${td(c.telefono)}${td(c.correo)}<td>${c.esPrincipal?'<span class="badge badge-light-primary">Principal</span>':'—'}</td><td class="text-end">${contactosBloqueados?'<span class="text-muted small">Gestionar en Clientes</span>':`<button type="button" class="btn btn-sm btn-light-primary me-1 btnEditCon" data-id="${c.id}" title="Editar">✎</button><button type="button" class="btn btn-sm btn-light-danger btnBajaCon" data-id="${c.id}" title="Dar de baja">×</button>`}</td></tr>`).join(''):'<tr><td colspan="7" class="text-center text-muted py-5">Sin contactos registrados.</td></tr>';
+                get('tblServiciosOp').innerHTML=d.servicios.length?d.servicios.map((s,i)=>`<tr>${td(i+1)}${td(s.servicio)}${td(s.cantidad)}${td(s.tipo)}${td(s.jornada)}${td(s.observaciones)}<td class="text-end"><button type="button" class="btn btn-sm btn-light-primary me-1 btnEditSrv" data-id="${s.id}" title="Editar">✎</button><button type="button" class="btn btn-sm btn-light-danger btnDelSrv" data-id="${s.id}" title="Eliminar">×</button></td></tr>`).join(''):'<tr><td colspan="7" class="text-center text-muted py-5">Sin servicios registrados.</td></tr>';
+                get('tblSeguimientosOp').innerHTML=d.seguimientos.length?d.seguimientos.map(s=>`<tr>${td(fecha(s.fechaGestion))}${td(`<span class="badge badge-light-primary">${s.tipo}</span>`)}${td(s.comentario)}${td(s.proximaAccion)}${td(fecha(s.fechaProximaAccion))}<td>—</td></tr>`).join(''):'<tr><td colspan="6" class="text-center text-muted py-5">Sin seguimientos registrados.</td></tr>';
+                get('tblDocumentosOp').innerHTML=d.documentos.length?d.documentos.map((a,i)=>`<tr>${td(i+1)}${td(a.nombre)}${td(fecha(a.fechaRegistro))}${td(a.tipo)}<td>${a.rutaArchivo?`<a href="${a.rutaArchivo}" target="_blank" class="btn btn-sm btn-light-primary">Abrir</a>`:'—'}</td><td><button class="btn btn-sm btn-light-danger btnDelDoc" data-id="${a.id}">×</button></td></tr>`).join(''):'<tr><td colspan="6" class="text-center text-muted py-5">Sin documentos registrados.</td></tr>';
 
-        setText('detCodigo',`Oportunidad ${codigo}`);
-        setText('detCodigoValor',codigo);
-        setText('detNombreCabecera',texto(x.nombre));
-        setText('detNombre',texto(x.nombre));
-        setText('detFechaRegistro',fecha(x.fechaRegistro));
-        setText('detFechaCierre',fecha(x.fechaEstimadaCierre));
-        setText('detPrioridad',texto(x.prioridad));
-        setText('detMoneda',texto(x.moneda));
-        setText('detContratacion',texto(x.tipoContratacion));
-        setText('detAceptacion',fecha(x.fechaAceptacion));
-        setText('detNecesidad',texto(x.descripcionNecesidad,'Sin información registrada.'));
-        setText('detAlcance',texto(x.objetivosAlcance,'Sin información registrada.'));
-        setText('detObservacion',texto(x.observacion,'Sin observaciones.'));
-        setText('detProspectoNombre',texto(x.prospectoNombre));
-        setText('detProbText',`${prob}%`);
-        get('detProbBar').style.width=`${Math.max(0,Math.min(100,prob))}%`;
-
-        const monto=(x.montoEstimado===null||x.montoEstimado===undefined)
-            ? '—'
-            : `${x.moneda==='USD'?'$':'S/'} ${Number(x.montoEstimado).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
-        setText('detMonto',monto);
-
-        ['detEtapa','detEtapaBadge'].forEach(id=>{
-            const el=get(id);
-            el.className=`op-stage stage-${etapa}`;
-            el.textContent=etapaNombre;
-        });
-
-        // Flujo correcto: 1-3 son etapas; 4 y 5 son cierres alternativos.
-        for(let i=1;i<=5;i++){
-            const el=get(`flow${i}`);
-            el.classList.remove('bg-primary','text-white','bg-success','bg-danger','border-primary','border-success','border-danger');
-            let activo=false, clase='';
-            if(etapa<=3) activo=i<=etapa;
-            else activo=(i<=3 || i===etapa);
-            if(activo){
-                if(i===4) clase='bg-success';
-                else if(i===5) clase='bg-danger';
-                else clase='bg-primary';
-                el.classList.add(clase,'text-white');
+                const p=d.propuesta;get('propuestaVacia').classList.toggle('d-none',!!p);get('propuestaResumen').classList.toggle('d-none',!p);if(p){setText('propRVersion',texto(p.version));setText('propRFecha',fecha(p.fechaEnvio));setText('propRMonto',p.monto==null?'—':`${p.moneda==='USD'?'$':'S/'} ${Number(p.monto).toLocaleString('es-PE',{minimumFractionDigits:2})}`);setText('propREstado',texto(p.estado));setText('propRVigencia',p.vigenciaDias==null?'—':`${p.vigenciaDias} días`);setText('propRObs',texto(p.observacion,'Sin observaciones.'));}
+                get('tblCompetenciaOp').innerHTML=d.competencias.length?d.competencias.map((c,i)=>`<tr>${td(i+1)}${td(c.competidor)}${td(c.montoConocido==null?'—':`${c.moneda==='USD'?'$':'S/'} ${Number(c.montoConocido).toLocaleString('es-PE',{minimumFractionDigits:2})}`)}${td(c.fortalezas)}${td(c.debilidades)}<td>${c.esPrincipal?'<span class="badge badge-light-danger">Principal</span>':'—'}</td><td><button class="btn btn-sm btn-light-danger btnDelComp" data-id="${c.id}">×</button></td></tr>`).join(''):'<tr><td colspan="7" class="text-center text-muted py-5">Sin competencia registrada.</td></tr>';
+                get('tblHistorialOp').innerHTML=d.historial.length?d.historial.map(h=>`<tr>${td(new Date(h.fecha).toLocaleString('es-PE'))}${td(`<span class="badge badge-light-primary">${h.evento}</span>`)}${td(h.detalle)}${td(h.usuario)}</tr>`).join(''):'<tr><td colspan="4" class="text-center text-muted py-5">Aún no hay eventos registrados.</td></tr>';
+                get('propDocumento').innerHTML='<option value="">Ninguno</option>'+d.documentos.map(a=>`<option value="${a.id}">${a.nombre}</option>`).join('');
+                const convertir=get('btnConvertirCliente'); convertir.classList.remove('d-none'); convertir.disabled=(etapa!==4||d.conversion.convertido); convertir.title=d.conversion.convertido?'Esta oportunidad ya fue convertida en cliente.':(etapa!==4?'La oportunidad debe estar Ganada para convertirla en cliente.':'Convertir esta oportunidad en cliente.'); convertir.textContent=d.conversion.convertido?'Cliente ya creado':'Convertir en Cliente';
+                document.querySelectorAll('.btnEditCon').forEach(b=>b.onclick=()=>{const c=d.contactos.find(x=>String(x.id)===String(b.dataset.id));if(!c)return;get('formContactoOp').reset();get('conId').value=c.id;get('conNombre').value=c.nombre??'';get('conCargo').value=c.cargo??'';get('conTelefono').value=c.telefono??'';get('conCorreo').value=c.correo??'';get('conPrincipal').checked=!!c.esPrincipal;setText('tituloContactoOp','Editar contacto');mCon.show();});
+                document.querySelectorAll('.btnBajaCon').forEach(b=>b.onclick=async()=>{const q=await Swal.fire({title:'¿Dar de baja este contacto?',text:'Dejará de mostrarse como contacto activo del prospecto.',icon:'warning',showCancelButton:true,confirmButtonText:'Sí, dar de baja',cancelButtonText:'Cancelar'});if(q.isConfirmed){const z=await post('@Url.Action("DarBajaContactoProspecto", "Oportunidad")',{idContactoProspecto:b.dataset.id,idOportunidad:oportunidadActual});z.ok?(toastr.success(z.mensaje),cargarDetalle(oportunidadActual,false)):toastr.error(z.mensaje);}});
+                document.querySelectorAll('.btnEditSrv').forEach(b=>b.onclick=()=>{const s=d.servicios.find(x=>String(x.id)===String(b.dataset.id));if(!s)return;get('formServicioOp').reset();get('srvId').value=s.id;get('srvNombre').value=s.servicio??'';get('srvCantidad').value=s.cantidad??1;get('srvTipo').value=s.tipo??'';get('srvJornada').value=s.jornada??'';get('srvObs').value=s.observaciones??'';mSrv.show();});
+                document.querySelectorAll('.btnDelSrv').forEach(b=>b.onclick=async()=>{const q=await Swal.fire({title:'¿Quitar servicio?',icon:'question',showCancelButton:true});if(q.isConfirmed){const z=await post('@Url.Action("EliminarServicio", "Oportunidad")',{idServicioOportunidad:b.dataset.id,idOportunidad:oportunidadActual});z.ok?(toastr.success(z.mensaje),cargarDetalle(oportunidadActual,false)):toastr.error(z.mensaje);}});
+                document.querySelectorAll('.btnDelDoc').forEach(b=>b.onclick=async()=>{const q=await Swal.fire({title:'¿Quitar documento?',icon:'question',showCancelButton:true});if(q.isConfirmed){const z=await post('@Url.Action("EliminarDocumento", "Oportunidad")',{idDocumentoOportunidad:b.dataset.id,idOportunidad:oportunidadActual});z.ok?(toastr.success(z.mensaje),cargarDetalle(oportunidadActual,false)):toastr.error(z.mensaje);}});
+                document.querySelectorAll('.btnDelComp').forEach(b=>b.onclick=async()=>{const q=await Swal.fire({title:'¿Quitar competidor?',icon:'question',showCancelButton:true});if(q.isConfirmed){const z=await post('@Url.Action("EliminarCompetencia", "Oportunidad")',{idCompetenciaOportunidad:b.dataset.id,idOportunidad:oportunidadActual});z.ok?(toastr.success(z.mensaje),cargarDetalle(oportunidadActual,false)):toastr.error(z.mensaje);}});
+                if(abrir){bootstrap.Tab.getOrCreateInstance(get('modalDetalleOportunidad').querySelector('[data-bs-target="#detGeneral"]')).show();modalDetalle.show();}
             }
-        }
-
-        const convertir=get('btnConvertirCliente');
-        convertir.classList.toggle('d-none',etapa!==4);
-
-        // Siempre abrir inicialmente Datos Generales.
-        const firstTab=get('modalDetalleOportunidad').querySelector('[data-bs-target="#detGeneral"]');
-        bootstrap.Tab.getOrCreateInstance(firstTab).show();
-        modalDetalle.show();
-    }));
+            document.querySelectorAll('.btnVerDetalle').forEach(btn=>btn.addEventListener('click',()=>cargarDetalle(JSON.parse(btn.dataset.item).idOportunidad)));
 
 
-    get('btnNueva').addEventListener('click',()=>{
-        form.reset(); get('opId').value='0'; get('opEstado').value='1';
-        get('opTitulo').textContent='Nueva oportunidad'; get('opGuardar').textContent='Guardar oportunidad';
-        get('opGuardar').disabled=false; modal.show();
-    });
 
-    const map={opId:'idOportunidad',opProspecto:'idProspecto',opNombre:'nombre',opNecesidad:'descripcionNecesidad',opAlcance:'objetivosAlcance',opEstado:'idEstadoOportunidad',opProbabilidad:'probabilidadCierre',opCierre:'fechaEstimadaCierre',opMonto:'montoEstimado',opMoneda:'moneda',opContratacion:'tipoContratacion',opPrioridad:'prioridad',opObservacion:'observacion'};
-    document.querySelectorAll('.btnEditar').forEach(btn=>btn.addEventListener('click',()=>{
-        const x=JSON.parse(btn.dataset.item); form.reset();
-        Object.entries(map).forEach(([id,key])=>{let value=x[key];if(id==='opCierre'&&value)value=value.substring(0,10);get(id).value=value??'';});
-        get('opTitulo').textContent='Editar oportunidad';get('opGuardar').textContent='Guardar cambios';get('opGuardar').disabled=false;modal.show();
-    }));
+            const mCon=bootstrap.Modal.getOrCreateInstance(get('modalContactoOp')),mSrv=bootstrap.Modal.getOrCreateInstance(get('modalServicioOp')),mSeg=bootstrap.Modal.getOrCreateInstance(get('modalSeguimientoOp')),mDoc=bootstrap.Modal.getOrCreateInstance(get('modalDocumentoOp')),mConv=bootstrap.Modal.getOrCreateInstance(get('modalConvertirCliente')),mProp=bootstrap.Modal.getOrCreateInstance(get('modalPropuestaOp')),mComp=bootstrap.Modal.getOrCreateInstance(get('modalCompetenciaOp'));
+            get('btnAgregarContactoOp').onclick=()=>{if(window.__opDetalle?.conversion?.convertido){toastr.info('El cliente ya fue creado. Gestiona sus contactos desde el módulo Clientes.');return;}get('formContactoOp').reset();get('conId').value=0;setText('tituloContactoOp','Agregar contacto');mCon.show();};
+            get('formContactoOp').onsubmit=async e=>{e.preventDefault();const z=await post('@Url.Action("GuardarContactoProspecto", "Oportunidad")',{idContactoProspecto:get('conId').value,idOportunidad:oportunidadActual,nombre:get('conNombre').value,cargo:get('conCargo').value,telefono:get('conTelefono').value,correo:get('conCorreo').value,esPrincipal:get('conPrincipal').checked});if(z.ok){mCon.hide();toastr.success(z.mensaje);cargarDetalle(oportunidadActual,false);}else toastr.error(z.mensaje);};
+            get('btnAgregarServicio').onclick=()=>{get('formServicioOp').reset();get('srvId').value=0;mSrv.show();};
+            get('formServicioOp').onsubmit=async e=>{e.preventDefault();const z=await post('@Url.Action("GuardarServicio", "Oportunidad")',{idServicioOportunidad:get('srvId').value,idOportunidad:oportunidadActual,servicio:get('srvNombre').value,cantidad:get('srvCantidad').value,tipo:get('srvTipo').value,jornada:get('srvJornada').value,observaciones:get('srvObs').value});if(z.ok){mSrv.hide();toastr.success(z.mensaje);cargarDetalle(oportunidadActual,false);}else toastr.error(z.mensaje);};
+            get('btnAgregarSeguimiento').onclick=()=>{get('formSeguimientoOp').reset();const n=new Date();n.setMinutes(n.getMinutes()-n.getTimezoneOffset());get('segFecha').value=n.toISOString().slice(0,16);mSeg.show();};
+            get('formSeguimientoOp').onsubmit=async e=>{e.preventDefault();const z=await post('@Url.Action("RegistrarSeguimiento", "Oportunidad")',{idOportunidad:oportunidadActual,fechaGestion:get('segFecha').value,tipo:get('segTipo').value,comentario:get('segComentario').value,proximaAccion:get('segProxima').value,fechaProximaAccion:get('segFechaProxima').value});if(z.ok){mSeg.hide();toastr.success(z.mensaje);cargarDetalle(oportunidadActual,false);}else toastr.error(z.mensaje);};
+            get('btnGestionarPropuesta').onclick=()=>{const p=window.__opDetalle?.propuesta;get('formPropuestaOp').reset();get('propVersion').value=p?.version??'V1';get('propFecha').value=p?.fechaEnvio?String(p.fechaEnvio).slice(0,10):'';get('propMonto').value=p?.monto??'';get('propMoneda').value=p?.moneda??'PEN';get('propVigencia').value=p?.vigenciaDias??'';get('propEstado').value=p?.estado??'Borrador';get('propObs').value=p?.observacion??'';get('propDocumento').value=p?.idDocumentoOportunidad??'';mProp.show();};
+            get('formPropuestaOp').onsubmit=async e=>{e.preventDefault();const z=await post('@Url.Action("GuardarPropuesta", "Oportunidad")',{idOportunidad:oportunidadActual,version:get('propVersion').value,fechaEnvio:get('propFecha').value,monto:get('propMonto').value,moneda:get('propMoneda').value,vigenciaDias:get('propVigencia').value,estado:get('propEstado').value,observacion:get('propObs').value,idDocumentoOportunidad:get('propDocumento').value});if(z.ok){mProp.hide();toastr.success(z.mensaje);cargarDetalle(oportunidadActual,false);}else toastr.error(z.mensaje);};
+            get('btnAgregarCompetencia').onclick=()=>{get('formCompetenciaOp').reset();get('compId').value=0;mComp.show();};
+            get('formCompetenciaOp').onsubmit=async e=>{e.preventDefault();const z=await post('@Url.Action("GuardarCompetencia", "Oportunidad")',{idCompetenciaOportunidad:get('compId').value,idOportunidad:oportunidadActual,competidor:get('compNombre').value,montoConocido:get('compMonto').value,moneda:get('compMoneda').value,fortalezas:get('compFortalezas').value,debilidades:get('compDebilidades').value,observacion:get('compObs').value,esPrincipal:get('compPrincipal').checked});if(z.ok){mComp.hide();toastr.success(z.mensaje);cargarDetalle(oportunidadActual,false);}else toastr.error(z.mensaje);};
+            get('btnAgregarDocumento').onclick=()=>{get('formDocumentoOp').reset();mDoc.show();};
+            get('formDocumentoOp').onsubmit=async e=>{e.preventDefault();const btn=e.submitter;try{if(btn){btn.disabled=true;btn.textContent='Guardando...';}const archivo=get('docArchivo').files[0];if(archivo&&archivo.size>100*1024*1024){toastr.error('El archivo supera el límite máximo permitido de 100 MB.');return;}const fd=new FormData();fd.append('__RequestVerificationToken',token());fd.append('idOportunidad',oportunidadActual);fd.append('nombre',get('docNombre').value);fd.append('tipo',get('docTipo').value);fd.append('observacion',get('docObs').value);if(get('docArchivo').files[0])fd.append('archivo',get('docArchivo').files[0]);const res=await fetch('@Url.Action("RegistrarDocumento", "Oportunidad")',{method:'POST',headers:{'RequestVerificationToken':token()},body:fd});const raw=await res.text();let z;try{z=JSON.parse(raw);}catch{throw new Error(raw||`HTTP ${res.status}`);}if(!res.ok||!z.ok){toastr.error(z.mensaje||'No se pudo guardar el documento.');return;}mDoc.hide();toastr.success(z.mensaje);await cargarDetalle(oportunidadActual,false);}catch(err){console.error(err);toastr.error('Error al guardar el documento: '+err.message);}finally{if(btn){btn.disabled=false;btn.textContent='Guardar';}}};
+            async function opcionesUbigeo(url,id,select,selected){select.innerHTML='<option value="">Seleccionar</option>';if(!id)return;const r=await fetch(`${url}?${url.includes('Provincias')?'idDepartamento':'idProvincia'}=${id}`);const a=await r.json();a.forEach(x=>select.add(new Option(x.nombre,x.id,x.id==selected,x.id==selected)));}
+            get('btnConvertirCliente').onclick=async()=>{const r=await fetch(`@Url.Action("DatosConversion", "Oportunidad")?id=${oportunidadActual}`);const z=await r.json();if(!z.ok){toastr.error(z.mensaje);return;}if(z.datos.idUnidad){toastr.info('Esta oportunidad ya fue convertida.');return;}const d=z.datos;get('convEmpresa').innerHTML='<option value="">Seleccionar</option>'+z.empresas.map(x=>`<option value="${x.id}">${x.nombre}</option>`).join('');get('convSector').innerHTML='<option value="">Seleccionar</option>'+z.sectores.map(x=>`<option value="${x.id}" ${x.id==d.idSector?'selected':''}>${x.nombre}</option>`).join('');get('convDepartamento').innerHTML='<option value="">Seleccionar</option>'+z.departamentos.map(x=>`<option value="${x.id}" ${x.id==d.idDepartamento?'selected':''}>${x.nombre}</option>`).join('');get('convRuc').value=d.ruc??'';get('convRazon').value=d.razonSocial??'';get('convComercial').value=d.nombreComercial??'';get('convDireccion').value=d.direccion??'';get('convTelefono').value=d.telefono??'';get('convCorreo').value=d.correo??'';get('convWeb').value=d.paginaWeb??'';get('convTipoCliente').value=d.tipoCliente==='Estado'?'Estado':'Privado';await opcionesUbigeo('@Url.Action("Provincias", "Prospecto")',d.idDepartamento,get('convProvincia'),d.idProvincia);await opcionesUbigeo('@Url.Action("Distritos", "Prospecto")',d.idProvincia,get('convDistrito'),d.idDistrito);mConv.show();};
+            get('convDepartamento').onchange=()=>opcionesUbigeo('@Url.Action("Provincias", "Prospecto")',get('convDepartamento').value,get('convProvincia'),null);get('convProvincia').onchange=()=>opcionesUbigeo('@Url.Action("Distritos", "Prospecto")',get('convProvincia').value,get('convDistrito'),null);
+            get('formConvertirCliente').onsubmit=async e=>{e.preventDefault();const q=await Swal.fire({title:'¿Convertir en cliente?',text:'Se creará el cliente y el prospecto quedará como Convertido.',icon:'question',showCancelButton:true,confirmButtonText:'Sí, convertir'});if(!q.isConfirmed)return;const z=await post('@Url.Action("ConvertirCliente", "Oportunidad")',{idOportunidad:oportunidadActual,idEmpresa:get('convEmpresa').value,razonSocial:get('convRazon').value,rucUnidad:get('convRuc').value,nombreComercial:get('convComercial').value,idSector:get('convSector').value,idDepartamento:get('convDepartamento').value,idProvincia:get('convProvincia').value,idDistrito:get('convDistrito').value,direccion:get('convDireccion').value,telefono:get('convTelefono').value,correo:get('convCorreo').value,paginaWeb:get('convWeb').value,tipoCliente:get('convTipoCliente').value,copiarContactos:get('convCopiarContactos').checked});if(!z.ok){toastr.error(z.mensaje);return;}mConv.hide();await Swal.fire({icon:'success',title:'Cliente creado correctamente',html:`Se creó el cliente con código <strong>${z.codigoCliente}</strong>.<br>La oportunidad permanece como Ganada.`,confirmButtonText:'Ir al Cliente',showCancelButton:true,cancelButtonText:'Ver Oportunidad'}).then(x=>{if(x.isConfirmed)location.href='@Url.Action("Index", "Cliente")';else cargarDetalle(oportunidadActual,false);});};
 
-    form.addEventListener('submit',()=>get('opGuardar').disabled=true);
+            get('btnNueva').addEventListener('click',()=>{
+                form.reset(); get('opId').value='0'; get('opEstado').value='1';
+                get('opTitulo').textContent='Nueva oportunidad'; get('opGuardar').textContent='Guardar oportunidad';
+                get('opGuardar').disabled=false; modal.show();
+            });
 
-    document.querySelectorAll('.btnEstado').forEach(btn=>btn.addEventListener('click',async()=>{
-        const nuevoEstado=Number(btn.dataset.estado)===1?2:1;
-        const result=await Swal.fire({title:'¿Confirmar acción?',text:`¿Deseas ${nuevoEstado===1?'activar':'dar de baja'} la oportunidad ${btn.dataset.nombre}?`,icon:'question',showCancelButton:true,confirmButtonText:'Sí, continuar',cancelButtonText:'Cancelar'});
-        if(!result.isConfirmed)return;
-        try{
-            const body=new URLSearchParams({idOportunidad:btn.dataset.id,idEstado:nuevoEstado,__RequestVerificationToken:form.querySelector('[name="__RequestVerificationToken"]').value});
-            const response=await fetch('@Url.Action("CambiarEstado","Oportunidad")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
-            const data=await response.json();
-            if(data.ok){toastr.success(data.mensaje);setTimeout(()=>location.reload(),650);}else toastr.error(data.mensaje);
-        }catch{toastr.error('No se pudo cambiar el estado.');}
-    }));
-});
-</script>
-@if(TempData["Success"] is string success){<script>toastr.success(@Html.Raw(JsonSerializer.Serialize(success)));</script>}
-@if(TempData["Error"] is string error){<script>toastr.error(@Html.Raw(JsonSerializer.Serialize(error)));</script>}
+            const map={opId:'idOportunidad',opProspecto:'idProspecto',opNombre:'nombre',opNecesidad:'descripcionNecesidad',opAlcance:'objetivosAlcance',opEstado:'idEstadoOportunidad',opProbabilidad:'probabilidadCierre',opCierre:'fechaEstimadaCierre',opMonto:'montoEstimado',opMoneda:'moneda',opContratacion:'tipoContratacion',opPrioridad:'prioridad',opObservacion:'observacion'};
+            document.querySelectorAll('.btnEditar').forEach(btn=>btn.addEventListener('click',()=>{
+                const x=JSON.parse(btn.dataset.item); form.reset();
+                Object.entries(map).forEach(([id,key])=>{let value=x[key];if(id==='opCierre'&&value)value=value.substring(0,10);get(id).value=value??'';});
+                get('opTitulo').textContent='Editar oportunidad';get('opGuardar').textContent='Guardar cambios';get('opGuardar').disabled=false;modal.show();
+            }));
+
+            form.addEventListener('submit',()=>get('opGuardar').disabled=true);
+
+            document.querySelectorAll('.btnEstado').forEach(btn=>btn.addEventListener('click',async()=>{
+                const nuevoEstado=Number(btn.dataset.estado)===1?2:1;
+                const result=await Swal.fire({title:'¿Confirmar acción?',text:`¿Deseas ${nuevoEstado===1?'activar':'dar de baja'} la oportunidad ${btn.dataset.nombre}?`,icon:'question',showCancelButton:true,confirmButtonText:'Sí, continuar',cancelButtonText:'Cancelar'});
+                if(!result.isConfirmed)return;
+                try{
+                    const body=new URLSearchParams({idOportunidad:btn.dataset.id,idEstado:nuevoEstado,__RequestVerificationToken:form.querySelector('[name="__RequestVerificationToken"]').value});
+                    const response=await fetch('@Url.Action("CambiarEstado", "Oportunidad")',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+                    const data=await response.json();
+                    if(data.ok){toastr.success(data.mensaje);setTimeout(()=>location.reload(),650);}else toastr.error(data.mensaje);
+                }catch{toastr.error('No se pudo cambiar el estado.');}
+            }));
+        });
+    </script>
+    @if (TempData["Success"] is string success)
+    {
+        <script>toastr.success(@Html.Raw(JsonSerializer.Serialize(success)));</script>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <script>toastr.error(@Html.Raw(JsonSerializer.Serialize(error)));</script>
+    }
 }
